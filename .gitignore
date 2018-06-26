@@ -1,1 +1,4 @@
 vendor
+.env
+db.db
+isucon-portal-go
