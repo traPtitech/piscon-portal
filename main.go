@@ -128,9 +128,27 @@ func main() {
 
 	api := e.Group("/api")
 	api.GET("/results", getAllResults)
+	api.POST("/team", updateTeam)
 
 	e.StartAutoTLS(":443")
 	fmt.Println("end")
+}
+
+func updateTeam(c echo.Context) error {
+	requestBody := &struct {
+		Name string `json:"name"`
+	}{}
+
+	c.Bind(requestBody)
+	if requestBody.Name == "" {
+		c.NoContent(http.StatusBadRequest)
+	}
+
+	team := &Team{
+		Name: requestBody.Name,
+	}
+	db.Create(team)
+	return c.NoContent(http.StatusCreated)
 }
 
 func getAllResults(c echo.Context) error {
