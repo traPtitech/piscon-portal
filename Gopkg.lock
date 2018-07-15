@@ -8,10 +8,16 @@
   version = "v3.2.0"
 
 [[projects]]
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  revision = "d523deb1b23d913de5bdada721a6071e71283618"
+  version = "v1.4.0"
+
+[[projects]]
   name = "github.com/jinzhu/gorm"
   packages = [
     ".",
-    "dialects/sqlite"
+    "dialects/mysql"
   ]
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
@@ -61,10 +67,36 @@
   version = "v1.0.3"
 
 [[projects]]
-  name = "github.com/mattn/go-sqlite3"
+  branch = "master"
+  name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "25ecb14adfc7543176f7d85291ec7dba82c6f7e4"
-  version = "v1.9.0"
+  revision = "bb74f1db0675b241733089d5a1faa5dd8b0ef57b"
+
+[[projects]]
+  name = "github.com/racker/perigee"
+  packages = ["."]
+  revision = "44a7879d89b7040bcdb51164a83292ef5bf9deec"
+  version = "v0.1.0"
+
+[[projects]]
+  name = "github.com/rackspace/gophercloud"
+  packages = [
+    ".",
+    "openstack",
+    "openstack/compute/v2/images",
+    "openstack/compute/v2/servers",
+    "openstack/identity/v2/tenants",
+    "openstack/identity/v2/tokens",
+    "openstack/identity/v3/endpoints",
+    "openstack/identity/v3/services",
+    "openstack/identity/v3/tokens",
+    "openstack/utils",
+    "pagination",
+    "testhelper",
+    "testhelper/client"
+  ]
+  revision = "da56de6a59e53fdd61be1b5d9b87df34c47ac420"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -93,9 +125,15 @@
   packages = ["unix"]
   revision = "63fc586f45fe72d95d5240a5d5eb95e6503907d3"
 
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = ["cloudsql"]
+  revision = "b1f26356af11148e710935ed1ac8a7f5702c7612"
+  version = "v1.1.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a1207d80fd7d35e21e118e7e575ce6eb1f42ef09d9d0c62d1daf4fc2e214cffd"
+  inputs-digest = "23df92844d198f947470d4807f357e8d3431a0de46863b44c0ac05c72dc7292d"
   solver-name = "gps-cdcl"
   solver-version = 1

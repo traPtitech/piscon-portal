@@ -3,17 +3,21 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	shellwords "github.com/mattn/go-shellwords"
+	"github.com/rackspace/gophercloud"
+	"github.com/tohutohu/isucon-portal-go/conoha"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -21,7 +25,13 @@ var (
 	checkTask  chan struct{}
 	sendWorker chan *Task
 	db         *gorm.DB
+	client     *conoha.ConohaClient
 )
+
+type Response struct {
+	Suceess bool   `json:"suceess"`
+	Message string `json:"message"`
+}
 
 type jwtCustomClaims struct {
 	Name  string `json:"name"`
@@ -39,8 +49,17 @@ type Output struct {
 
 type Team struct {
 	gorm.Model
-	Name    string    `gorm:"unique" json:"name"`
-	Results []*Result `json:"results"`
+	Name     string    `gorm:"unique size:50" json:"name"`
+	Instance Instance  `json:"instance"`
+	Results  []*Result `json:"results"`
+}
+
+type Instance struct {
+	gorm.Model
+	TeamID       uint   `json:"team_id"`
+	InstanceName string `json:"instance_id"`
+	IPAddress    string `json:"ip_address"`
+	Password     string `json:"password"`
 }
 
 type Result struct {
@@ -51,6 +70,7 @@ type Result struct {
 	Score     int64      `json:"score"`
 	Suceess   int64      `json:"suceess"`
 	Fail      int64      `json:"fail"`
+	Betterize string     `json:"betterize"`
 	Messages  []*Message `json:"messages"`
 	CreatedAt time.Time  `json:"created_at"`
 }
@@ -63,11 +83,17 @@ type Message struct {
 
 type Task struct {
 	gorm.Model
-	CmdStr string `json:"cmd_str"`
-	IP     string `json:"ip"`
-	State  string `json:"state"`
-	TeamID uint   `json:"team_id"`
-	Team   Team   `json:"team"`
+	CmdStr    string `json:"cmd_str"`
+	IP        string `json:"ip"`
+	State     string `json:"state"`
+	Betterize string `json:"betterize"`
+	TeamID    uint   `json:"team_id"`
+	Team      Team   `json:"team"`
+}
+
+type Question struct {
+	gorm.Model
+	Q string
 }
 
 func main() {
@@ -76,18 +102,14 @@ func main() {
 
 	go benchmarkWorker()
 
-	_db, err := gorm.Open("sqlite3", "./db.db")
+	_db, err := gorm.Open("mysql", "root@/isucon?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 	db = _db
 
-	db.AutoMigrate(&Message{}, &Result{}, &Team{}, &Task{})
-	team := Team{Name: "to-hutohu"}
-	if db.NewRecord(team) {
-		db.Create(&team)
-	}
+	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{}, &Question{})
 
 	tasks := []*Task{}
 	db.Not("state = 'done'").Find(&tasks)
@@ -123,15 +145,72 @@ func main() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	e.POST("/benchmark/run", queBenchmark)
-	e.GET("/benchmark/queue", getBenchmarkQueue)
-
 	api := e.Group("/api")
 	api.GET("/results", getAllResults)
 	api.POST("/team", updateTeam)
+	api.GET("/team/:id", getTeam)
+	api.GET("/admin/team", getAllTeam)
+	api.POST("/benchmark/:id", queBenchmark)
+	api.GET("/benchmark/queue", getBenchmarkQueue)
+	api.GET("/newer", getNewer)
+	api.POST("/question", func(c echo.Context) error {
+		req := struct {
+			Q string `json:"q"`
+		}{}
+		c.Bind(&req)
+		q := &Question{
+			Q: req.Q,
+		}
+		db.Create(q)
+		return c.NoContent(http.StatusOK)
+	})
 
 	e.StartAutoTLS(":443")
 	fmt.Println("end")
+}
+
+func getNewer(c echo.Context) error {
+	teams := []Team{}
+	db.Raw("select * from results as pi left join teams on pi.team_id = teams.id where pi.id = (select po.id from results as po left join teams on po.team_id = teams.id where pass = 1 and pi.team_id = po.team_id and score > 0 order by po.id asc limit 1) and pi.created_at > CURDATE()").Scan(&teams)
+	return c.JSON(http.StatusOK, teams)
+}
+
+func getTeam(c echo.Context) error {
+	id := c.Param("id")
+	team := Team{}
+	db.Where("name = ?", id).Find(&team)
+
+	if team.Name == "" {
+		return c.JSON(http.StatusNotFound, Response{false, "登録されていません"})
+	}
+	db.Model(&team).Related(&team.Results)
+	for _, result := range team.Results {
+		db.Model(result).Related(&result.Messages)
+	}
+	db.Model(&team).Related(&team.Instance)
+	return c.JSON(http.StatusOK, team)
+}
+
+func getAllTeam(c echo.Context) error {
+	teams := []*Team{}
+	db.Find(&teams)
+	for _, team := range teams {
+		db.Model(team).Related(&team.Results)
+		db.Model(team).Related(&team.Instance)
+		for _, result := range team.Results {
+			db.Model(result).Related(&result.Messages)
+		}
+	}
+	return c.JSON(http.StatusOK, teams)
+}
+
+func genPassword() string {
+	pass := ""
+	gen := "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+	for i := 0; i < 12; i++ {
+		pass += string(gen[rand.Intn(len(gen))])
+	}
+	return pass
 }
 
 func updateTeam(c echo.Context) error {
@@ -140,15 +219,56 @@ func updateTeam(c echo.Context) error {
 	}{}
 
 	c.Bind(requestBody)
+
 	if requestBody.Name == "" {
-		c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, Response{false, "Nameが空です"})
+	}
+
+	t := &Team{}
+	db.Where("name = ?", requestBody.Name).Find(t)
+	db.Model(t).Related(&t.Instance)
+
+	if t.Name != "" && t.Instance.IPAddress != "" {
+		return c.JSON(http.StatusNotFound, Response{false, "登録されています"})
+	}
+	pass := genPassword()
+	client = conoha.New(gophercloud.AuthOptions{
+		IdentityEndpoint: os.Getenv("OS_AUTH_URL"),
+		Username:         os.Getenv("OS_USERNAME"),
+		TenantName:       os.Getenv("OS_TENANT_NAME"),
+		Password:         os.Getenv("OS_PASSWORD"),
+	})
+
+	err := client.MakeInstance(requestBody.Name, pass)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, Response{false, "インスタンスの作成に失敗しました\n@to-hutohuに連絡してください"})
+	}
+	s, err := client.GetInstanceInfo(requestBody.Name)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, Response{false, "インスタンスの作成に失敗しました\n@to-hutohuに連絡してください"})
+	}
+
+	instance := Instance{
+		InstanceName: s.ID,
+		IPAddress:    strings.Replace(s.Name, "-", ".", -1),
+		Password:     pass,
+	}
+
+	if t.Name != "" {
+		t.Instance = instance
+		db.Create(instance)
+		db.Save(t)
+		return c.JSON(http.StatusCreated, Response{true, "インスタンスを作成しました"})
 	}
 
 	team := &Team{
-		Name: requestBody.Name,
+		Name:     requestBody.Name,
+		Instance: instance,
 	}
 	db.Create(team)
-	return c.NoContent(http.StatusCreated)
+	return c.JSON(http.StatusCreated, Response{true, "登録しました"})
 }
 
 func getAllResults(c echo.Context) error {
@@ -164,27 +284,41 @@ func getAllResults(c echo.Context) error {
 }
 
 func queBenchmark(c echo.Context) error {
-	requestBody := &struct {
-		IP string `json:"ip"`
-	}{}
-	c.Bind(requestBody)
+	id := c.Param("id")
 
-	teamID := 1
+	req := struct {
+		Betterize string `json:"betterize"`
+	}{}
+
+	c.Bind(&req)
+
+	team := &Team{}
+	db.Where("name = ?", id).Find(team)
+
+	if team.Name == "" {
+		return c.JSON(http.StatusNotFound, Response{false, "登録されていません"})
+	}
+
+	db.Model(team).Related(&team.Instance)
+
+	if team.Instance.IPAddress == "" {
+		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
+	}
 
 	task := &Task{}
 
-	//db.Where("team_id = ?", teamID).Not("state = 'done'").First(task)
-	fmt.Println(teamID)
+	db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task)
 	if task.CmdStr != "" {
-		return c.JSON(http.StatusNotAcceptable, map[string]string{"massage": "すでに登録されています"})
+		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/benchmarker/bin/benchmarker -t http://%s -u /home/benchmarker/private-isu/benchmarker/userdata", requestBody.IP)
+	cmdStr := fmt.Sprintf("/home/benchmarker/bin/benchmarker -t http://%s -u /home/benchmarker/private-isu/benchmarker/userdata", team.Instance.IPAddress)
 	t := &Task{
-		CmdStr: cmdStr,
-		IP:     requestBody.IP,
-		State:  "waiting",
-		TeamID: 1,
+		CmdStr:    cmdStr,
+		IP:        team.Instance.IPAddress,
+		State:     "waiting",
+		TeamID:    team.ID,
+		Betterize: req.Betterize,
 	}
 	db.Create(t)
 
@@ -192,7 +326,7 @@ func queBenchmark(c echo.Context) error {
 		sendWorker <- t
 	}()
 
-	return c.NoContent(http.StatusNoContent)
+	return c.JSON(http.StatusCreated, Response{true, "キューに追加しました"})
 }
 
 func getBenchmarkQueue(c echo.Context) error {
@@ -225,15 +359,30 @@ func benchmarkWorker() {
 		data := &Output{}
 		err := json.Unmarshal(output, data)
 		if err != nil {
-			panic(err)
+			result := &Result{
+				TeamID:    task.TeamID,
+				TaskID:    task.ID,
+				Pass:      false,
+				Score:     0,
+				Suceess:   0,
+				Fail:      0,
+				Betterize: task.Betterize,
+				Messages:  []*Message{&Message{Text: err.Error()}},
+			}
+			db.Create(result)
+
+			task.State = "done"
+			db.Save(task)
+			continue
 		}
 		result := &Result{
-			TeamID:  task.TeamID,
-			TaskID:  task.ID,
-			Pass:    data.Pass,
-			Score:   data.Score,
-			Suceess: data.Suceess,
-			Fail:    data.Fail,
+			TeamID:    task.TeamID,
+			TaskID:    task.ID,
+			Pass:      data.Pass,
+			Score:     data.Score,
+			Suceess:   data.Suceess,
+			Fail:      data.Fail,
+			Betterize: task.Betterize,
 		}
 
 		for _, message := range data.Messages {
@@ -243,6 +392,5 @@ func benchmarkWorker() {
 
 		task.State = "done"
 		db.Save(task)
-
 	}
 }
