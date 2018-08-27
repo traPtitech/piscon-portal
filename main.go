@@ -171,7 +171,7 @@ func main() {
 
 func getNewer(c echo.Context) error {
 	teams := []Team{}
-	db.Raw("select * from results as pi left join teams on pi.team_id = teams.id where pi.id = (select po.id from results as po left join teams on po.team_id = teams.id where pass = 1 and pi.team_id = po.team_id and score > 0 order by po.id asc limit 1) and pi.created_at > CURDATE()").Scan(&teams)
+	db.Raw("SELECT * FROM results AS PI LEFT JOIN teams ON PI.team_id = teams.id WHERE PI.id =( SELECT po.id FROM results AS po LEFT JOIN teams ON po.team_id = teams.id WHERE pass = 1 AND PI.team_id = po.team_id AND score > 0 ORDER BY po.score DESC LIMIT 1 ) AND (PI.created_at > (CURRENT_TIME() - INTERVAL 1 day))").Scan(&teams)
 	return c.JSON(http.StatusOK, teams)
 }
 
