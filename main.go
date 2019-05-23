@@ -19,6 +19,7 @@ import (
 	"github.com/rackspace/gophercloud"
 	"github.com/tohutohu/isucon-portal-go/conoha"
 	"golang.org/x/crypto/acme/autocert"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -102,6 +103,11 @@ func main() {
 
 	go benchmarkWorker()
 
+	err := godotenv.Load()
+	if err != nil {
+			fmt.Println("Error loading .env file")
+	}
+
 	_db, err := gorm.Open("mysql", "root@/isucon?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
@@ -109,6 +115,7 @@ func main() {
 	defer db.Close()
 	db = _db
 
+	db.Exec("USE isucon")
 	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{}, &Question{})
 
 	tasks := []*Task{}
@@ -120,26 +127,29 @@ func main() {
 	}
 
 	e := echo.New()
-	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
-	e.Pre(middleware.HTTPSNonWWWRedirect())
-
-	signingKey := os.Getenv("JWTKey")
-	config := middleware.JWTConfig{
-		Claims:     &jwtCustomClaims{},
-		SigningKey: []byte(signingKey),
+	env := os.Getenv("ENV")
+	if env == "prod" {
+		e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
+		e.Pre(middleware.HTTPSNonWWWRedirect())
 	}
-	e.Use(middleware.JWTWithConfig(config))
 
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			user := c.Get("user").(*jwt.Token)
-			claims := user.Claims.(*jwtCustomClaims)
-			if claims.Name != "traP-showcase" {
-				return c.NoContent(http.StatusForbidden)
-			}
-			return next(c)
-		}
-	})
+	// signingKey := os.Getenv("JWTKey")
+	// config := middleware.JWTConfig{
+	// 	Claims:     &jwtCustomClaims{},
+	// 	SigningKey: []byte(signingKey),
+	// }
+	// e.Use(middleware.JWTWithConfig(config))
+
+	// e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+	// 	return func(c echo.Context) error {
+	// 		user := c.Get("user").(*jwt.Token)
+	// 		claims := user.Claims.(*jwtCustomClaims)
+	// 		if claims.Name != "traP-showcase" {
+	// 			return c.NoContent(http.StatusForbidden)
+	// 		}
+	// 		return next(c)
+	// 	}
+	// })
 
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
@@ -165,7 +175,12 @@ func main() {
 		return c.NoContent(http.StatusOK)
 	})
 
-	e.StartAutoTLS(":443")
+	switch env {
+	case "prod":
+		e.StartAutoTLS(":443")
+	default:
+		e.Start(":4000")
+	}
 	fmt.Println("end")
 }
 
