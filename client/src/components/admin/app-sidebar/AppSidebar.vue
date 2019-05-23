@@ -1,0 +1,73 @@
+<template>
+  <vuestic-sidebar :hidden="this.isOpen"
+                   :toggleWithoutAnimation="toggleWithoutAnimation">
+    <template slot="menu">
+      <sidebar-link
+        :to="{ name: 'dashboard' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-dashboard"></span>
+          <span>{{ $t('menu.dashboard') }}</span>
+        </span>
+      </sidebar-link>
+      <sidebar-link
+        :to="{ name: 'statistics' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-statistics"></span>
+          <span>Statistics</span>
+        </span>
+      </sidebar-link>
+      <sidebar-link
+        v-if="$store.state.Me !== '-'"
+        :to="{ name: 'team-info' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-user"></span>
+          <span>{{ $t('menu.teamInfo') }}</span>
+        </span>
+      </sidebar-link>
+      <sidebar-link
+        :to="{ name: 'readme' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon entypo entypo-info" style="padding: 5px;"></span>
+          <span>Readme</span>
+        </span>
+      </sidebar-link>
+      <sidebar-link
+        :to="{ name: 'q-and-a' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon entypo entypo-help" style="padding: 5px;"></span>
+          <span>Q & A</span>
+        </span>
+      </sidebar-link>
+    </template>
+  </vuestic-sidebar>
+</template>
+
+<script>
+
+  import VuesticSidebar from '../../../vuestic-theme/vuestic-components/vuestic-sidebar/VuesticSidebar'
+  import {mapGetters} from 'vuex'
+  import SidebarLink from './components/SidebarLink'
+  import SidebarLinkGroup from './components/SidebarLinkGroup'
+
+  export default {
+    name: 'app-sidebar',
+    components: {
+      VuesticSidebar,
+      SidebarLink,
+      SidebarLinkGroup
+    },
+    props: {
+      isOpen: {
+        type: Boolean,
+        required: true
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'toggleWithoutAnimation'
+      ]),
+    }
+  }
+
+
+</script>
