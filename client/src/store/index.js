@@ -3,10 +3,9 @@ import Vuex from 'vuex'
 import VuexI18n from 'vuex-i18n' // load vuex i18n module
 
 import app from './modules/app'
-
 import * as getters from './getters'
-
-import axios from '../services/axios'
+import { setAuthToken, getMe, getRsults, getNewer, getTeam, getQueue } from '../api'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
@@ -21,7 +20,8 @@ const store = new Vuex.Store({
     Team: {},
     AllResults: [],
     Que: [],
-    Newer: []
+    Newer: [],
+    authToken: null
   },
   mutations: {
     setMe (state, data) {
@@ -38,19 +38,28 @@ const store = new Vuex.Store({
     },
     setNewer (state, data) {
       state.Newer = data
+    },
+    setToken (state, data) {
+      state.authToken = data
+      setAuthToken(data)
     }
   },
   actions: {
     async getData ({commit}) {
-      const me = await axios.get('/api/public/whoami').then(data => { commit('setMe', data.data); return data.data })
-      axios.get('/api/public/results').then(data => commit('setAllResults', data.data))
-      axios.get('/api/public/newer').then(data => commit('setNewer', data.data))
+      const me = await getMe().then(data => { commit('setMe', data.data); return data.data })
+      console.log(me)
+      getRsults().then(data => commit('setAllResults', data.data))
+      getNewer().then(data => commit('setNewer', data.data))
 
-      if (me.user_id === '-') return
-      axios.get('/api/internal/team').then(data => commit('setTeam', data.data))
-      axios.get('/api/internal/que').then(data => commit('setQue', data.data))
+      // if (me.user_id === '-') return
+      // TODO: Fix
+      getTeam().then(data => commit('setTeam', data.data))
+      getQueue().then(data => commit('setQue', data.data))
     }
-  }
+  },
+  plugins: [createPersistedState({
+    paths: ['Me', 'Team', 'AllResults', 'Que', 'Newer', 'authToken']
+  })]
 })
 
 Vue.use(VuexI18n.plugin, store)

@@ -1,7 +1,7 @@
 <template>
 <div class="modal-page">
 <div class="row">
-  <div class="col-md-12" v-if="$store.state.Me.user_id !== '-'">
+  <div class="col-md-12" v-if="$store.state.Me.name !== '-'">
     <div v-if="$store.state.Team.instance && $store.state.Team.instance.ip_address">
       <vuestic-widget class="col-md-12">
         <div class="widget-header">サーバー情報</div>
@@ -42,7 +42,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr :class="{'table-danger': !result.pass}" v-for="result in $store.state.Team.results">
+              <tr :class="{'table-danger': !result.pass}" v-for="result in $store.state.Team.results" :key="result">
                 <td>{{result.id}}</td>
                 <td>{{result.pass}}</td>
                 <td>{{result.fail}}</td>
@@ -98,14 +98,14 @@ export default {
     makeInstance () {
       if (this.makeInstanceButton) return
       this.makeInstanceButton = true
-      axios.post('/api/internal/team')
+      axios.post('/api/team')
         .then(_ => {
           this.$store.dispatch('getData')
         })
     },
     benchmark () {
       if (this.benchmarkButton) return
-      axios.post('/api/internal/bench', {betterize: this.betterize})
+      axios.post('/api/bench', {betterize: this.betterize})
         .then(_ => {
           this.betterize = ''
           this.$store.dispatch('getData')
@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     benchmarkButton () {
-      return this.$store.state.Que.find(que => que.team.name === this.$store.state.Me.user_id)
+      return this.$store.state.Que.find(que => que.team.name === this.$store.state.Me.name)
     },
     tweetURL () {
       try {

@@ -15,7 +15,7 @@
     </div>
   </vuestic-widget>
 
-  <vuestic-widget headerText="質問する" v-if="$store.state.Me.user_id !== '-'">
+  <vuestic-widget headerText="質問する" v-if="$store.state.Me.name !== '-'">
     <div class="form-group">
       <div class="input-group">
         <textarea type="text" id="new" name="new" col="10" v-model="newQ"></textarea>
@@ -39,7 +39,7 @@ export default {
     }
   },
   created () {
-    axios.get('/api/public/questions')
+    axios.get('/api/questions')
       .then(data => {
         this.questions = data.data
         console.log(this.questions)
@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     newQuestion () {
-      axios.post('/api/public/new', {q: this.newQ})
+      axios.post('/api/new', {q: this.newQ})
         .then(() => {
           this.newQ = ''
         })

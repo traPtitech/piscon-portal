@@ -6,14 +6,7 @@
 
 <script>
   export default {
-    name: 'app',
-    created () {
-      console.log('a')
-      this.$store.dispatch('getData')
-      setInterval(() => {
-        this.$store.dispatch('getData')
-      }, 20000)
-    }
+    name: 'app'
   }
 </script>
 

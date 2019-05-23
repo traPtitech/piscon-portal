@@ -3,9 +3,12 @@
   <vuestic-navbar>
     <header-selector slot="selector" :isOpen.sync="valueProxy"/>
     <span slot="logo">Piscon</span>
-    <profile-dropdown>
-      <img :src="$store.state.Me.user_id!=='-'?`https://q.trapti.tech/static/icon/${$store.state.Me.user_id}/128.png`:`http://i.imgur.com/nfa5itq.png`"/>
+    <profile-dropdown v-if="$store.state.Me">
+      <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.Me.iconFileId}`" />
     </profile-dropdown>
+    <div v-else>
+      <router-link :to="{name: 'login'}">login</router-link>
+    </div>
   </vuestic-navbar>
 
 </template>
