@@ -3,11 +3,12 @@
   <vuestic-navbar>
     <header-selector slot="selector" :isOpen.sync="valueProxy"/>
     <span slot="logo">Piscon</span>
-    <profile-dropdown v-if="$store.state.Me">
+    <profile-dropdown v-if="$store.state.Me"
+      :options="profileOptions">
       <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.Me.iconFileId}`" />
     </profile-dropdown>
-    <div v-else>
-      <router-link :to="{name: 'login'}">login</router-link>
+    <div v-else class="login">
+      <router-link :to="{name: 'login'}">Login</router-link>
     </div>
   </vuestic-navbar>
 
@@ -39,6 +40,20 @@
         required: true
       }
     },
+    data () {
+      return {
+        profileOptions: [
+          {
+            name: 'name',
+            redirectTo: 'team-info'
+          },
+          {
+            name: 'Logout',
+            redirectTo: 'logout'
+          }
+        ]
+      }
+    },
     computed: {
       valueProxy: {
         get () {
@@ -49,5 +64,16 @@
         },
       }
     },
+    mounted () {
+      if (this.$store.state.Me) {
+        this.profileOptions[0]['name'] = this.$store.state.Me.displayName
+      }
+    }
   }
 </script>
+
+<style scoped>
+.login {
+  margin: 15px 0 0 auto;
+}
+</style>

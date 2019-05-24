@@ -7,7 +7,7 @@
       <vuestic-pre-loader v-show="isLoading" ref="preLoader" class="pre-loader"></vuestic-pre-loader>
       <router-view></router-view>
     </main>
-    <span slot="footer">©2018. Made by&nbsp;<a href="https://to-hutohu.com" target="_blank">@to-hutohu</a></span>
+    <span slot="footer">©2019. Made by&nbsp;<a href="https://to-hutohu.com" target="_blank">@to-hutohu</a>, <a href="https://nagatech.work" target="_blank">@nagatech</a></span>
   </vuestic-layout>
 </template>
 

@@ -9,6 +9,15 @@ import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
+const initState = {
+  Me: null,
+  Team: {},
+  AllResults: [],
+  Que: [],
+  Newer: [],
+  authToken: null
+}
+
 const store = new Vuex.Store({
   strict: true, // process.env.NODE_ENV !== 'production',
   getters,
@@ -42,6 +51,11 @@ const store = new Vuex.Store({
     setToken (state, data) {
       state.authToken = data
       setAuthToken(data)
+    },
+    destroySession (state) {
+      for (let key in initState) {
+        state[key] = initState[key]
+      }
     }
   },
   actions: {

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import AppLayout from '../components/admin/AppLayout'
 import lazyLoading from './lazyLoading'
 import store from '../store/index'
-import { fetchAuthToken, redirectAuthorizationEndpoint, setAuthToken } from '../api'
+import { fetchAuthToken, redirectAuthorizationEndpoint, setAuthToken, revokeAuthToken } from '../api'
 
 setAuthToken(store.state.authToken)
 
@@ -49,7 +49,6 @@ export default new Router({
         }
       ],
       beforeEnter: async (to, from, next) => {
-        console.log('po')
         try {
           await store.dispatch('getData')
           next()
@@ -87,11 +86,25 @@ export default new Router({
           const res = await fetchAuthToken(code, codeVerifier)
           store.commit('setToken', res.data.access_token)
           store.dispatch('getData')
-          next('/')
+          next('/team-info')
         } catch (e) {
           console.error(e)
         }
       }
-    }
+    },
+    {
+      path: '/auth/logout',
+      name: 'logout',
+      component: () => import('../components/auth/Callback'),
+      beforeEnter: async (to, from, next) => {
+        try {
+          await revokeAuthToken(store.state.authToken)
+          await store.commit('destroySession')
+          next('/dashboard')
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    },
   ]
 })

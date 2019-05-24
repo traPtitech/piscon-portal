@@ -1,8 +1,20 @@
 <template>
-  <div class="profile-dropdown col nav-item dropdown navbar-dropdown">
-    <span class="profile-section-avatar-container">
-      <slot></slot>
-    </span>
+  <div class="profile-dropdown col nav-item dropdown navbar-dropdown" v-dropdown>
+    <a class="nav-link dropdown-toggle" href="#">
+      <span class="profile-section-avatar-container">
+        <slot></slot>
+      </span>
+    </a>
+    <div class="dropdown-menu last">
+      <div class="dropdown-menu-content">
+        <div v-for="(option, id) in options" :key="id"
+          class="dropdown-item plain-link-item">
+          <router-link :to="{name: option.redirectTo}" class="plain-link" href="#">
+            {{ `${option.name}` | translate}}
+          </router-link>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -24,7 +36,7 @@
           }
         ]
       }
-    },
+    }
   }
 </script>
 
@@ -48,6 +60,15 @@
       }
     }
 
+  }
+
+  .dropdown-menu {
+    margin-top: 0.5rem !important
+  }
+
+  .dropdown-menu-content {
+    margin: 0 0 0 auto;
+    width: 20% !important
   }
 
 </style>
