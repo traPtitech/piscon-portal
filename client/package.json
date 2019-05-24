@@ -96,11 +96,11 @@
     "url-loader": "0.5.8",
     "vue-component-tree": "^2.2.1",
     "vue-flatpickr-component": "^7.0.1",
-    "vue-loader": "13.3.0",
+    "vue-loader": "^15.0.0",
     "vue-style-loader": "3.0.1",
     "vue-template-compiler": "2.5.2",
     "webpack": "3.6.0",
-    "webpack-bundle-analyzer": "2.9.0",
+    "webpack-bundle-analyzer": "3.3.2",
     "webpack-dev-middleware": "1.12.0",
     "webpack-hot-middleware": "2.18.2",
     "webpack-merge": "4.1.0"
