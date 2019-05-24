@@ -1,7 +1,7 @@
 <template>
 <div class="modal-page">
 <div class="row">
-  <div class="col-md-12" v-if="$store.state.Me.name !== '-'">
+  <div class="col-md-12" v-if="$store.state.Me">
     <div v-if="$store.state.Team.instance && $store.state.Team.instance.ip_address">
       <vuestic-widget class="col-md-12">
         <div class="widget-header">サーバー情報</div>

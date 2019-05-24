@@ -15,7 +15,7 @@
     </div>
   </vuestic-widget>
 
-  <vuestic-widget headerText="質問する" v-if="$store.state.Me.name !== '-'">
+  <vuestic-widget headerText="質問する" v-if="$store.state.Me">
     <div class="form-group">
       <div class="input-group">
         <textarea type="text" id="new" name="new" col="10" v-model="newQ"></textarea>

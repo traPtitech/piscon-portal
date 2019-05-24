@@ -68,7 +68,7 @@
 
   .dropdown-menu-content {
     margin: 0 0 0 auto;
-    width: 20% !important
+    width: 150px !important
   }
 
 </style>
