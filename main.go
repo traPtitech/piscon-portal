@@ -112,10 +112,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	_db.LogMode(true)
+	defer _db.Close()
 	db = _db
 
-	db.Exec("USE isucon")
 	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{}, &Question{})
 
 	tasks := []*Task{}
