@@ -4,7 +4,7 @@ import VuexI18n from 'vuex-i18n' // load vuex i18n module
 
 import app from './modules/app'
 import * as getters from './getters'
-import { setAuthToken, getMe, getRsults, getNewer, getTeam, getQueue } from '../api'
+import { setAuthToken, getMe, getRsults, getNewer, getQueue, getTeam } from '../api'
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)

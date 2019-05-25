@@ -17,7 +17,7 @@ import (
 	"github.com/labstack/echo/middleware"
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/rackspace/gophercloud"
-	"github.com/tohutohu/isucon-portal-go/conoha"
+	"github.com/nagatea/piscon-portal/conoha"
 	"golang.org/x/crypto/acme/autocert"
 	"github.com/joho/godotenv"
 )
@@ -285,20 +285,20 @@ func updateTeam(c echo.Context) error {
 	pass := genPassword()
 	client = conoha.New(gophercloud.AuthOptions{
 		IdentityEndpoint: os.Getenv("OS_AUTH_URL"),
-		Username:         os.Getenv("OS_USERNAME"),
 		TenantName:       os.Getenv("OS_TENANT_NAME"),
+		Username:         os.Getenv("OS_USERNAME"),
 		Password:         os.Getenv("OS_PASSWORD"),
 	})
 
 	err := client.MakeInstance(requestBody.Name, pass)
 	if err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusInternalServerError, Response{false, "インスタンスの作成に失敗しました\n@to-hutohuに連絡してください"})
+		return c.JSON(http.StatusInternalServerError, Response{false, "インスタンスの作成に失敗しました\n@nagatechに連絡してください"})
 	}
 	s, err := client.GetInstanceInfo(requestBody.Name)
 	if err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusInternalServerError, Response{false, "インスタンスの作成に失敗しました\n@to-hutohuに連絡してください"})
+		return c.JSON(http.StatusInternalServerError, Response{false, "インスタンスの作成に失敗しました\n@nagatechに連絡してください"})
 	}
 
 	instance := Instance{

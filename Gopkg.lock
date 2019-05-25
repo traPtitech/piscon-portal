@@ -101,6 +101,14 @@
   version = "v1.1.2"
 
 [[projects]]
+  branch = "master"
+  digest = "1:f41aebad7194f3e8d9ce3284986b86a8884332154c5b04d02543ccadb11dd180"
+  name = "github.com/nagatea/piscon-portal"
+  packages = ["conoha"]
+  pruneopts = "UT"
+  revision = "4c4cee54c41f1ea4d2e8b083a4e29784d8aaf9ef"
+
+[[projects]]
   digest = "1:3a01c84131fb00d21ff27e857de12b985a576c55ce0e42ae9e3a45f4ad2fc2fa"
   name = "github.com/racker/perigee"
   packages = ["."]
@@ -129,14 +137,6 @@
   pruneopts = "UT"
   revision = "da56de6a59e53fdd61be1b5d9b87df34c47ac420"
   version = "v1.0.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:47bb8bd86b7d4643563d82ef95fba1bb0b7ee98f1edc3cdc62c3b96e75bdcd55"
-  name = "github.com/tohutohu/isucon-portal-go"
-  packages = ["conoha"]
-  pruneopts = "UT"
-  revision = "c10ffef3a4fee9e991986d86befb484d397ce6ca"
 
 [[projects]]
   digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
@@ -225,12 +225,12 @@
     "github.com/labstack/echo",
     "github.com/labstack/echo/middleware",
     "github.com/mattn/go-shellwords",
+    "github.com/nagatea/piscon-portal/conoha",
     "github.com/rackspace/gophercloud",
     "github.com/rackspace/gophercloud/openstack",
     "github.com/rackspace/gophercloud/openstack/compute/v2/images",
     "github.com/rackspace/gophercloud/openstack/compute/v2/servers",
     "github.com/rackspace/gophercloud/pagination",
-    "github.com/tohutohu/isucon-portal-go/conoha",
     "golang.org/x/crypto/acme/autocert",
   ]
   solver-name = "gps-cdcl"

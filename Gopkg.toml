@@ -51,7 +51,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/tohutohu/isucon-portal-go"
+  name = "github.com/nagatea/piscon-portal"
 
 [[constraint]]
   branch = "master"

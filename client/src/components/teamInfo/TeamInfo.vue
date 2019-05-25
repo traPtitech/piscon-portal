@@ -66,6 +66,9 @@
         </p>
       </div>
       <button class="btn btn-primary" @click="makeInstance" :disabled="makeInstanceButton">インスタンスを作成する</button>
+      <div v-if="error" class="type-articles">
+        {{ error }}
+      </div>
     </vuestic-widget>
   </div>
   <vuestic-widget v-else class="col-md-12" headerText="traP外の方へ">
@@ -92,15 +95,19 @@ export default {
       modalText: '',
       betterize: '',
       show: true,
+      error: '',
     }
   },
   methods: {
     makeInstance () {
       if (this.makeInstanceButton) return
       this.makeInstanceButton = true
-      axios.post('/api/team')
+      axios.post('/api/team', {name: this.$store.state.Me.name})
         .then(_ => {
           this.$store.dispatch('getData')
+        })
+        .catch(err => {
+          this.error = err.response.data.message
         })
     },
     benchmark () {
