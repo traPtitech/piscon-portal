@@ -17,10 +17,13 @@
           <div class="form-group">
             <div class="input-group">
               <textarea type="text" id="simple-textarea" required v-model="betterize"></textarea>
-              <label class="control-label" for="simple-textarea">改善点を入力してください<br>(記入しないとベンチマークを行えません)</label><i class="bar"></i>
+              <label class="control-label" for="simple-textarea">改善点を入力してください(記入しないとベンチマークを行えません)</label><i class="bar"></i>
             </div>
           </div>
           <button class="btn btn-micro btn-info" @click="benchmark" :disabled="benchmarkButton || betterize === ''">ベンチマークを行う</button>
+          <div v-if="error" class="type-articles">
+            {{ error }}
+          </div>
         </div>
       </vuestic-widget>
       <vuestic-widget class="col-md-12" headerText="最新の結果">
@@ -42,7 +45,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr :class="{'table-danger': !result.pass}" v-for="result in $store.state.Team.results" :key="result">
+              <tr :class="{'table-danger': !result.pass}" v-for="result in $store.state.Team.results" :key="result.id">
                 <td>{{result.id}}</td>
                 <td>{{result.pass}}</td>
                 <td>{{result.fail}}</td>
@@ -114,10 +117,12 @@ export default {
     },
     benchmark () {
       if (this.benchmarkButton) return
-      axios.post('/api/bench', {betterize: this.betterize})
+      axios.post(`/api/benchmark/${this.$store.state.Me.name}`, {betterize: this.betterize})
         .then(_ => {
           this.betterize = ''
           this.$store.dispatch('getData')
+        }).catch(err => {
+          this.error = err.response.data.message
         })
     },
     showModal (data) {

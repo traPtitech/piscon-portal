@@ -43,3 +43,8 @@
     }
   }
 </script>
+
+<style lang="sass" scoped>
+  a
+    color: #4ab1e2;
+</style>

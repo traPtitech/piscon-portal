@@ -2,8 +2,8 @@ import axios from 'axios'
 import { randomString, pkce } from './utils'
 
 // axios.defaults.withCredentials = true
-export const traQBaseURL = process.env.VUE_APP_API_ENDPOINT || 'https://q.trap.jp/api/1.0'
-axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : ''
+export const traQBaseURL = 'https://q.trap.jp/api/1.0'
+axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : process.env.VUE_APP_API_ENDPOINT
 
 export function setAuthToken (token) {
   if (token) {
