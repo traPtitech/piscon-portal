@@ -3,6 +3,7 @@ package conoha
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack"
@@ -50,8 +51,8 @@ systemctl restart sshd
 
 	copts := servers.CreateOpts{
 		Name:      "isucon",
-		ImageRef:  "6bf41f8b-0579-45f9-abe5-37fbff5f964c",
-		FlavorRef: "7eea7469-0d85-4f82-8050-6ae742394681",
+		ImageRef:  os.Getenv("CONOHA_IMAGE_REF"),
+		FlavorRef: os.Getenv("CONOHA_IMAGE_FLAVOR"),
 		Metadata: map[string]string{
 			"instance_name_tag": name,
 		},
