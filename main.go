@@ -10,16 +10,15 @@ import (
 	"strings"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	shellwords "github.com/mattn/go-shellwords"
-	"github.com/rackspace/gophercloud"
 	"github.com/nagatea/piscon-portal/conoha"
+	"github.com/rackspace/gophercloud"
 	"golang.org/x/crypto/acme/autocert"
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -32,12 +31,6 @@ var (
 type Response struct {
 	Suceess bool   `json:"suceess"`
 	Message string `json:"message"`
-}
-
-type jwtCustomClaims struct {
-	Name  string `json:"name"`
-	Admin bool   `json:"admin"`
-	jwt.StandardClaims
 }
 
 type Output struct {
@@ -106,7 +99,7 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-			fmt.Println("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	_db, err := gorm.Open("mysql", "root@/isucon?charset=utf8&parseTime=True&loc=Local")
@@ -134,40 +127,29 @@ func main() {
 		e.Pre(middleware.HTTPSNonWWWRedirect())
 	}
 
-	// signingKey := os.Getenv("JWTKey")
-	// config := middleware.JWTConfig{
-	// 	Claims:     &jwtCustomClaims{},
-	// 	SigningKey: []byte(signingKey),
-	// }
-	// e.Use(middleware.JWTWithConfig(config))
-
-	// e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-	// 	return func(c echo.Context) error {
-	// 		user := c.Get("user").(*jwt.Token)
-	// 		claims := user.Claims.(*jwtCustomClaims)
-	// 		if claims.Name != "traP-showcase" {
-	// 			return c.NoContent(http.StatusForbidden)
-	// 		}
-	// 		return next(c)
-	// 	}
-	// })
-
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})
 
 	api := e.Group("/api")
 	api.GET("/results", getAllResults)
-	api.POST("/team", updateTeam)
-	api.GET("/team/:id", getTeam)
-	api.GET("/admin/team", getAllTeam)
-	api.POST("/benchmark/:id", queBenchmark)
 	api.GET("/benchmark/queue", getBenchmarkQueue)
 	api.GET("/newer", getNewer)
 	api.GET("/questions", getQuestions)
-	api.POST("/questions", postQuestions)
-	api.PUT("/questions/:id", putQuestions)
-	api.DELETE("/questions/:id", deleteQuestions)
+
+	apiWithAuth := e.Group("/api", middlewareAuthUser)
+	apiWithAuth.GET("/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "pong")
+	})
+	apiWithAuth.POST("/team", updateTeam)
+	// TODO: ユーザー名で認証してないので修正する必要がある
+	apiWithAuth.GET("/team/:id", getTeam)
+	apiWithAuth.POST("/benchmark/:id", queBenchmark)
+	apiWithAuth.GET("/admin/team", getAllTeam)
+
+	apiWithAuth.POST("/questions", postQuestions)
+	apiWithAuth.PUT("/questions/:id", putQuestions)
+	apiWithAuth.DELETE("/questions/:id", deleteQuestions)
 
 	switch env {
 	case "prod":
@@ -176,6 +158,25 @@ func main() {
 		e.Start(":4000")
 	}
 	fmt.Println("end")
+}
+
+// traPかどうかの認証
+// TODO: Fix ユーザーネーム認証
+func middlewareAuthUser(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Request().Header.Get("Authorization")
+		if token == "" {
+			return c.NoContent(http.StatusForbidden)
+		}
+		req, _ := http.NewRequest("GET", "https://q.trap.jp/api/1.0/users/me", nil)
+		req.Header.Set("Authorization", token)
+		client := new(http.Client)
+		res, _ := client.Do(req)
+		if res.StatusCode != 200 {
+			return c.NoContent(http.StatusForbidden)
+		}
+		return next(c)
+	}
 }
 
 func getNewer(c echo.Context) error {
