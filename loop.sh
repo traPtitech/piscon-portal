@@ -2,5 +2,5 @@
 
 while :
 do
-  sudo -E ./isucon-portal-go
+  sudo -E ./piscon-portal
 done

@@ -3,6 +3,7 @@ import { randomString, pkce } from './utils'
 
 // axios.defaults.withCredentials = true
 export const traQBaseURL = 'https://q.trap.jp/api/1.0'
+export const traQClientID = process.env.VUE_APP_API_CLIENT_ID || 'CySPaqKWiUXvwechb66dk0yubIlDqCcK07DV'
 axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : process.env.VUE_APP_API_ENDPOINT
 
 export function setAuthToken (token) {
@@ -22,7 +23,7 @@ export async function redirectAuthorizationEndpoint () {
 
   const authorizationEndpointUrl = new URL(`${traQBaseURL}/oauth2/authorize`)
   authorizationEndpointUrl.search = new URLSearchParams({
-    client_id: process.env.VUE_APP_API_CLIENT_ID || 'CySPaqKWiUXvwechb66dk0yubIlDqCcK07DV',
+    client_id: traQClientID,
     response_type: 'code',
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
@@ -33,7 +34,7 @@ export async function redirectAuthorizationEndpoint () {
 
 export function fetchAuthToken (code, verifier) {
   return axios.post(`${traQBaseURL}/oauth2/token`, new URLSearchParams({
-    client_id: process.env.VUE_APP_API_CLIENT_ID || 'CySPaqKWiUXvwechb66dk0yubIlDqCcK07DV',
+    client_id: traQClientID,
     grant_type: 'authorization_code',
     code_verifier: verifier,
     code

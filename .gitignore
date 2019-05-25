@@ -1,5 +1,5 @@
 vendor
 .env
 db.db
-isucon-portal-go
+piscon-portal
 test

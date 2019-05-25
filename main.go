@@ -106,7 +106,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_db.LogMode(true)
+	//_db.LogMode(true)
 	defer _db.Close()
 	db = _db
 
