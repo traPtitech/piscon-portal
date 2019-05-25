@@ -94,7 +94,8 @@ type Task struct {
 
 type Question struct {
 	gorm.Model
-	Q string
+	Question string `json:"question"`
+	Answer   string `json:"answer"`
 }
 
 func main() {
@@ -163,17 +164,10 @@ func main() {
 	api.POST("/benchmark/:id", queBenchmark)
 	api.GET("/benchmark/queue", getBenchmarkQueue)
 	api.GET("/newer", getNewer)
-	api.POST("/question", func(c echo.Context) error {
-		req := struct {
-			Q string `json:"q"`
-		}{}
-		c.Bind(&req)
-		q := &Question{
-			Q: req.Q,
-		}
-		db.Create(q)
-		return c.NoContent(http.StatusOK)
-	})
+	api.GET("/questions", getQuestions)
+	api.POST("/questions", postQuestions)
+	api.PUT("/questions/:id", putQuestions)
+	api.DELETE("/questions/:id", deleteQuestions)
 
 	switch env {
 	case "prod":
@@ -217,6 +211,48 @@ func getAllTeam(c echo.Context) error {
 		}
 	}
 	return c.JSON(http.StatusOK, teams)
+}
+
+func getQuestions(c echo.Context) error {
+	questions := []*Question{}
+	db.Find(&questions)
+	// TODO: 改行対応
+
+	return c.JSON(http.StatusOK, questions)
+}
+
+func postQuestions(c echo.Context) error {
+	req := struct {
+		Question string `json:"question"`
+	}{}
+	c.Bind(&req)
+	question := &Question{
+		Question: req.Question,
+	}
+	db.Create(question)
+	return c.NoContent(http.StatusCreated)
+}
+
+func putQuestions(c echo.Context) error {
+	id := c.Param("id")
+	req := struct {
+		Answer string `json:"answer"`
+	}{}
+	c.Bind(&req)
+	question := &Question{
+		Answer: req.Answer,
+	}
+	db.Model(question).Where("id = ?", id).Update(&question)
+
+	return c.JSON(http.StatusOK, question)
+}
+
+func deleteQuestions(c echo.Context) error {
+	id := c.Param("id")
+	question := &Question{}
+	db.Model(question).Where("id = ?", id).Delete(&question)
+
+	return c.JSON(http.StatusOK, question)
 }
 
 func genPassword() string {
