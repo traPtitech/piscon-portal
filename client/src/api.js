@@ -60,9 +60,8 @@ export function getNewer () {
   return axios.get(`/api/newer`)
 }
 
-export function getTeam () {
-  // TODO: Fix
-  return axios.get(`/api/team/nagatech`)
+export function getTeam (name) {
+  return axios.get(`/api/team/${name}`)
 }
 
 export function getQueue () {

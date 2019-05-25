@@ -60,14 +60,20 @@ const store = new Vuex.Store({
   },
   actions: {
     async getData ({commit}) {
-      const me = await getMe().then(data => { commit('setMe', data.data); return data.data })
-      console.log(me)
       getRsults().then(data => commit('setAllResults', data.data))
       getNewer().then(data => commit('setNewer', data.data))
+      const me = await getMe()
+        .then(data => {
+          console.log(data.data)
+          commit('setMe', data.data)
+          return data.data
+        })
+        .catch(() => {
+          return null
+        })
 
-      // if (me.user_id === '-') return
-      // TODO: Fix
-      getTeam().then(data => commit('setTeam', data.data))
+      if (!me) return
+      getTeam(me.name).then(data => commit('setTeam', data.data))
       getQueue().then(data => commit('setQue', data.data))
     }
   },

@@ -71,11 +71,13 @@
       </div>
     </vuestic-widget>
   </div>
-  <vuestic-widget v-else class="col-md-12" headerText="traP外の方へ">
-    <div class="widget-body">
-      このページはtraP部員専用です！<br>
-    </div>
-  </vuestic-widget>
+  <div v-else class="col-md-12">
+    <vuestic-widget  headerText="traP外の方へ">
+      <div class="widget-body">
+        このページはtraP部員専用です！<br>
+      </div>
+    </vuestic-widget>
+  </div>
 </div>
 <vuestic-modal :large="true" :show.sync="show" :okText="'閉じる'" :cancelClass="'none'" ref="largeModal">
   <div slot="title">結果詳細</div>

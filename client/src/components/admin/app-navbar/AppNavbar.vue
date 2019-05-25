@@ -7,8 +7,8 @@
       :options="profileOptions">
       <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.Me.iconFileId}`" />
     </profile-dropdown>
-    <div v-else class="login">
-      <router-link :to="{name: 'login'}">Login</router-link>
+    <div v-else class="signin">
+      <router-link :to="{name: 'signin'}">Signin with traQ</router-link>
     </div>
   </vuestic-navbar>
 
@@ -73,7 +73,7 @@
 </script>
 
 <style scoped>
-.login {
+.signin {
   margin: 15px 0 0 auto;
 }
 </style>

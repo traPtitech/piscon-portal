@@ -51,22 +51,28 @@ export default new Router({
       beforeEnter: async (to, from, next) => {
         try {
           await store.dispatch('getData')
+          if (to.path === '/') {
+            next('/dashboard')
+          }
           next()
         } catch (e) {
-          next()
+          console.error(e)
         }
       }
     },
     {
-      path: '/auth/login',
-      name: 'login',
-      component: () => import('../components/auth/login/Login'),
+      path: '/auth/signin',
+      name: 'signin',
+      component: () => import('../components/auth/Callback'),
       beforeEnter: async (to, from, next) => {
         try {
           await store.dispatch('getData')
+          if (!store.state.Me) {
+            await redirectAuthorizationEndpoint()
+          }
           next()
         } catch (e) {
-          await redirectAuthorizationEndpoint()
+          console.error(e)
         }
       }
     },
@@ -100,6 +106,7 @@ export default new Router({
         try {
           await revokeAuthToken(store.state.authToken)
           await store.commit('destroySession')
+          await store.dispatch('getData')
           next('/dashboard')
         } catch (e) {
           console.error(e)
