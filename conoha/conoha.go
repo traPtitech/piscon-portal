@@ -55,7 +55,7 @@ systemctl restart sshd
 		Metadata: map[string]string{
 			"instance_name_tag": name,
 		},
-		SecurityGroups: os.Getenv("CONOHA_SECURITY_GROUP"),
+		SecurityGroups: []string(os.Getenv("CONOHA_SECURITY_GROUP")),
 		UserData:       []byte(startUpScript),
 	}
 	r := servers.Create(compute, copts)
