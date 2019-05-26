@@ -18,7 +18,6 @@ type ConohaClient struct {
 
 func New(opts gophercloud.AuthOptions) *ConohaClient {
 	c := &ConohaClient{}
-	fmt.Println(opts)
 	client, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
 		panic(err)
