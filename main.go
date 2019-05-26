@@ -364,7 +364,7 @@ func queBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/benchmarker/bin/benchmarker -t http://%s -u /home/benchmarker/private-isu/benchmarker/userdata", team.Instance.IPAddress)
+	cmdStr := fmt.Sprintf("/home/benchmarker/bin/benchmarker -t http://%s -u /home/benchmarker/userdata", team.Instance.IPAddress)
 	t := &Task{
 		CmdStr:    cmdStr,
 		IP:        team.Instance.IPAddress,
@@ -404,12 +404,17 @@ func benchmarkWorker() {
 
 		command, _ := shellwords.Parse(task.CmdStr)
 
-		output, _ := exec.Command(command[0], command[1:]...).CombinedOutput()
+		output, err := exec.Command(command[0], command[1:]...).CombinedOutput()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(output)
 		fmt.Println("end benchmark")
 
 		fmt.Println(string(output))
 		data := &Output{}
-		err := json.Unmarshal(output, data)
+		err = json.Unmarshal(output, data)
 		if err != nil {
 			result := &Result{
 				TeamID:    task.TeamID,
