@@ -9,7 +9,7 @@
           <h6><span class="col-md-6">インスタンス名 : {{$store.state.Team.name}}</span></h6>
           <h6><span class="col-md-6">IP アドレス : {{$store.state.Team.instance.ip_address}}</span></h6>
           <h6><span class="col-md-6">ユーザー名 : isucon</span></h6>
-          <h6><span class="col-md-6">パスワード : {{$store.state.Team.instance.password}}</span></h6>
+          <h6><span class="col-md-6">初期パスワード : {{$store.state.Team.instance.password}}</span></h6>
           <h6><span class="col-md-6">ベンチマーク回数 : {{$store.state.Team.results.length}}</span></h6>
           <h6><span class="col-md-6">最高スコア : {{$store.getters.maxScore.score}}</span></h6>
           <h6><span class="col-md-6">作成時間 : {{$store.state.Team.instance.CreatedAt}}</span></h6>
@@ -28,7 +28,11 @@
       </vuestic-widget>
       <vuestic-widget class="col-md-12" headerText="最新の結果">
         <pre>{{$store.getters.lastResult}}</pre>
-        <a :href="tweetURL" target="_blank"><button class="btn btn-info btn-with-icon rounded-icon"><div class="btn-with-icon-content"><i style="color:white; top:0.5rem; left:0.5rem;" class="brandico brandico-twitter-bird"></i></div></button></a>
+        <a :href="tweetURL" target="_blank">
+          <button class="btn btn-info btn-with-icon rounded-icon">
+            <span style="color:white; margin-left: 0.3rem; font-size: 25px;" class="zocial zocial-twitter"></span>
+          </button>
+        </a>
       </vuestic-widget>
       <vuestic-widget class="col-md-12" headerText="これまでの結果">
         <div class="table-responsible">
@@ -137,9 +141,9 @@ export default {
     tweetURL () {
       try {
         const result = JSON.parse(this.$store.getters.lastResult)
-        return `https://twitter.com/intent/tweet?text=PISCONで${result.score}点を取りました！%0d%0a&hashtags=traPiscon`
+        return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0dhttps://piscon.nagatech.work&hashtags=traPiscon`
       } catch (e) {
-        return `https://twitter.com/intent/tweet?text=PISCONはじめました！%0d%0a&hashtags=traPiscon`
+        return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0dhttps://piscon.nagatech.work&hashtags=traPiscon`
       }
     }
   }
