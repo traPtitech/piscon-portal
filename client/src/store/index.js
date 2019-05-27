@@ -62,9 +62,9 @@ const store = new Vuex.Store({
     async getData ({commit}) {
       getRsults().then(data => commit('setAllResults', data.data))
       getNewer().then(data => commit('setNewer', data.data))
+      getQueue().then(data => commit('setQue', data.data))
       const me = await getMe()
         .then(data => {
-          console.log(data.data)
           commit('setMe', data.data)
           return data.data
         })
@@ -74,7 +74,6 @@ const store = new Vuex.Store({
 
       if (!me) return
       getTeam(me.name).then(data => commit('setTeam', data.data))
-      getQueue().then(data => commit('setQue', data.data))
     }
   },
   plugins: [createPersistedState({
