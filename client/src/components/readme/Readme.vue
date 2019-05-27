@@ -18,7 +18,7 @@
       <p>(この回答はtraP内部向けです)</p>
       <p><router-link :to="{name: 'team-info'}">Team Info</router-link>にアクセスしてインスタンスを作成を押すとサーバーが作成されます。
       <br>今回は<b>環境構築も競技の一部になっている</b>ので作成されるインスタンスはすっからかんです。
-      <br><a href="https://git.trapti.tech/to-hutohu/isucon" target="_blank">このリポジトリ</a>のREADME.mdを参考に環境構築をして正の点数を取るところから始めてみましょう！</p>
+      <br>まずは<router-link to="manual">環境構築マニュアル</router-link>を参考に環境構築をして正の点数を取るところから始めてみましょう！</p>
     </div>
     <div class="box">
       <h3>Q. 〇〇が分からない・〇〇について聞きたい</h3>

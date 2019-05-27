@@ -17,7 +17,6 @@
         </span>
       </sidebar-link>
       <sidebar-link
-        v-if="$store.state.Me !== '-'"
         :to="{ name: 'team-info' }">
         <span slot="title">
           <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-user"></span>
@@ -29,6 +28,20 @@
         <span slot="title">
           <span class="sidebar-menu-item-icon entypo entypo-info" style="padding: 5px;"></span>
           <span>Readme</span>
+        </span>
+      </sidebar-link>
+      <sidebar-link
+        :to="{ name: 'manual' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon entypo entypo-book" style="padding: 5px;"></span>
+          <span>Manual</span>
+        </span>
+      </sidebar-link>
+      <sidebar-link
+        :to="{ name: 'articles' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon entypo entypo-lamp" style="padding: 5px;"></span>
+          <span>Articles</span>
         </span>
       </sidebar-link>
       <sidebar-link

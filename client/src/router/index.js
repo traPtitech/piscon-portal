@@ -38,6 +38,16 @@ export default new Router({
           component: lazyLoading('readme/Readme')
         },
         {
+          name: 'manual',
+          path: 'manual',
+          component: lazyLoading('manual/Manual')
+        },
+        {
+          name: 'articles',
+          path: 'articles',
+          component: lazyLoading('articles/Articles')
+        },
+        {
           name: 'q-and-a',
           path: 'qa',
           component: lazyLoading('qanda/QandA')

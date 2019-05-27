@@ -1,7 +1,7 @@
 <template>
   <div class="row dashboard-info-widgets">
     <div class="col-md-6 col-xl-3">
-      <vuestic-widget class="info-widget" headerText="ベンチ回数">
+      <vuestic-widget class="info-widget" headerText="総ベンチマーク回数">
         <div class="info-widget-inner">
           <div class="stats">
             <div class="stats-number">
@@ -31,9 +31,9 @@
         <div class="info-widget-inner">
           <div class="stats">
             <div class="stats-number">
-              <a href="http://dsas.blog.klab.org/archives/pixiv-isucon2016-1.html" target="_blank">
+              <router-link to="articles">
                 <span style="color:#4ae387;">攻略記事</span>
-              </a>
+              </router-link>
             </div>
             <div class="stats-title">これやるだけでも<br>力付きます</div>
           </div>
