@@ -82,7 +82,8 @@
   <div v-else class="col-md-12">
     <vuestic-widget  headerText="traP外の方へ">
       <div class="widget-body">
-        このページはtraP部員専用です！<br>
+        <p>このページはtraP部員専用です！</p>
+        <p>traP部員は右上の「Signin with traQ」よりログインすることができます。</p>
       </div>
     </vuestic-widget>
   </div>

@@ -6,7 +6,7 @@
         :to="{ name: 'dashboard' }">
         <span slot="title">
           <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-dashboard"></span>
-          <span>{{ $t('menu.dashboard') }}</span>
+          <span>Dashboard</span>
         </span>
       </sidebar-link>
       <sidebar-link
@@ -20,7 +20,8 @@
         :to="{ name: 'team-info' }">
         <span slot="title">
           <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-user"></span>
-          <span>{{ $t('menu.teamInfo') }}</span>
+          <span v-if="$store.state.Me">TeamInfo</span>
+          <span v-else>TeamInfo (traP Only)</span>
         </span>
       </sidebar-link>
       <sidebar-link
@@ -34,7 +35,8 @@
         :to="{ name: 'manual' }">
         <span slot="title">
           <span class="sidebar-menu-item-icon entypo entypo-book" style="padding: 5px;"></span>
-          <span>Manual</span>
+          <span v-if="$store.state.Me">Manual</span>
+          <span v-else>Manual (traP Only)</span>
         </span>
       </sidebar-link>
       <sidebar-link
