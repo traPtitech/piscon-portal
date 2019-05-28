@@ -77,7 +77,7 @@ const store = new Vuex.Store({
     }
   },
   plugins: [createPersistedState({
-    paths: ['Me', 'Team', 'AllResults', 'Que', 'Newer', 'authToken']
+    paths: ['authToken']
   })]
 })
 
