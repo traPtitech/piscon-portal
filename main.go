@@ -50,10 +50,16 @@ type Team struct {
 
 type Instance struct {
 	gorm.Model
-	TeamID       uint   `json:"team_id"`
-	InstanceName string `json:"instance_id"`
+	TeamID       uint           `json:"team_id"`
+	InstanceName string         `json:"instance_id"`
+	IPAddress    string         `json:"ip_address"`
+	Password     string         `json:"password"`
+	InstanceLogs []*InstanceLog `json:"instance_logs"`
+}
+
+type InstanceLog struct {
+	gorm.Model
 	IPAddress    string `json:"ip_address"`
-	Password     string `json:"password"`
 }
 
 type Result struct {
@@ -110,7 +116,7 @@ func main() {
 	defer _db.Close()
 	db = _db
 
-	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{}, &Question{})
+	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &InstanceLog{}, &Team{}, &Question{})
 
 	tasks := []*Task{}
 	db.Not("state = 'done'").Find(&tasks)
@@ -136,6 +142,7 @@ func main() {
 	api.GET("/benchmark/queue", getBenchmarkQueue)
 	api.GET("/newer", getNewer)
 	api.GET("/questions", getQuestions)
+	api.POST("/instancelog", postInstanceLog)
 
 	apiWithAuth := e.Group("/api", middlewareAuthUser)
 	apiWithAuth.GET("/ping", func(c echo.Context) error {
@@ -198,6 +205,7 @@ func getTeam(c echo.Context) error {
 		db.Model(result).Related(&result.Messages)
 	}
 	db.Model(&team).Related(&team.Instance)
+	db.Where("ip_address = ?", &team.Instance.IPAddress).Find(&team.Instance.InstanceLogs)
 	return c.JSON(http.StatusOK, team)
 }
 
@@ -450,4 +458,13 @@ func benchmarkWorker() {
 		task.State = "done"
 		db.Save(task)
 	}
+}
+
+func postInstanceLog(c echo.Context) error {
+	ipaddress := c.Request().Header.Get("X-Forwarded-For")
+	instanceLog := &InstanceLog{
+		IPAddress: ipaddress,
+	}
+	db.Create(instanceLog)
+	return c.NoContent(http.StatusCreated)
 }
