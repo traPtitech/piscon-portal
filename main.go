@@ -200,10 +200,8 @@ func getTeam(c echo.Context) error {
 	if team.Name == "" {
 		return c.JSON(http.StatusNotFound, Response{false, "登録されていません"})
 	}
-	db.Model(&team).Related(&team.Results)
-	for _, result := range team.Results {
-		db.Model(result).Related(&result.Messages)
-	}
+
+	db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
 	db.Model(&team).Related(&team.Instance)
 	db.Where("ip_address = ?", &team.Instance.IPAddress).Find(&team.Instance.InstanceLogs)
 	return c.JSON(http.StatusOK, team)
@@ -335,10 +333,7 @@ func getAllResults(c echo.Context) error {
 	teams := []*Team{}
 	db.Find(&teams)
 	for _, team := range teams {
-		db.Model(team).Related(&team.Results)
-		for _, result := range team.Results {
-			db.Model(result).Related(&result.Messages)
-		}
+		db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
 	}
 	return c.JSON(http.StatusOK, teams)
 }
