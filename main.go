@@ -43,9 +43,12 @@ type Output struct {
 
 type Team struct {
 	gorm.Model
-	Name     string    `gorm:"unique size:50" json:"name"`
-	Instance Instance  `json:"instance"`
-	Results  []*Result `json:"results"`
+	Name       string    `gorm:"unique size:50" json:"name"`
+	ScreenName string    `json:"screen_name"`
+	IconFileID string    `json:"icon_file_id"`
+	Group      string    `json:"group"`
+	Instance   Instance  `json:"instance"`
+	Results    []*Result `json:"results"`
 }
 
 type Instance struct {
@@ -273,13 +276,16 @@ func genPassword() string {
 
 func updateTeam(c echo.Context) error {
 	requestBody := &struct {
-		Name string `json:"name"`
+		Name       string `json:"name"`
+		ScreenName string `json:"screenName"`
+		IconFileID string `json:"iconFileId"`
+		Group      string `json:"group"`
 	}{}
 
 	c.Bind(requestBody)
 
-	if requestBody.Name == "" {
-		return c.JSON(http.StatusBadRequest, Response{false, "Nameが空です"})
+	if requestBody.Name == "" || requestBody.ScreenName == "" || requestBody.IconFileID == "" || requestBody.Group == "" {
+		return c.JSON(http.StatusBadRequest, Response{false, "リクエストボディの要素が足りません"})
 	}
 
 	t := &Team{}
@@ -322,8 +328,11 @@ func updateTeam(c echo.Context) error {
 	}
 
 	team := &Team{
-		Name:     requestBody.Name,
-		Instance: instance,
+		Name:       requestBody.Name,
+		ScreenName: requestBody.ScreenName,
+		IconFileID: requestBody.IconFileID,
+		Group:      requestBody.Group,
+		Instance:   instance,
 	}
 	db.Create(team)
 	return c.JSON(http.StatusCreated, Response{true, "登録しました"})

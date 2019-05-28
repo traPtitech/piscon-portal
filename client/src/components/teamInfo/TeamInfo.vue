@@ -13,6 +13,7 @@
           <h6><span class="col-md-6">ベンチマーク回数 : {{$store.state.Team.results.length}}</span></h6>
           <h6><span class="col-md-6">最高スコア : {{$store.getters.maxScore.score}}</span></h6>
           <h6><span class="col-md-6">作成時間 : {{$store.state.Team.instance.CreatedAt}}</span></h6>
+          <h6 v-if="$store.state.Team.instance.instance_logs.length > 0"><span class="col-md-6">最終ログイン時間 : {{$store.state.Team.instance.instance_logs.slice(-1)[0].CreatedAt}}</span></h6>
           <div class="col-md-12"></div>
           <div class="form-group">
             <div class="input-group">
@@ -95,6 +96,7 @@
 
 <script>
 import axios from '../../services/axios'
+import { getMeGroup } from '../../api'
 
 export default {
   name: 'team-info',
@@ -108,10 +110,16 @@ export default {
     }
   },
   methods: {
-    makeInstance () {
+    async makeInstance () {
       if (this.makeInstanceButton) return
       this.makeInstanceButton = true
-      axios.post('/api/team', {name: this.$store.state.Me.name})
+      const group = await getMeGroup().then(res => res.data[0])
+      axios.post('/api/team', {
+        name: this.$store.state.Me.name,
+        screenName: this.$store.state.Me.displayName,
+        iconFileId: this.$store.state.Me.iconFileId,
+        group: group
+      })
         .then(_ => {
           this.$store.dispatch('getData')
         })

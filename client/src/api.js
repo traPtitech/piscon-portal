@@ -49,6 +49,10 @@ export function getMe () {
   return axios.get(`${traQBaseURL}/users/me`)
 }
 
+export function getMeGroup () {
+  return axios.get(`${traQBaseURL}/users/me/groups`)
+}
+
 export function getUser (id) {
   return axios.get(`${traQBaseURL}/users/${id}`)
 }
