@@ -31,7 +31,7 @@
         <pre>{{$store.getters.lastResult}}</pre>
         <a :href="tweetURL" target="_blank">
           <button class="btn btn-info btn-with-icon rounded-icon">
-            <span style="color:white; margin-left: 0.3rem; font-size: 25px;" class="zocial zocial-twitter"></span>
+            <img src="../../assets/twitter_logo.png" style="width: 55px; border-radius: 50%;" />
           </button>
         </a>
       </vuestic-widget>
@@ -150,9 +150,9 @@ export default {
     tweetURL () {
       try {
         const result = JSON.parse(this.$store.getters.lastResult)
-        return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0dhttps://piscon.nagatech.work&hashtags=traPiscon`
+        return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0dhttps://piscon.nagatech.work%0d&hashtags=traPiscon`
       } catch (e) {
-        return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0dhttps://piscon.nagatech.work&hashtags=traPiscon`
+        return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0dhttps://piscon.nagatech.work%0d&hashtags=traPiscon`
       }
     }
   }
