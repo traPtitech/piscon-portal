@@ -2,18 +2,54 @@
 <div class="modal-page">
 <div class="row">
   <div class="col-md-12" v-if="$store.state.Me">
+    <vuestic-widget class="col-md-12">
+      <div>
+        <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.Me.iconFileId}`" class="profile-image" />
+        <h3 style="padding: 1rem 0 0 5rem;">{{ $store.state.Me.displayName }}(@{{ $store.state.Me.name }})</h3>
+      </div>
+    </vuestic-widget>
     <div v-if="$store.state.Team.instance && $store.state.Team.instance.ip_address">
       <vuestic-widget class="col-md-12">
         <div class="widget-header">サーバー情報</div>
         <div class="widget-body">
-          <h6><span class="col-md-6">インスタンス名 : {{$store.state.Team.name}}</span></h6>
-          <h6><span class="col-md-6">IP アドレス : {{$store.state.Team.instance.ip_address}}</span></h6>
-          <h6><span class="col-md-6">ユーザー名 : isucon</span></h6>
-          <h6><span class="col-md-6">初期パスワード : {{$store.state.Team.instance.password}}</span></h6>
-          <h6><span class="col-md-6">ベンチマーク回数 : {{$store.state.Team.results.length}}</span></h6>
-          <h6><span class="col-md-6">最高スコア : {{$store.getters.maxScore.score}}</span></h6>
-          <h6><span class="col-md-6">作成時間 : {{$store.state.Team.instance.CreatedAt}}</span></h6>
-          <h6 v-if="$store.state.Team.instance.instance_logs.length > 0"><span class="col-md-6">最終ログイン時間 : {{$store.state.Team.instance.instance_logs.slice(-1)[0].CreatedAt}}</span></h6>
+          <table>
+            <tr>
+              <td><h6><span class="col-md-6">インスタンス名 :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.name}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.ip_address}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">ユーザー名 :</span></h6></td>
+              <td><h6><span class="col-md-6">isucon</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">初期パスワード :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.password}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">ベンチマーク回数 :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.results.length}}</span></h6></td>
+            </tr>
+            <tr v-if="$store.state.Team.results.length > 0">
+              <td><h6><span class="col-md-6">現在のスコア :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.results.slice(-1)[0].score}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">最高スコア :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.getters.maxScore.score}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">作成時間 :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.CreatedAt}}</span></h6></td>
+            </tr>
+            <tr v-if="$store.state.Team.instance.instance_logs.length > 0">
+              <td><h6><span class="col-md-6">最終ログイン時間 :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.instance_logs.slice(-1)[0].CreatedAt}}</span></h6></td>
+            </tr>
+          </table>
           <div class="col-md-12"></div>
           <div class="form-group">
             <div class="input-group">
@@ -25,6 +61,15 @@
           <div v-if="error" class="type-articles">
             {{ error }}
           </div>
+        </div>
+      </vuestic-widget>
+      <vuestic-widget v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="col-md-12">
+        <div class="widget-header">広告</div>
+        <div class="widget-body">
+          <p>
+            今回の部内ISUCONの鯖代は運営のポケットマネーから捻出されています。<br>
+            部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけると@nagatechが泣いて喜びます。
+          </p>
         </div>
       </vuestic-widget>
       <vuestic-widget class="col-md-12" headerText="最新の結果">
@@ -159,11 +204,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .btn-nano {
   font-size: 11px;
   padding: 6px;
   border-radius: 9px;
+}
+
+.profile-image {
+  float: left;
+  width: 55px;
+  border-radius: 50%;
 }
 
 </style>
