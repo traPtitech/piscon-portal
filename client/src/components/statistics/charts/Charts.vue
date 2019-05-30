@@ -10,8 +10,8 @@
 
     <div class="row">
       <div class="col-md-12">
-        <vuestic-widget class="chart-widget" headerText="スコア推移(新入生)">
-          <vuestic-chart :options="options" :data="score19BData" type="line"></vuestic-chart>
+        <vuestic-widget class="chart-widget" headerText="スコア推移(新入生・2年生)">
+          <vuestic-chart :options="options" :data="scorefreshData" type="line"></vuestic-chart>
         </vuestic-widget>
       </div>
     </div>
@@ -116,12 +116,12 @@
 
         return data
       },
-      score19BData () {
+      scorefreshData () {
         const data = {
           datasets: []
         }
         data.datasets = this.$store.state.AllResults
-        .filter(a => a.group === '054409cd-97bb-452e-a5ee-a28fa55ea127')
+        .filter(a => a.group === '054409cd-97bb-452e-a5ee-a28fa55ea127' || a.group === '510b5c73-1bc1-428f-9edf-6923a91ae900')
         .filter(a => a.results.filter(r => r.pass).length > 0)
         .map((team, i, c) => {
           const color = chroma(360 / c.length * i, 0.6, 0.4, 'hsl')
