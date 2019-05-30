@@ -195,9 +195,9 @@ export default {
     tweetURL () {
       try {
         const result = JSON.parse(this.$store.getters.lastResult)
-        return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0dhttps://piscon.nagatech.work%0d&hashtags=traPiscon`
+        return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0d&url=https://piscon.nagatech.work&hashtags=traPiscon`
       } catch (e) {
-        return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0dhttps://piscon.nagatech.work%0d&hashtags=traPiscon`
+        return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0d&url=https://piscon.nagatech.work&hashtags=traPiscon`
       }
     }
   }
