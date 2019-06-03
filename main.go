@@ -421,7 +421,6 @@ func benchmarkWorker() {
 			fmt.Println(err)
 		}
 
-		fmt.Println(output)
 		fmt.Println("end benchmark")
 
 		fmt.Println(string(output))

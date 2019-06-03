@@ -54,9 +54,9 @@
         <div class="box">
           <h3>5. データのインポート</h3>
           <p>
-            /home/isucon/webapp/dump.sql.bz2 にMySQLの初期データに必要なデータを置いておきました。
+            /home/isucon/dump.sql.bz2 にMySQLの初期データに必要なデータを置いておきました。
           </p>
-          <div class="well"> $ dump.sql.bz2 | mysql -uroot</div>
+          <div class="well"> $ bzcat dump.sql.bz2 | mysql -uroot</div>
           <p>
             上のコマンドを実行し、データのインポートを行います。<br>
             数分かかります。気長に待ちましょう。<br>
