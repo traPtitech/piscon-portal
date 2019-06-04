@@ -4,8 +4,7 @@
     <div class="col-md-12" v-if="$store.state.Me">
       <vuestic-widget headerText="環境構築マニュアル">
         <div class="well">
-          今回は環境構築も競技の一部なのでわざと雑にかいてあります！<br>
-          分からないことばかりだとは思いますが頑張りましょう！
+          わからないことはどんどん<router-link to="qa">質問</router-link>しましょう！
         </div>
         <div class="box">
         </div>
@@ -40,16 +39,53 @@
         </div>
         <div class="box">
           <h3>4. アプリケーションに必要なソフトのインストール</h3>
-          <p>
-            <ul>
-              <li>各言語の実行環境</li>
-              <li>Mysql(MariaDB)</li>
-              <li>Memcached</li>
-            </ul>
-            上記の3つがアプリケーションの実行に最低限必要なソフトです。<br>
-            Nginx等その他に必要なものがあれば、適宜インストールしてください。<br>
-            ここが一番つらいところですが頑張りましょう。
-          </p>
+          <h4>パッケージのアップデート</h4>
+          <p>新しくサーバーを立てたときには、きちんと利用しているパッケージのアップデートをしましょう。 古いパッケージを利用していると、パフォーマンスが悪かったり脆弱性があったりするので良くないです。</p>
+          <div class="well">
+            $ sudo apt update<br>
+            $ sudo apt upgrade
+          </div>
+          <h4>利用する言語</h4>
+          <p>サーバーアプリケーションを実行するための、実行環境・コンパイラを導入する必要があります。</p>
+          <p>自分が好きな言語・得意な言語が下のリストにある人はそれを使ってもらって構いません。 そんなのないよ！って人はGolangを使うことをおすすめします。</p>
+          <h4>利用できる言語のリスト</h4>
+          <ul>
+            <li>Go</li>
+            <li>Node.js(JavaScript)</li>
+            <li>PHP</li>
+            <li>Python</li>
+            <li>Ruby</li>
+            <li>Rust</li>
+            <li>Scala</li>
+          </ul>
+          <p>ここではGolangとして進めていきます。</p>
+          <p>ubuntuのパッケージ管理ツールである<code>apt</code>を利用してインストールします。</p>
+          <div class="well">
+            $ sudo apt install -y golang-go
+          </div>
+          <h4>データベース</h4>
+          <p>データベースを入れます。 MySQLとMariaDBがありますが、MariaDBのほうがISUCON的には早くて良いです。互換性があるのでどちらでもMySQLの構文は動きます。</p>
+          <div class="well">$ sudo apt install -y mariadb-server</div>
+          <p><a href="https://mariadb.org/">mariadb 公式ページ (英語)</a> <a href="https://mariadb.com/kb/ja/mariadb/">mariadb ドキュメント
+              (日本語訳)</a></p>
+          <h4>nginx</h4>
+          <div class="well">$ sudo apt install -y nginx</div>
+          <p>設定ファイルを書く必要があります(後述)。</p>
+          <h4>memcached</h4>
+          <p>今回のアプリケーションではセッションの管理にmemcachedを使っているのでインストールする必要があります。</p>
+          <div class="well">$ sudo apt install -y memcached</div>
+          <p><a href="https://memcached.org/">memcached 公式ページ (英語)</a></p>
+          <h4>データベースの権限設定</h4>
+          <div class="well">$ sudo mysql -uroot</div>
+          <p>以下mysqlのコンソール</p>
+          <div class="well">
+            &gt; use mysql;<br>
+            &gt; update user set plugin=&#39;&#39; where user=&#39;root&#39;;<br>
+            &gt; flush privileges;<br>
+            &gt; exit
+          </div>
+          <p><code>$ mysql -uroot</code> は、mysql に ユーザー root でアクセスする、という意味です。 <code>$ mysql -u root</code> や
+            <code>$ mysql --user=root</code> も同じ意味になります。</p>
         </div>
         <div class="box">
           <h3>5. データのインポート</h3>
@@ -65,16 +101,35 @@
           </p>
         </div>
         <div class="box">
-          <h3>6. アプリケーションの実行</h3>
+          <h3>6. アプリケーションのライブラリの構築</h3>
+          <ul>
+            <li>Nodeだったらnpm</li>
+            <li>Pythonだったらpip</li>
+            <li>Rubyだったらgem</li>
+          </ul>
+          <p>以下Golangの例です。</p>
+          <p>今回は問題ソースコードにセットアップ用スクリプト(<code>setup.sh</code>)にライブラリ構築用のコマンドが全部あるのでそれを実行します</p>
+          <div class="well">
+            $ cd /home/isucon/webapp/golang<br>
+            $ sh setup.sh
+          </div>
+        </div>
+        <div class="box">
+          <h3>7. アプリケーションの実行</h3>
           <p>
             アプリケーションを実行してみてください。<br>
             環境変数等の設定はコードを見て行ってください。
           </p>
+          <p><code>go run</code>でもいけますがGolangは実行ファイルを生成してくれるのでそちらで実行してみましょう</p>
+          <div class="well">
+            $ ./app
+          </div>
         </div>
         <div class="box">
-          <h3>7. アプリケーションの動作を確認</h3>
+          <h3>8. アプリケーションの動作を確認</h3>
           <p>
-            Team Infoに表示されているIPアドレスにブラウザでアクセスし、動作を確認してください。以下の画面が表示されるはずです。
+            Team Infoに表示されているIPアドレスにブラウザでアクセスし、動作を確認してください。<br>
+            デフォルトだと8000番で動くらしいので、http://xx.xx.xx.xx:8000(xx xxはIPアドレス)にブラウザでアクセスしてみましょう。
           </p>
           <img src="../../assets/manual.png" style="width: 80%; border: 1px solid;"/>
           <p>
@@ -82,7 +137,46 @@
           </p>
         </div>
         <div class="box">
-          <h3>8. 負荷走行を実行</h3>
+          <h3>9. Nginxのプロキシ設定</h3>
+          <p>ベンチマークで正の点数を取るためには、普段ブラウザでアクセスした時に開かれる80番(HTTP)のポートでアプリが閲覧できるようにしなくてはいけません。
+            Nginxを使うことで80番にきたリクエストを8000番に渡す（プロキシ）ことができます。 <code>/etc/nginx/conf.d/isucon.conf</code>に設定ファイルを書きましょう。</p>
+          <div class="well">
+            <pre>
+server{
+  listen 80 default_server;
+  server_name _;
+
+  location / {
+    proxy_pass http://localhost:8000;
+    proxy_set_header Host $host;
+  }
+}</pre>
+          </div>
+          <p>また<code>/etc/nginx/sites-enabled/default</code>を削除します。</p>
+          <div class="well">
+            $ sudo rm /etc/nginx/sites-enabled/default
+          </div>
+          <p>Nginxの設定を書き換えた後は必ず文法のチェックを行いましょう。</p>
+          <div class="well">
+            $ sudo nginx -t
+          </div>
+          <p>書けたらNginxの設定を再読込します。</p>
+          <div class="well">
+            $ sudo systemctl reload nginx
+          </div>
+          <p><code>./app</code>を起動したままhttp://xx.xx.xx.xxにアクセスしてみましょう。 8000番を指定しなくても表示されると思います。</p>
+          <ul>
+            <li><a href="https://nginx.org/en/docs/">nginx ドキュメント (英語)</a></li>
+            <li><a href="http://mogile.web.fc2.com/nginx/index.html">nginx ドキュメント (日本語訳)</a>
+              <ul>
+                <li><a href="http://mogile.web.fc2.com/nginx/beginners_guide.html">ビギナーガイド (設定ファイルの構成・書き方)</a></li>
+                <li><a href="http://mogile.web.fc2.com/nginx/http/ngx_http_proxy_module.html#proxy_pass">proxy_pass</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>10. 負荷走行を実行</h3>
           <p>
             ポータルのTeamInfoでベンチマークを行うボタンを押して、ベンチマークを開始してください。<br>
             キューはページ上部に表示されています。<br>
@@ -206,6 +300,10 @@ export default {
 
 a
   color: #4ae287;
+
+.well
+  margin-bottom: 48px;
+  padding: 1rem 1.5rem;
 
 </style>
 
