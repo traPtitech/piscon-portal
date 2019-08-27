@@ -42,11 +42,11 @@ export default new Router({
           path: 'manual',
           component: lazyLoading('manual/Manual')
         },
-        {
-          name: 'articles',
-          path: 'articles',
-          component: lazyLoading('articles/Articles')
-        },
+        // {
+        //   name: 'articles',
+        //   path: 'articles',
+        //   component: lazyLoading('articles/Articles')
+        // },
         {
           name: 'q-and-a',
           path: 'qa',

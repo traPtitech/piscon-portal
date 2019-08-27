@@ -14,27 +14,10 @@
       </p>
     </div>
     <div class="box">
-      <h3>Q. どうやって始めるの？</h3>
-      <p><b>(この回答はtraP内部向けです)</b></p>
-      <p>まずは右上の「Signin with traQ」よりサインインしてください。</p>
-      <img src="../../assets/readme.png" style="border: 1px solid;" />
-      <p>このような画面が出ますが左の「承認」ボタンを押すことでアプリに戻ってこれます。</p>
-      <p><router-link :to="{name: 'team-info'}">Team Info</router-link>にアクセスしてインスタンスを作成を押すとサーバーが作成されます。
-      <br>今回は<b>環境構築も競技の一部になっている</b>ので作成されるインスタンスはすっからかんです。
-      <br>まずは<router-link to="manual">環境構築マニュアル</router-link>を参考に環境構築をして正の点数を取るところから始めてみましょう！</p>
-    </div>
-    <div class="box">
-      <h3>Q. 〇〇が分からない・〇〇について聞きたい</h3>
-      <p><router-link :to="{name: 'q-and-a'}">Q & A</router-link>でじゃんじゃん質問しましょう！
-      <br>運営が頑張って回答します。
-      </p>
-    </div>
-    <div class="box">
       <h3>運営からのお願い</h3>
       <div>
         <li>悪いことはしないでね</li>
         <li>バグとかあったらこっそり教えてください</li>
-        <li>どんどん質問していこう！</li>
       </div>
     </div>
   </vuestic-widget>

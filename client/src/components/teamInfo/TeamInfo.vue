@@ -1,25 +1,43 @@
 <template>
 <div class="modal-page">
 <div class="row">
-  <div class="col-md-12" v-if="$store.state.Me">
+  <div class="col-md-12" v-if="$store.state.Me && $store.state.Team.name">
+    <vuestic-widget class="col-md-12" v-if="$store.state.Team.name">
+      <div>
+        <img :src="`https://q.trap.jp/api/1.0/files/8fc25ba6-a0c9-493d-81d2-11f0870d711f`" class="profile-image" />
+        <h3 style="padding: 1rem 0 0 5rem;">{{ $store.state.Team.name }}</h3>
+      </div>
+    </vuestic-widget>
     <vuestic-widget class="col-md-12">
       <div>
-        <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.Me.iconFileId}`" class="profile-image" />
+        <img :src="`https://q.trap.jp/api/1.0/public/icon/${$store.state.Me.name}`" class="profile-image" />
         <h3 style="padding: 1rem 0 0 5rem;">{{ $store.state.Me.displayName }}(@{{ $store.state.Me.name }})</h3>
       </div>
     </vuestic-widget>
-    <div v-if="$store.state.Team.instance && $store.state.Team.instance.ip_address">
+    <div v-if="$store.state.User && $store.state.Team.instance && $store.state.Team.instance.grobal_ip_address1">
       <vuestic-widget class="col-md-12">
         <div class="widget-header">サーバー情報</div>
         <div class="widget-body">
           <table>
             <tr>
-              <td><h6><span class="col-md-6">インスタンス名 :</span></h6></td>
+              <td><h6><span class="col-md-6">チーム名 :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.state.Team.name}}</span></h6></td>
             </tr>
             <tr>
-              <td><h6><span class="col-md-6">IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.ip_address}}</span></h6></td>
+              <td><h6><span class="col-md-6">サーバ1 グローバル IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.grobal_ip_address1}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">サーバ2 グローバル IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.grobal_ip_address2}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">サーバ1 プライベート IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.private_ip_address1}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">サーバ2 プライベート IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance.private_ip_address2}}</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">ユーザー名 :</span></h6></td>
@@ -45,10 +63,6 @@
               <td><h6><span class="col-md-6">作成時間 :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.state.Team.instance.CreatedAt}}</span></h6></td>
             </tr>
-            <tr v-if="$store.state.Team.instance.instance_logs.length > 0">
-              <td><h6><span class="col-md-6">最終ログイン時間 :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.instance_logs.slice(-1)[0].CreatedAt}}</span></h6></td>
-            </tr>
           </table>
           <div class="col-md-12"></div>
           <div class="form-group">
@@ -57,7 +71,9 @@
               <label class="control-label" for="simple-textarea">改善点を入力してください(記入しないとベンチマークを行えません)</label><i class="bar"></i>
             </div>
           </div>
-          <button class="btn btn-micro btn-info" @click="benchmark" :disabled="benchmarkButton || betterize === ''">ベンチマークを行う</button>
+          <button class="btn btn-micro btn-info" @click="benchmark(1)" :disabled="benchmarkButton || betterize === ''">サーバ1にベンチマークを行う</button>
+          <div class="col-md-12"></div>
+          <button class="btn btn-micro btn-info" @click="benchmark(2)" :disabled="benchmarkButton || betterize === ''">サーバ2にベンチマークを行う</button>
           <div v-if="error" class="type-articles">
             {{ error }}
           </div>
@@ -74,11 +90,6 @@
       </vuestic-widget>
       <vuestic-widget class="col-md-12" headerText="最新の結果">
         <pre>{{$store.getters.lastResult}}</pre>
-        <a :href="tweetURL" target="_blank">
-          <button class="btn btn-info btn-with-icon rounded-icon">
-            <img src="../../assets/twitter_logo.png" style="width: 55px; border-radius: 50%;" />
-          </button>
-        </a>
       </vuestic-widget>
       <vuestic-widget class="col-md-12" headerText="これまでの結果">
         <div class="table-responsible">
@@ -87,8 +98,6 @@
               <tr>
                 <td>ID</td>
                 <td>PASS</td>
-                <td>FAIL</td>
-                <td>SUCCESS</td>
                 <td>SCORE</td>
                 <td>TIME</td>
                 <td>INFO</td>
@@ -98,8 +107,6 @@
               <tr :class="{'table-danger': !result.pass}" v-for="result in $store.state.Team.results" :key="result.id">
                 <td>{{result.id}}</td>
                 <td>{{result.pass}}</td>
-                <td>{{result.fail}}</td>
-                <td>{{result.suceess}}</td>
                 <td>{{result.score}}</td>
                 <td>{{result.created_at.slice(5, 19)}}</td>
                 <td><button class="btn btn-nano btn-info" @click="showModal(result)">詳細</button></td>
@@ -109,26 +116,11 @@
         </div>
       </vuestic-widget>
     </div>
-    <vuestic-widget v-else>
-      <div class="typo-headers">
-        <h2>インスタンスが作成されていません</h2>
-      </div>
-      <div class="type-articles">
-        <p>
-          インスタンスを作成する場合は下のインスタンスを作成するボタンを押してください
-        </p>
-      </div>
-      <button class="btn btn-primary" @click="makeInstance" :disabled="makeInstanceButton">インスタンスを作成する</button>
-      <div v-if="error" class="type-articles">
-        {{ error }}
-      </div>
-    </vuestic-widget>
   </div>
   <div v-else class="col-md-12">
-    <vuestic-widget  headerText="traP外の方へ">
+    <vuestic-widget  headerText="参加者専用ページ">
       <div class="widget-body">
-        <p>このページはtraP部員専用です！</p>
-        <p>traP部員は右上の「Signin with traQ」よりログインすることができます。</p>
+        <p>このページは参加者専用です！</p>
       </div>
     </vuestic-widget>
   </div>
@@ -173,9 +165,9 @@ export default {
           this.error = err.response.data.message
         })
     },
-    benchmark () {
+    benchmark (id) {
       if (this.benchmarkButton) return
-      axios.post(`/api/benchmark/${this.$store.state.Me.name}`, {betterize: this.betterize})
+      axios.post(`/api/benchmark/${this.$store.state.Team.name}/${id}`, {betterize: this.betterize})
         .then(_ => {
           this.betterize = ''
           this.$store.dispatch('getData')
@@ -190,7 +182,7 @@ export default {
   },
   computed: {
     benchmarkButton () {
-      return this.$store.state.Que.find(que => que.team.name === this.$store.state.Me.name)
+      return this.$store.state.Que.find(que => que.team.name === this.$store.state.Team.name)
     },
     tweetURL () {
       try {

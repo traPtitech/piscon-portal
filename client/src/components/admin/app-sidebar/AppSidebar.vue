@@ -40,13 +40,6 @@
         </span>
       </sidebar-link>
       <sidebar-link
-        :to="{ name: 'articles' }">
-        <span slot="title">
-          <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-extras"></span>
-          <span>Articles</span>
-        </span>
-      </sidebar-link>
-      <sidebar-link
         :to="{ name: 'q-and-a' }">
         <span slot="title">
           <span class="sidebar-menu-item-icon vuestic-icon vuestic-icon-comments"></span>

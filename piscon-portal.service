@@ -2,10 +2,10 @@
 Description = piscon portal server
 
 [Service]
-ExecStart = /home/nagatech/go/src/github.com/nagatea/piscon-portal/piscon-portal
+ExecStart = /home/isucon/go/src/github.com/nagatea/piscon-portal/piscon-portal
 Restart = always
 Type = simple
-EnvironmentFile=/home/nagatech/go/src/github.com/nagatea/piscon-portal/.env
+EnvironmentFile=/home/isucon/go/src/github.com/nagatea/piscon-portal/.env
 
 [Install]
 WantedBy = multi-user.target

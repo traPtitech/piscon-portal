@@ -3,8 +3,8 @@ import { randomString, pkce } from './utils'
 
 // axios.defaults.withCredentials = true
 export const traQBaseURL = 'https://q.trap.jp/api/1.0'
-export const traQClientID = process.env.VUE_APP_API_CLIENT_ID || 'CySPaqKWiUXvwechb66dk0yubIlDqCcK07DV'
-axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : process.env.VUE_APP_API_ENDPOINT
+export const traQClientID = 'fegJ93UlRut9pbDSoxq6lUg9rDB839CYm6Zp'
+axios.defaults.baseURL = 'https://portal.emoine.tech'
 
 export function setAuthToken (token) {
   if (token) {
@@ -53,10 +53,6 @@ export function getMeGroup () {
   return axios.get(`${traQBaseURL}/users/me/groups`)
 }
 
-export function getUser (id) {
-  return axios.get(`${traQBaseURL}/users/${id}`)
-}
-
 export function getRsults () {
   return axios.get(`/api/results`)
 }
@@ -65,8 +61,12 @@ export function getNewer () {
   return axios.get(`/api/newer`)
 }
 
-export function getTeam (name) {
-  return axios.get(`/api/team/${name}`)
+export function getTeam (id) {
+  return axios.get(`/api/team/${id}`)
+}
+
+export function getUser (id) {
+  return axios.get(`/api/user/${id}`)
 }
 
 export function getQueue () {
