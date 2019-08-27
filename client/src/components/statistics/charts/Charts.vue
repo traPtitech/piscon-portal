@@ -70,8 +70,15 @@
         options: {
           scales: {
             xAxes: [{
-              type: 'time'
+              type: 'linear'
             }]
+          },
+          tooltips: {
+            callbacks: {
+              title: function (item, chart) {
+                return chart.datasets[item[0].datasetIndex].data[item[0].index].time
+              }
+            }
           },
           lineTension: 0,
         }
@@ -97,7 +104,7 @@
             data: []
           }
           td.data = team.results.filter(r => r.pass && r.score !== 0).map(r => {
-            return {x: r.created_at, y: r.score}
+            return {x: r.id, y: r.score, time: r.created_at}
           })
           return td
         }).filter(a => a.data.length > 0).sort((a, b) => {
