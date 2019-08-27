@@ -35,6 +35,7 @@ type Output struct {
 	Pass     bool     `json:"pass"`
 	Score    int64    `json:"score"`
 	Messages []string `json:"error"`
+	Logs     []string `json:"log"`
 }
 
 type Team struct {
@@ -113,7 +114,7 @@ func main() {
 	defer _db.Close()
 	db = _db
 
-	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{},&User{}, &Question{})
+	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
 
 	tasks := []*Task{}
 	db.Not("state = 'done'").Find(&tasks)
@@ -460,6 +461,9 @@ func benchmarkWorker() {
 
 		for _, message := range data.Messages {
 			result.Messages = append(result.Messages, &Message{Text: message})
+		}
+		for _, log := range data.Logs {
+			result.Messages = append(result.Messages, &Message{Text: log})
 		}
 		db.Create(result)
 
