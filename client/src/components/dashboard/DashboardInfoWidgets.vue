@@ -26,36 +26,6 @@
         </div>
       </vuestic-widget>
     </div>
-    <div class="col-md-6 col-xl-3">
-      <vuestic-widget class="info-widget" headerText="何したら？な人へ">
-        <div class="info-widget-inner">
-          <div class="stats">
-            <div class="stats-number">
-              <router-link to="articles">
-                <span style="color:#4ae387;">攻略記事</span>
-              </router-link>
-            </div>
-            <div class="stats-title">これやるだけでも<br>力付きます</div>
-          </div>
-        </div>
-      </vuestic-widget>
-    </div>
-    <div class="col-md-6 col-xl-3">
-      <vuestic-widget class="info-widget" headerText="困ったら">
-        <div class="info-widget-inner">
-          <div class="stats">
-            <div class="stats-number">
-              <router-link
-                 :to="{name: 'q-and-a'}"
-              >
-              <span style="color:#4ae387;">Q&A</span>
-              </router-link>
-            </div>
-            <div class="stats-title">バシバシ質問！</div>
-          </div>
-        </div>
-      </vuestic-widget>
-    </div>
   </div>
 </template>
 

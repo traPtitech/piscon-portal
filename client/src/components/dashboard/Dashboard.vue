@@ -3,20 +3,12 @@
 
     <dashboard-info-widgets></dashboard-info-widgets>
 
-    <vuestic-widget headerText="直近24時間で得点を伸ばした人"> 
-      <li v-for="team in $store.state.Newer">
-        {{team.name}}
-      </li>
-    </vuestic-widget>
-
     <vuestic-widget class="no-padding no-v-padding" headerText="順位表">
       <table class="table table-striped table-sm">
         <thead>
           <tr>
             <td>RANK</td>
             <td>TEAM</td>
-            <td>SUCCESS</td>
-            <td>FAIL</td>
             <td>SCORE</td>
           </tr>
         </thead>
@@ -24,8 +16,6 @@
           <tr>
             <td>{{i+1}}</td>
             <td>{{team.name}}</td>
-            <td>{{team.result.score?team.result.suceess : '-'}}</td>
-            <td>{{team.result.score?team.result.fail : '-'}}</td>
             <td>{{team.result.score?team.result.score : '-'}}</td>
           </tr>
         </tbody>

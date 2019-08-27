@@ -4,13 +4,14 @@ import VuexI18n from 'vuex-i18n' // load vuex i18n module
 
 import app from './modules/app'
 import * as getters from './getters'
-import { setAuthToken, getMe, getRsults, getNewer, getQueue, getTeam } from '../api'
+import { setAuthToken, getMe, getRsults, getNewer, getQueue, getTeam, getUser } from '../api'
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 const initState = {
   Me: null,
+  User: {},
   Team: {},
   AllResults: [],
   Que: [],
@@ -35,6 +36,9 @@ const store = new Vuex.Store({
   mutations: {
     setMe (state, data) {
       state.Me = data
+    },
+    setUser (state, data) {
+      state.User = data
     },
     setTeam (state, data) {
       state.Team = data
@@ -73,7 +77,16 @@ const store = new Vuex.Store({
         })
 
       if (!me) return
-      getTeam(me.name).then(data => commit('setTeam', data.data))
+      const user = await getUser(me.name)
+        .then(data => {
+          commit('setUser', data.data)
+          return data.data
+        })
+        .catch(() => {
+          return null
+        })
+      if (!user) return
+      getTeam(user.team_id).then(data => commit('setTeam', data.data))
     }
   },
   plugins: [createPersistedState({
