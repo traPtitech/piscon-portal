@@ -1,10 +1,8 @@
-import axios from 'axios'
+import axios from './services/axios'
 import { randomString, pkce } from './utils'
 
-// axios.defaults.withCredentials = true
 export const traQBaseURL = 'https://q.trap.jp/api/1.0'
-export const traQClientID = 'fegJ93UlRut9pbDSoxq6lUg9rDB839CYm6Zp'
-axios.defaults.baseURL = 'https://portal.emoine.tech'
+export const traQClientID = '3eLMSKdx0e48Qeo81JSWEUgUELPlygyj6xUR'
 
 export function setAuthToken (token) {
   if (token) {

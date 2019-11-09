@@ -162,6 +162,7 @@ func main() {
 	case "prod":
 		e.StartAutoTLS(":443")
 	default:
+		e.Use(middleware.CORS())
 		e.Start(":4000")
 	}
 	fmt.Println("end")
