@@ -41,7 +41,7 @@ type Output struct {
 type Team struct {
 	gorm.Model
 	Name       string      `gorm:"unique size:50" json:"name"`
-	Instance   Instance    `json:"instance"`
+	Instance   []*Instance `json:"instance"`
 	Results    []*Result   `json:"results"`
 }
 
@@ -54,12 +54,10 @@ type User struct {
 
 type Instance struct {
 	gorm.Model
-	TeamID            uint     `json:"team_id"`
-	GrobalIPAddress1  string   `json:"grobal_ip_address1"`
-	GrobalIPAddress2  string   `json:"grobal_ip_address2"`
-	PrivateIPAddress1 string   `json:"private_ip_address1"`
-	PrivateIPAddress2 string   `json:"private_ip_address2"`
-	Password          string   `json:"password"`
+	TeamID            uint    `json:"team_id"`
+	GrobalIPAddress   string  `json:"grobal_ip_address"`
+	PrivateIPAddress  string  `json:"private_ip_address"`
+	Password          string  `json:"password"`
 }
 
 type Result struct {
@@ -301,10 +299,8 @@ func createUser(c echo.Context) error {
 func createTeam(c echo.Context) error {
 	requestBody := &struct {
 		Name              string   `json:"name"`
-		GrobalIPAddress1  string   `json:"grobal_ip_address1"`
-		GrobalIPAddress2  string   `json:"grobal_ip_address2"`
-		PrivateIPAddress1 string   `json:"private_ip_address1"`
-		PrivateIPAddress2 string   `json:"private_ip_address2"`
+		GrobalIPAddress  string   `json:"grobal_ip_address"`
+		PrivateIPAddress string   `json:"private_ip_address"`
 	}{}
 
 	c.Bind(requestBody)
@@ -322,17 +318,17 @@ func createTeam(c echo.Context) error {
 	pass := genPassword()
 
 	instance := Instance{
-		GrobalIPAddress1:  requestBody.GrobalIPAddress1,
-		GrobalIPAddress2:  requestBody.GrobalIPAddress2,
-		PrivateIPAddress1: requestBody.PrivateIPAddress1,
-		PrivateIPAddress2: requestBody.PrivateIPAddress2,
+		GrobalIPAddress:   requestBody.GrobalIPAddress,
+		PrivateIPAddress:  requestBody.PrivateIPAddress,
 		Password:          pass,
 	}
 
 	team := &Team{
 		Name:       requestBody.Name,
-		Instance:   instance,
+		Instance:   make([]*Instance, 3),
 	}
+	team.Instance[0] = &instance
+
 	db.Create(team)
 	return c.JSON(http.StatusCreated, team)
 }
@@ -365,14 +361,17 @@ func queBenchmark(c echo.Context) error {
 
 	db.Model(team).Related(&team.Instance)
 
-	if team.Instance.GrobalIPAddress1 == "" {
+	// プライベートネットワークを構築するならここをPrivateIPにする必要あり
+	if team.Instance[0].GrobalIPAddress == "" {
 		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
 	}
 
-	ip := team.Instance.GrobalIPAddress1
+	ip := team.Instance[0].GrobalIPAddress
 
 	if id == "2" {
-		ip = team.Instance.GrobalIPAddress2
+		ip = team.Instance[1].GrobalIPAddress
+	} else if id == "3" {
+		ip = team.Instance[2].GrobalIPAddress
 	}
 
 	task := &Task{}
