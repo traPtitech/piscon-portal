@@ -14,7 +14,7 @@
         <h3 style="padding: 1rem 0 0 5rem;">{{ $store.state.Me.displayName }}(@{{ $store.state.Me.name }})</h3>
       </div>
     </vuestic-widget>
-    <div v-if="$store.state.User && $store.state.Team.instance && $store.state.Team.instance.grobal_ip_address1">
+    <div v-if="$store.state.User && $store.state.Team.instance && $store.state.Team.instance">
       <vuestic-widget class="col-md-12">
         <div class="widget-header">サーバー情報</div>
         <div class="widget-body">
@@ -23,29 +23,21 @@
               <td><h6><span class="col-md-6">チーム名 :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.state.Team.name}}</span></h6></td>
             </tr>
-            <tr>
-              <td><h6><span class="col-md-6">サーバ1 グローバル IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.grobal_ip_address1}}</span></h6></td>
+            <tr v-for="(instance, index) in $store.state.Team.instance" :key="'global'+index">
+              <td><h6><span class="col-md-6">サーバ{{index+1}} グローバル IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{instance.grobal_ip_address}}</span></h6></td>
             </tr>
-            <tr>
-              <td><h6><span class="col-md-6">サーバ2 グローバル IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.grobal_ip_address2}}</span></h6></td>
-            </tr>
-            <tr>
-              <td><h6><span class="col-md-6">サーバ1 プライベート IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.private_ip_address1}}</span></h6></td>
-            </tr>
-            <tr>
-              <td><h6><span class="col-md-6">サーバ2 プライベート IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.private_ip_address2}}</span></h6></td>
+            <tr v-for="(instance, index) in $store.state.Team.instance" :key="'private'+index">
+              <td><h6><span class="col-md-6">サーバ{{index+1}} プライベート IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{instance.private_ip_address}}</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">ユーザー名 :</span></h6></td>
               <td><h6><span class="col-md-6">isucon</span></h6></td>
             </tr>
             <tr>
-              <td><h6><span class="col-md-6">初期パスワード :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.password}}</span></h6></td>
+              <td><h6><span class="col-md-6">初期パスワード(共通) :</span></h6></td>
+              <td><h6><span class="col-md-6">{{$store.state.Team.instance[0].password}}</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">ベンチマーク回数 :</span></h6></td>
@@ -59,9 +51,9 @@
               <td><h6><span class="col-md-6">最高スコア :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.getters.maxScore.score}}</span></h6></td>
             </tr>
-            <tr>
-              <td><h6><span class="col-md-6">作成時間 :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance.CreatedAt}}</span></h6></td>
+            <tr v-for="(instance, index) in $store.state.Team.instance" :key="'created'+index">
+              <td><h6><span class="col-md-6">サーバ{{index+1}} 作成時間 :</span></h6></td>
+              <td><h6><span class="col-md-6">{{instance.CreatedAt}}</span></h6></td>
             </tr>
           </table>
           <div class="col-md-12"></div>
@@ -71,9 +63,9 @@
               <label class="control-label" for="simple-textarea">改善点を入力してください(記入しないとベンチマークを行えません)</label><i class="bar"></i>
             </div>
           </div>
-          <button class="btn btn-micro btn-info" @click="benchmark(1)" :disabled="benchmarkButton || betterize === ''">サーバ1にベンチマークを行う</button>
-          <div class="col-md-12"></div>
-          <button class="btn btn-micro btn-info" @click="benchmark(2)" :disabled="benchmarkButton || betterize === ''">サーバ2にベンチマークを行う</button>
+          <div class="col-md-12 my-2" v-for="i in $store.state.Team.instance.length" :key="i">
+            <button class="btn btn-micro btn-info" @click="benchmark(i)" :disabled="benchmarkButton || betterize === ''">サーバ{{i}}にベンチマークを行う</button>
+          </div>
           <div v-if="error" class="type-articles">
             {{ error }}
           </div>
