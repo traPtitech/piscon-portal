@@ -38,7 +38,7 @@
   <vuestic-widget headerText="質問する" v-if="$store.state.Me">
     <div>
       <p>バシバシ質問しましょう！</p>
-      <p>バグ報告はこっそり@nagatechまでお願いします</p>
+      <p>バグ報告はこっそり@xecuaまでお願いします</p>
     </div>
     <div class="form-group">
       <div class="input-group">
@@ -75,7 +75,7 @@ export default {
       if (!me) {
         return false
       }
-      return me.name === 'nagatech' || me.name === 'to-hutohu'
+      return me.name === 'nagatech' || me.name === 'to-hutohu' || me.name === 'xecua'
     }
   },
   methods: {

@@ -61,7 +61,7 @@
         </div>
         <div class="box">
           <h3>その他</h3>
-          <p>なにかあったらnagatechまで教えてください。</p>
+          <p>なにかあったらxecuaまで教えてください。</p>
         </div>
       </vuestic-widget>
     </div>
