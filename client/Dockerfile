@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:lts-alpine
 
 WORKDIR /app
 
@@ -6,8 +6,8 @@ COPY . /app
 
 EXPOSE 8080
 
-RUN npm install http-server -g
+RUN yarn global add http-server
 
-RUN npm install && npm run build
+RUN yarn install && yarn build || true
 
 CMD http-server ./dist
