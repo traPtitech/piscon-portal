@@ -25,7 +25,7 @@
             </tr>
             <tr v-for="(instance, index) in $store.state.Team.instance" :key="'global'+index">
               <td><h6><span class="col-md-6">サーバ{{index+1}} グローバル IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{instance.grobal_ip_address}}</span></h6></td>
+              <td><h6><span class="col-md-6">{{instance.global_ip_address}}</span></h6></td>
             </tr>
             <tr v-for="(instance, index) in $store.state.Team.instance" :key="'private'+index">
               <td><h6><span class="col-md-6">サーバ{{index+1}} プライベート IP アドレス :</span></h6></td>

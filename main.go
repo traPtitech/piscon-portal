@@ -55,7 +55,7 @@ type User struct {
 type Instance struct {
 	gorm.Model
 	TeamID            uint    `json:"team_id"`
-	GrobalIPAddress   string  `json:"grobal_ip_address"`
+	GlobalIPAddress   string  `json:"global_ip_address"`
 	PrivateIPAddress  string  `json:"private_ip_address"`
 	Password          string  `json:"password"`
 }
@@ -104,7 +104,7 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 
-	_db, err := gorm.Open("mysql", "root@/isucon?charset=utf8&parseTime=True&loc=Local")
+	_db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}
@@ -299,7 +299,7 @@ func createUser(c echo.Context) error {
 func createTeam(c echo.Context) error {
 	requestBody := &struct {
 		Name              string   `json:"name"`
-		GrobalIPAddress  string   `json:"grobal_ip_address"`
+		GlobalIPAddress  string   `json:"global_ip_address"`
 		PrivateIPAddress string   `json:"private_ip_address"`
 	}{}
 
@@ -318,7 +318,7 @@ func createTeam(c echo.Context) error {
 	pass := genPassword()
 
 	instance := Instance{
-		GrobalIPAddress:   requestBody.GrobalIPAddress,
+		GlobalIPAddress:   requestBody.GlobalIPAddress,
 		PrivateIPAddress:  requestBody.PrivateIPAddress,
 		Password:          pass,
 	}
@@ -362,16 +362,16 @@ func queBenchmark(c echo.Context) error {
 	db.Model(team).Related(&team.Instance)
 
 	// プライベートネットワークを構築するならここをPrivateIPにする必要あり
-	if team.Instance[0].GrobalIPAddress == "" {
+	if team.Instance[0].GlobalIPAddress == "" {
 		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
 	}
 
-	ip := team.Instance[0].GrobalIPAddress
+	ip := team.Instance[0].GlobalIPAddress
 
 	if id == "2" {
-		ip = team.Instance[1].GrobalIPAddress
+		ip = team.Instance[1].GlobalIPAddress
 	} else if id == "3" {
-		ip = team.Instance[2].GrobalIPAddress
+		ip = team.Instance[2].GlobalIPAddress
 	}
 
 	task := &Task{}
