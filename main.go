@@ -34,47 +34,43 @@ type Response struct {
 type Output struct {
 	Pass     bool     `json:"pass"`
 	Score    int64    `json:"score"`
-	Messages []string `json:"error"`
-	Logs     []string `json:"log"`
+	Campaign int64    `json:"campaign`
+	Language string   `json:"language`
+	Messages []string `json:"messages"`
 }
 
 type Team struct {
 	gorm.Model
-	Name       string      `gorm:"unique size:50" json:"name"`
-	Instance   []*Instance `json:"instance"`
-	Results    []*Result   `json:"results"`
+	Name     string      `gorm:"unique size:50" json:"name"`
+	Instance []*Instance `json:"instance"`
+	Results  []*Result   `json:"results"`
 }
 
 type User struct {
 	gorm.Model
-	Name       string    `gorm:"unique size:50" json:"name"`
-	ScreenName string    `json:"screen_name"`
-	TeamID     uint      `json:"team_id"`
+	Name       string `gorm:"unique size:50" json:"name"`
+	ScreenName string `json:"screen_name"`
+	TeamID     uint   `json:"team_id"`
 }
 
 type Instance struct {
 	gorm.Model
-	TeamID            uint    `json:"team_id"`
-	GlobalIPAddress   string  `json:"global_ip_address"`
-	PrivateIPAddress  string  `json:"private_ip_address"`
-	Password          string  `json:"password"`
+	TeamID           uint   `json:"team_id"`
+	GlobalIPAddress  string `json:"global_ip_address"`
+	PrivateIPAddress string `json:"private_ip_address"`
+	Password         string `json:"password"`
 }
 
 type Result struct {
-	ID        int        `gorm:"AUTO_INCREMENT" json:"id"`
-	TeamID    uint       `json:"team_id"`
-	TaskID    uint       `json:"task_id"`
-	Pass      bool       `json:"pass"`
-	Score     int64      `json:"score"`
-	Betterize string     `json:"betterize"`
-	Messages  []*Message `json:"messages"`
-	CreatedAt time.Time  `json:"created_at"`
-}
-
-type Message struct {
-	ID       uint   `json:"id"`
-	ResultID int    `json:"result_id"`
-	Text     string `json:"text"`
+	ID        int       `gorm:"AUTO_INCREMENT" json:"id"`
+	TeamID    uint      `json:"team_id"`
+	TaskID    uint      `json:"task_id"`
+	Pass      bool      `json:"pass"`
+	Score     int64     `json:"score"`
+	Campaign  int64     `json:"campaign`
+	Betterize string    `json:"betterize"`
+	Messages  []string  `json:"messages"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Task struct {
@@ -112,7 +108,7 @@ func main() {
 	defer _db.Close()
 	db = _db
 
-	db.AutoMigrate(&Message{}, &Task{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
+	db.AutoMigrate(&Task{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
 
 	tasks := []*Task{}
 	db.Not("state = 'done'").Find(&tasks)
@@ -298,9 +294,9 @@ func createUser(c echo.Context) error {
 
 func createTeam(c echo.Context) error {
 	requestBody := &struct {
-		Name              string   `json:"name"`
-		GlobalIPAddress  string   `json:"global_ip_address"`
-		PrivateIPAddress string   `json:"private_ip_address"`
+		Name             string `json:"name"`
+		GlobalIPAddress  string `json:"global_ip_address"`
+		PrivateIPAddress string `json:"private_ip_address"`
 	}{}
 
 	c.Bind(requestBody)
@@ -318,14 +314,14 @@ func createTeam(c echo.Context) error {
 	pass := genPassword()
 
 	instance := Instance{
-		GlobalIPAddress:   requestBody.GlobalIPAddress,
-		PrivateIPAddress:  requestBody.PrivateIPAddress,
-		Password:          pass,
+		GlobalIPAddress:  requestBody.GlobalIPAddress,
+		PrivateIPAddress: requestBody.PrivateIPAddress,
+		Password:         pass,
 	}
 
 	team := &Team{
-		Name:       requestBody.Name,
-		Instance:   make([]*Instance, 3),
+		Name:     requestBody.Name,
+		Instance: make([]*Instance, 3),
 	}
 	team.Instance[0] = &instance
 
@@ -361,17 +357,16 @@ func queBenchmark(c echo.Context) error {
 
 	db.Model(team).Related(&team.Instance)
 
-	// プライベートネットワークを構築するならここをPrivateIPにする必要あり
-	if team.Instance[0].GlobalIPAddress == "" {
+	if team.Instance[0].PrivateIPAddress == "" {
 		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
 	}
 
-	ip := team.Instance[0].GlobalIPAddress
+	ip := team.Instance[0].PrivateIPAddress
 
 	if id == "2" {
-		ip = team.Instance[1].GlobalIPAddress
+		ip = team.Instance[1].PrivateIPAddress
 	} else if id == "3" {
-		ip = team.Instance[2].GlobalIPAddress
+		ip = team.Instance[2].PrivateIPAddress
 	}
 
 	task := &Task{}
@@ -381,7 +376,8 @@ func queBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/isucon/torb/bench/bin/bench -data /home/isucon/torb/bench/data -remotes=%s -output /home/isucon/result.json", ip)
+	cmdStr := fmt.Sprintf("/home/xecua/go/src/github.com/isucon/isucon9-qualify/bin/benchmarker "+
+		"-target-url %s", ip)
 	t := &Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
@@ -421,12 +417,7 @@ func benchmarkWorker() {
 
 		command, _ := shellwords.Parse(task.CmdStr)
 
-		err := exec.Command(command[0], command[1:]...).Run()
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		res, err := exec.Command("cat", "/home/isucon/result.json").CombinedOutput()
+		res, err := exec.Command(command[0], command[1:]...).Output()
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -442,8 +433,9 @@ func benchmarkWorker() {
 				TaskID:    task.ID,
 				Pass:      false,
 				Score:     0,
+				Campaign:  0,
 				Betterize: task.Betterize,
-				Messages:  []*Message{&Message{Text: err.Error()}},
+				Messages:  []string{err.Error()},
 			}
 			db.Create(result)
 
@@ -456,15 +448,11 @@ func benchmarkWorker() {
 			TaskID:    task.ID,
 			Pass:      data.Pass,
 			Score:     data.Score,
+			Campaign:  data.Campaign,
 			Betterize: task.Betterize,
+			Messages:  data.Messages,
 		}
 
-		for _, message := range data.Messages {
-			result.Messages = append(result.Messages, &Message{Text: message})
-		}
-		for _, log := range data.Logs {
-			result.Messages = append(result.Messages, &Message{Text: log})
-		}
 		db.Create(result)
 
 		task.State = "done"
