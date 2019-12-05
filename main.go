@@ -36,7 +36,12 @@ type Output struct {
 	Score    int64    `json:"score"`
 	Campaign int64    `json:"campaign`
 	Language string   `json:"language`
-	Messages []*string `json:"messages"`
+	Messages []string `json:"messages"`
+}
+
+type Message struct {
+	gorm.Model
+	Text string
 }
 
 type Team struct {
@@ -63,15 +68,15 @@ type Instance struct {
 
 type Result struct {
 	gorm.Model
-	ID        int       `gorm:"AUTO_INCREMENT" json:"id"`
-	TeamID    uint      `json:"team_id"`
-	TaskID    uint      `json:"task_id"`
-	Pass      bool      `json:"pass"`
-	Score     int64     `json:"score"`
-	Campaign  int64     `json:"campaign`
-	Betterize string    `json:"betterize"`
-	Messages  []*string  `json:"messages"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int        `gorm:"AUTO_INCREMENT" json:"id"`
+	TeamID    uint       `json:"team_id"`
+	TaskID    uint       `json:"task_id"`
+	Pass      bool       `json:"pass"`
+	Score     int64      `json:"score"`
+	Campaign  int64      `json:"campaign`
+	Betterize string     `json:"betterize"`
+	Messages  []*Message `json:"messages"`
+	CreatedAt time.Time  `json:"created_at"`
 }
 
 type Task struct {
@@ -429,7 +434,6 @@ func benchmarkWorker() {
 		data := &Output{}
 		err = json.Unmarshal(res, data)
 		if err != nil {
-			errMessage := err.Error()
 			result := &Result{
 				TeamID:    task.TeamID,
 				TaskID:    task.ID,
@@ -437,7 +441,7 @@ func benchmarkWorker() {
 				Score:     0,
 				Campaign:  0,
 				Betterize: task.Betterize,
-				Messages:  []*string { &errMessage },
+				Messages:  []*Message{{Text: err.Error()}},
 			}
 			db.Create(result)
 
@@ -445,6 +449,11 @@ func benchmarkWorker() {
 			db.Save(task)
 			continue
 		}
+		messages := make([]*Message, len(data.Messages))
+		for i, text := range data.Messages {
+			messages[i] = &Message{Text: text}
+		}
+
 		result := &Result{
 			TeamID:    task.TeamID,
 			TaskID:    task.ID,
@@ -452,7 +461,7 @@ func benchmarkWorker() {
 			Score:     data.Score,
 			Campaign:  data.Campaign,
 			Betterize: task.Betterize,
-			Messages:  data.Messages,
+			Messages:  messages,
 		}
 
 		db.Create(result)
