@@ -114,7 +114,7 @@ func main() {
 	defer _db.Close()
 	db = _db
 
-	db.AutoMigrate(&Task{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
+	db.AutoMigrate(&Task{}, &Message{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
 
 	tasks := []*Task{}
 	db.Not("state = 'done'").Find(&tasks)
