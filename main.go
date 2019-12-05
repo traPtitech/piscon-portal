@@ -62,6 +62,7 @@ type Instance struct {
 }
 
 type Result struct {
+	gorm.Model
 	ID        int       `gorm:"AUTO_INCREMENT" json:"id"`
 	TeamID    uint      `json:"team_id"`
 	TaskID    uint      `json:"task_id"`
