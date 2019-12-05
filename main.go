@@ -36,7 +36,7 @@ type Output struct {
 	Score    int64    `json:"score"`
 	Campaign int64    `json:"campaign`
 	Language string   `json:"language`
-	Messages []string `json:"messages"`
+	Messages []*string `json:"messages"`
 }
 
 type Team struct {
@@ -70,7 +70,7 @@ type Result struct {
 	Score     int64     `json:"score"`
 	Campaign  int64     `json:"campaign`
 	Betterize string    `json:"betterize"`
-	Messages  []string  `json:"messages"`
+	Messages  []*string  `json:"messages"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -429,6 +429,7 @@ func benchmarkWorker() {
 		data := &Output{}
 		err = json.Unmarshal(res, data)
 		if err != nil {
+			errMessage := err.Error()
 			result := &Result{
 				TeamID:    task.TeamID,
 				TaskID:    task.ID,
@@ -436,7 +437,7 @@ func benchmarkWorker() {
 				Score:     0,
 				Campaign:  0,
 				Betterize: task.Betterize,
-				Messages:  []string{err.Error()},
+				Messages:  []*string { &errMessage },
 			}
 			db.Create(result)
 
