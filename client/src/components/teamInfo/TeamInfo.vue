@@ -76,7 +76,7 @@
         <div class="widget-body">
           <p>
             今回の部内ISUCONの鯖代は運営のポケットマネーから捻出されています。<br>
-            部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけると@nagatechが泣いて喜びます。
+            部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけるとSysAd班が泣いて喜びます。
           </p>
         </div>
       </vuestic-widget>
