@@ -41,6 +41,7 @@ type Output struct {
 
 type Message struct {
 	gorm.Model
+	ResultId uint
 	Text string
 }
 
@@ -80,7 +81,7 @@ type Result struct {
 
 type Task struct {
 	gorm.Model
-	CmdStr    string `json:"cmd_str"`
+	CmdStr    string `json:"cmd_str" sql:"type:text;"`
 	IP        string `json:"ip"`
 	State     string `json:"state"`
 	Betterize string `json:"betterize"`
@@ -382,7 +383,12 @@ func queBenchmark(c echo.Context) error {
 	}
 
 	cmdStr := fmt.Sprintf("/home/xecua/go/src/github.com/isucon/isucon9-qualify/bin/benchmarker "+
-		"-target-url %s", ip)
+		"-shipment-url \"https://shipment.koffein.dev\" " +
+		"-payment-url \"https://payment.koffein.dev\" " +
+		"-data-dir \"/home/xecua/go/src/github.com/isucon/isucon9-qualify/initial-data\" "+
+		"-static-dir \"/home/xecua/go/src/github.com/isucon/isucon9-qualify/webapp/public/static\" "+
+		"-target-host \"piscon.koffein.dev\" " +
+		"-target-url https://%s", ip)
 	t := &Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
