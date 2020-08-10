@@ -1,0 +1,43 @@
+version: "3"
+volumes:
+  node_modules: {}
+  db:
+services:
+  backend:
+    build:
+      context: .
+    tty: true
+    ports:
+      - 4000:4000
+    entrypoint: dockerize -timeout 60s -wait tcp://db:3306
+    command: ./piscon_portal
+    environment:
+      MARIADB_HOST: db
+      MARIADB_USERNAME: isucon
+      MARIADB_PASSWORD: isucon
+      MARIADB_DATABASE: isucon
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile_dev
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ./client:/app
+      - node_modules:/app/node_modules
+    depends_on:
+      - backend
+  db:
+    image: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      # 初期データを投入するSQLが格納されているdir
+      - ./db/init:/docker-entrypoint-initdb.d
+      # 永続化
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root

@@ -1,13 +1,12 @@
-FROM node:lts-alpine
+FROM node:lts-alpine as build
 
 WORKDIR /app
 
 COPY . /app
 
-EXPOSE 8080
-
-RUN yarn global add http-server
-
 RUN yarn install && yarn build || true
 
-CMD http-server ./dist
+
+FROM nginx
+
+COPY --from=build /app/dist /usr/share/nginx/html

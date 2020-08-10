@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -15,7 +16,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	shellwords "github.com/mattn/go-shellwords"
-	"github.com/nagatea/piscon-portal/conoha"
+	"github.com/traPtitech/piscon-portal/conoha"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -42,7 +43,7 @@ type Output struct {
 type Message struct {
 	gorm.Model
 	ResultId uint
-	Text string
+	Text     string
 }
 
 type Team struct {
@@ -106,13 +107,15 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 
-	_db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
+	// _db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
+	_db, err := establishConnection()
 	if err != nil {
 		panic(err)
 	}
 	//_db.LogMode(true)
 	defer _db.Close()
 	db = _db
+	db.LogMode(true)
 
 	db.AutoMigrate(&Task{}, &Message{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
 
@@ -185,6 +188,33 @@ func middlewareAuthUser(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		return next(c)
 	}
+}
+
+func establishConnection() (*gorm.DB, error) {
+	user := os.Getenv("MARIADB_USERNAME")
+	if user == "" {
+		user = "isucon"
+	}
+
+	pass := os.Getenv("MARIADB_PASSWORD")
+	if pass == "" {
+		pass = "isucon"
+	}
+
+	host := os.Getenv("MARIADB_HOSTNAME")
+	if host == "" {
+		host = "db"
+	}
+
+	dbname := os.Getenv("MARIADB_DATABASE")
+	if dbname == "" {
+		dbname = "isucon"
+	}
+
+	_db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@(%s)/%s", user, pass, host, dbname)+"?charset=utf8mb4&parseTime=True&loc=Local")
+	_db.BlockGlobalUpdate(true)
+	db = _db
+	return db, err
 }
 
 func getNewer(c echo.Context) error {
@@ -306,6 +336,7 @@ func createTeam(c echo.Context) error {
 	}{}
 
 	c.Bind(requestBody)
+	log.Println(requestBody)
 
 	if requestBody.Name == "" {
 		return c.JSON(http.StatusBadRequest, Response{false, "リクエストボディの要素が足りません"})
@@ -324,13 +355,16 @@ func createTeam(c echo.Context) error {
 		PrivateIPAddress: requestBody.PrivateIPAddress,
 		Password:         pass,
 	}
-
 	team := &Team{
 		Name:     requestBody.Name,
-		Instance: make([]*Instance, 3),
+		Instance: make([]*Instance, 0, 3),
 	}
-	team.Instance[0] = &instance
+	team.Instance = append(team.Instance, &instance)
+	// log.Printf("len %d,cap %d", len(team.Instance), cap(team.Instance))
 
+	// log.Println(instance)
+
+	// log.Println(team)
 	db.Create(team)
 	return c.JSON(http.StatusCreated, team)
 }
@@ -383,11 +417,11 @@ func queBenchmark(c echo.Context) error {
 	}
 
 	cmdStr := fmt.Sprintf("/home/xecua/go/src/github.com/isucon/isucon9-qualify/bin/benchmarker "+
-		"-shipment-url \"https://shipment.koffein.dev\" " +
-		"-payment-url \"https://payment.koffein.dev\" " +
+		"-shipment-url \"https://shipment.koffein.dev\" "+
+		"-payment-url \"https://payment.koffein.dev\" "+
 		"-data-dir \"/home/xecua/go/src/github.com/isucon/isucon9-qualify/initial-data\" "+
 		"-static-dir \"/home/xecua/go/src/github.com/isucon/isucon9-qualify/webapp/public/static\" "+
-		"-target-host \"piscon.koffein.dev\" " +
+		"-target-host \"piscon.koffein.dev\" "+
 		"-target-url https://%s", ip)
 	t := &Task{
 		CmdStr:    cmdStr,
