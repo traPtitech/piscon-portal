@@ -5,7 +5,7 @@
     <span slot="logo">Piscon</span>
     <profile-dropdown v-if="$store.state.Me"
       :options="profileOptions">
-      <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.Me.iconFileId}`" />
+      <img :src="`https://q.trap.jp/api/v3/public/icon/${$store.state.Me.name}`" />
     </profile-dropdown>
     <div v-else class="signin">
       <router-link :to="{name: 'signin'}">Signin with traQ</router-link>

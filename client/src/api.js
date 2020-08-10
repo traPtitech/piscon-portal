@@ -2,7 +2,7 @@ import axios from './services/axios'
 import { randomString, pkce } from './utils'
 
 export const traQBaseURL = 'https://q.trap.jp/api/1.0'
-export const traQClientID = '3eLMSKdx0e48Qeo81JSWEUgUELPlygyj6xUR'
+export const traQClientID = 'J0RR7Auk9OVa4LZnQ4pD37hupkEkYloEHiIU'
 
 export function setAuthToken (token) {
   if (token) {
