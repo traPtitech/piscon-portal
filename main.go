@@ -8,8 +8,11 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 	"time"
 
+	"github.com/gophercloud/gophercloud"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
@@ -21,10 +24,22 @@ import (
 )
 
 var (
-	checkTask  chan struct{}
-	sendWorker chan *Task
-	db         *gorm.DB
-	client     *conoha.ConohaClient
+	checkTask     chan struct{}
+	sendWorker    chan *Task
+	checkInstance chan *Instance
+	db            *gorm.DB
+	conohaClient  *conoha.ConohaClient
+)
+
+const (
+	BUILD   = "BUILD"
+	ACTIVE  = "ACTIVE"
+	SHUTOFF = "SHUTOFF"
+
+	SHUTDOWNING  = "SHUTDOWNING"
+	NOT_EXIST    = "NOT_EXIST"
+	STARTING     = "STARTING"
+	PRE_SHUTDOWN = "PRE_SHUTDOWN"
 )
 
 type Response struct {
@@ -66,6 +81,9 @@ type Instance struct {
 	GlobalIPAddress  string `json:"global_ip_address"`
 	PrivateIPAddress string `json:"private_ip_address"`
 	Password         string `json:"password"`
+	InstanceNumber   uint   `json:"instance_number"`
+	Status           string `json:"status"`
+	Name             string `json:"name"`
 }
 
 type Result struct {
@@ -99,13 +117,25 @@ type Question struct {
 func main() {
 	sendWorker = make(chan *Task, 10)
 	checkTask = make(chan struct{})
+	checkInstance = make(chan *Instance)
 
 	go benchmarkWorker()
+	go instanceInfo()
 
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
+
+	opts := gophercloud.AuthOptions{
+		IdentityEndpoint: "https://identity.tyo2.conoha.io/v2.0",
+		Username:         os.Getenv("CONOHA_USERNAME"),
+		TenantName:       os.Getenv("CONOHA_TENANT_NAME"),
+		TenantID:         os.Getenv("CONOHA_TENANT_ID"),
+		Password:         os.Getenv("CONOHA_PASSWORD"),
+	}
+
+	conohaClient = conoha.New(opts)
 
 	// _db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
 	_db, err := establishConnection()
@@ -115,7 +145,7 @@ func main() {
 	//_db.LogMode(true)
 	defer _db.Close()
 	db = _db
-	db.LogMode(true)
+	// db.LogMode(true)
 
 	db.AutoMigrate(&Task{}, &Message{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
 
@@ -151,6 +181,8 @@ func main() {
 	})
 	apiWithAuth.POST("/team", createTeam)
 	apiWithAuth.POST("/user", createUser)
+	apiWithAuth.POST("/instance/:team_id/:instance_number", createInstance)
+	apiWithAuth.DELETE("/instance/:team_id/:instance_number", deleteInstance)
 	// TODO: ユーザー名で認証してないので修正する必要がある
 	apiWithAuth.GET("/team/:id", getTeam)
 	apiWithAuth.GET("/user/:name", getUser)
@@ -330,13 +362,10 @@ func createUser(c echo.Context) error {
 
 func createTeam(c echo.Context) error {
 	requestBody := &struct {
-		Name             string `json:"name"`
-		GlobalIPAddress  string `json:"global_ip_address"`
-		PrivateIPAddress string `json:"private_ip_address"`
+		Name string `json:"name"`
 	}{}
 
 	c.Bind(requestBody)
-	log.Println(requestBody)
 
 	if requestBody.Name == "" {
 		return c.JSON(http.StatusBadRequest, Response{false, "リクエストボディの要素が足りません"})
@@ -348,25 +377,119 @@ func createTeam(c echo.Context) error {
 	if t.Name != "" {
 		return c.JSON(http.StatusNotFound, Response{false, "登録されています"})
 	}
-	pass := genPassword()
+	// pass := genPassword()
 
-	instance := Instance{
-		GlobalIPAddress:  requestBody.GlobalIPAddress,
-		PrivateIPAddress: requestBody.PrivateIPAddress,
-		Password:         pass,
-	}
 	team := &Team{
-		Name:     requestBody.Name,
-		Instance: make([]*Instance, 0, 3),
+		Name: requestBody.Name,
+		// Instance: make([]*Instance, 0, 3),
+		Instance: []*Instance{},
 	}
-	team.Instance = append(team.Instance, &instance)
+	// team.Instance = append(team.Instance, &instance)
 	// log.Printf("len %d,cap %d", len(team.Instance), cap(team.Instance))
 
 	// log.Println(instance)
 
 	// log.Println(team)
 	db.Create(team)
+
+	// db.Where("name = ?", team.Name).Find(t)
+
+	// for i := 1; i <= 3; i++ {
+	// 	db.Create(&Instance{
+	// 		Status:         NOT_EXIST,
+	// 		InstanceNumber: uint(i),
+	// 		TeamID:         t.ID,
+	// 	})
+	// }
 	return c.JSON(http.StatusCreated, team)
+}
+
+func createInstance(c echo.Context) error {
+
+	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	teamId, err := strconv.Atoi(c.Param("team_id"))
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
+		return c.JSON(http.StatusBadRequest, Response{false, "instance number should be 1 or 2 or 3"})
+	}
+
+	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
+
+	pass := genPassword()
+	i := &Instance{}
+	db.Where("name = ?", name).Find(i)
+	if i.Name != "" {
+		return c.JSON(http.StatusConflict, "既に登録されています")
+	}
+
+	privateIP := fmt.Sprintf("172.16.0.%d", teamId*10+instanceNumber)
+
+	log.Printf("Makeinstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
+	err = conohaClient.MakeInstance(name, pass, privateIP)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	instance := &Instance{
+		Password:         pass,
+		InstanceNumber:   uint(instanceNumber),
+		TeamID:           uint(teamId),
+		Name:             name,
+		Status:           BUILD,
+		GlobalIPAddress:  "",
+		PrivateIPAddress: privateIP,
+	}
+	go func() {
+		checkInstance <- instance
+	}()
+	db.Create(instance)
+
+	return nil
+}
+
+func deleteInstance(c echo.Context) error {
+	log.Println("delete command received")
+	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	teamId, err := strconv.Atoi(c.Param("team_id"))
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
+		return c.JSON(http.StatusBadRequest, Response{false, "instance number should be 1 or 2 or 3"})
+	}
+
+	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
+	i := &Instance{}
+	if db.Where("name = ?", name).First(i).RecordNotFound() {
+		return c.JSON(http.StatusNotFound, "指定したインスタンスが見つかりません")
+	}
+
+	err = conohaClient.DeleteInstance(name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	i = &Instance{}
+	db.Where("name = ?", name).Delete(i)
+
+	return nil
 }
 
 func getAllResults(c echo.Context) error {
@@ -508,4 +631,106 @@ func benchmarkWorker() {
 		task.State = "done"
 		db.Save(task)
 	}
+}
+
+// activeになったらdbにipアドレスとかを含めて登録
+func instanceInfo() {
+	for {
+		instance := <-checkInstance
+
+		fmt.Println("receive instance")
+		switch instance.Status {
+		case BUILD:
+			log.Println("wait building")
+			waitBuilding(instance)
+			// instance.Status = SHUTOFF
+			// go func() { checkInstance <- instance }()
+		case PRE_SHUTDOWN:
+			log.Println("pre shutdown")
+			instance.Status = SHUTDOWNING
+			conohaClient.ShutdownInstance(instance.Name)
+			go func() { checkInstance <- instance }()
+		case SHUTDOWNING:
+			log.Println("shutdowning")
+			waitShutdown(instance)
+		case SHUTOFF:
+			log.Println("shutoff")
+			networkID := os.Getenv("CONOHA_NETWORK_ID")
+			log.Printf("AttachPrivateNetwork name:%s networkID %s privateIP:%s\n", instance.Name, os.Getenv("CONOHA_NETWORK_ID"), instance.PrivateIPAddress)
+			conohaClient.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
+			conohaClient.StartInstance(instance.Name)
+			instance.Status = STARTING
+			go func() { checkInstance <- instance }()
+		case STARTING:
+			log.Println("wait starting")
+			waitStarting(instance)
+		case ACTIVE:
+			log.Println("write to db")
+			db.Model(&Instance{Name: instance.Name}).Update(instance)
+		}
+	}
+}
+
+func waitBuilding(instance *Instance) {
+	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if strings.ToUpper(_instance.Status) == ACTIVE {
+		IPv4 := ""
+		// instanceのipv4のアドレスを抜き出そうとしてるけどもっといいやり方がありそう
+		for _, v := range _instance.Addresses {
+			// tmp := (([]interface{})(v.([]interface{})))
+			for _, vv := range ([]interface{})(v.([]interface{})) {
+				if (vv.(map[string]interface{})["version"]).(float64) == 4 {
+					IPv4 = (vv.(map[string]interface{})["addr"]).(string)
+				}
+				// if i == 0 {
+				// 	for k, vvv := range vv.(map[string]interface{}) {
+				// 		if k == "addr" {
+				// 			IPv4 = vvv.(string)
+				// 		}
+				// 	}
+				// }
+			}
+			// fmt.Println(tmp)
+		}
+		if IPv4 != "" {
+			instance.GlobalIPAddress = IPv4
+			instance.Status = PRE_SHUTDOWN
+			// db.Model(&Instance{Name: instance.Name}).Update(instance)
+		}
+	}
+	go func() {
+		checkInstance <- instance
+	}()
+
+	time.Sleep(10 * time.Second)
+}
+
+func waitShutdown(instance *Instance) {
+	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if strings.ToUpper(_instance.Status) == SHUTOFF {
+		instance.Status = SHUTOFF
+	}
+	go func() { checkInstance <- instance }()
+
+	time.Sleep(10 * time.Second)
+}
+
+func waitStarting(instance *Instance) {
+	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if strings.ToUpper(_instance.Status) == ACTIVE {
+		instance.Status = ACTIVE
+	}
+	go func() { checkInstance <- instance }()
+
+	time.Sleep(10 * time.Second)
 }
