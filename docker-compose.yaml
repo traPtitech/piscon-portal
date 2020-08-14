@@ -1,4 +1,6 @@
 version: "3"
+volumes:
+  db:
 services:
   backend:
     build:
@@ -6,6 +8,11 @@ services:
     tty: true
     ports:
       - 4000:4000
+    # ベンチマークのためにマウントする
+    volumes:
+      - ./isucon9-qualify/initial-data:/isucon9-qualify/initial-data
+      - ./isucon9-qualify/webapp/public/static:/isucon9-qualify/webapp/public/static
+      - ./isucon9-qualify/bin/benchmarker
     entrypoint: dockerize -timeout 60s -wait tcp://db:3306
     command: ./piscon_portal
     environment:
@@ -33,6 +40,6 @@ services:
       # 初期データを投入するSQLが格納されているdir
       - ./db/init:/docker-entrypoint-initdb.d
       # 永続化
-      - ./db/mysql_data:/var/lib/mysql
+      - db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}

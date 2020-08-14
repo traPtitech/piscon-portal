@@ -530,7 +530,12 @@ func getAllResults(c echo.Context) error {
 }
 
 func queBenchmark(c echo.Context) error {
-	id := c.Param("id")
+	// id := strconv.atoi(c.Param("id"))
+	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	name := c.Param("name")
 
 	req := struct {
@@ -548,16 +553,24 @@ func queBenchmark(c echo.Context) error {
 
 	db.Model(team).Related(&team.Instance)
 
-	if team.Instance[0].PrivateIPAddress == "" {
-		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
-	}
-
 	ip := team.Instance[0].PrivateIPAddress
 
-	if id == "2" {
-		ip = team.Instance[1].PrivateIPAddress
-	} else if id == "3" {
-		ip = team.Instance[2].PrivateIPAddress
+	for i := 0; i < team.MaxInstanceNumber; i++ {
+		if uint(instanceNumber) == team.Instance[i].InstanceNumber {
+			ip = team.Instance[i].PrivateIPAddress
+		}
+	}
+	// if team.Instance[0].PrivateIPAddress == "" {
+	// 	return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
+	// }
+
+	// if id == "2" {
+	// 	ip = team.Instance[1].PrivateIPAddress
+	// } else if id == "3" {
+	// 	ip = team.Instance[2].PrivateIPAddress
+	// }
+	if ip == "" {
+		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
 	}
 
 	task := &Task{}
@@ -567,11 +580,9 @@ func queBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/piscon/github.com/isucon/isucon9-qualify/bin/benchmarker "+
-		"-shipment-url \"https://shipment.koffein.dev\" "+
-		"-payment-url \"https://payment.koffein.dev\" "+
-		"-data-dir \"/home/piscon/go/src/github.com/isucon/isucon9-qualify/initial-data\" "+
-		"-static-dir \"/home/piscon/go/src/github.com/isucon/isucon9-qualify/webapp/public/static\" "+
+	cmdStr := fmt.Sprintf("/isucon9-qualify/bin/benchmarker "+
+		"-data-dir \"/isucon9-qualify/initial-data\" "+
+		"-static-dir \"/isucon9-qualify/webapp/public/static\" "+
 		"-target-host \"piscon.koffein.dev\" "+
 		"-target-url https://%s", ip)
 	t := &Task{
