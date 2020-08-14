@@ -189,7 +189,7 @@ func main() {
 	// TODO: ユーザー名で認証してないので修正する必要がある
 	apiWithAuth.GET("/team/:id", getTeam)
 	apiWithAuth.GET("/user/:name", getUser)
-	apiWithAuth.POST("/benchmark/:name/:id", queBenchmark)
+	apiWithAuth.POST("/benchmark/:name/:instance_number", queBenchmark)
 	apiWithAuth.GET("/admin/team", getAllTeam)
 
 	apiWithAuth.POST("/questions", postQuestions)
@@ -689,6 +689,7 @@ func instanceInfo() {
 		case PRE_SHUTDOWN:
 			log.Println("pre shutdown")
 			instance.Status = SHUTDOWNING
+			time.Sleep(5 * time.Second)
 			conohaClient.ShutdownInstance(instance.Name)
 			go func() { checkInstance <- instance }()
 		case SHUTDOWNING:

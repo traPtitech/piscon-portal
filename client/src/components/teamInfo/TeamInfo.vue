@@ -1,6 +1,6 @@
 <template>
 <div class="modal-page">
-  <Modal v-if="showOperationModal" @close="showOperationModal = false" @operation="operationInstance(this.operationInstanceNumber)">
+  <Modal v-if="showOperationModal" @close="showOperationModal = false" @operation="operationInstance(operationInstanceNumber)">
     <div slot="header">確認</div>
     <div slot="body">この操作は取り消せません。間違えて行わないように注意してください</div>
   </Modal>
@@ -27,6 +27,10 @@
           <table v-for="n in $store.state.Team.max_instance_number" :key="'global'+n">
             <tr>
               <td><h6><span class="col-md-6">サーバ{{n}}</span></h6></td>
+            </tr>
+            <tr>
+              <td><h6><span class="col-md-6">状態 :{{n}}</span></h6></td>
+              <td><h6><span class="col-md-6">{{sortedInstance[n-1].status}}</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">グローバル IP アドレス :</span></h6></td>
@@ -65,6 +69,8 @@
               <td><h6><span class="col-md-6">{{$store.getters.maxScore.score}}</span></h6></td>
             </tr>
           </table>
+  {{this.operationInstanceNumber}}
+
           <div class="col-md-12"></div>
           <div class="form-group">
             <div class="input-group">
@@ -74,7 +80,7 @@
           </div>
           <div class="col-md-12 my-2" v-for="i in $store.state.Team.max_instance_number" :key="i">
             <button class="btn btn-micro btn-info" @click="benchmark(i)" :disabled="benchmarkButton || betterize === ''">サーバ{{i}}にベンチマークを行う</button>
-            <button class="btn btn-micro btn-info" @click="setOperationModal(i)" :disabled="instanceButton(i)">{{instanceButtonMessage(i)}}</button>
+            <button class="btn btn-micro btn-info" @click="setOperationModal(i)" :disabled="instanceButton(i)||waiting">{{instanceButtonMessage(i)}}</button>
             
           </div>
           <div v-if="error" class="type-articles">
@@ -151,6 +157,7 @@ export default {
       error: '',
       showOperationModal: false,
       operationInstanceNumber: 0,
+      waiting: false,
     }
   },
   components: {
@@ -190,36 +197,44 @@ export default {
     },
     setOperationModal (id) {
       this.showOperationModal = true
+      console.log(id)
       this.operationInstanceNumber = id
     },
     operationInstance (id) {
       this.showOperationModal = false
+      this.waiting = true
       if (this.instanceButton(id)) return
       switch (this.sortedInstance[id - 1].status) {
         case 'ACTIVE':
-          axios.delete(`/api/instance/${this.$store.state.Team.id}/${id}`)
+          console.log('delete instance')
+          axios.delete(`/api/instance/${this.$store.state.Team.ID}/${id}`)
           .then(_ => {
             this.$store.dispatch('getData')
+            this.waiting = false
           })
           .catch(err => {
             this.err = err.response.data.message
+            this.waiting = false
           })
           break
         case 'NOT_EXIST':
-          axios.post(`/api/instance/${this.$store.state.Team.id}/${id}`)
+          console.log('make instance')
+          axios.post(`/api/instance/${this.$store.state.Team.ID}/${id}`)
           .then(_ => {
             this.$store.dispatch('getData')
+            this.waiting = false
           })
           .catch(err => {
             this.err = err.response.data.message
+            this.waiting = false
           })
           break
       }
     },
   },
   computed: {
-    benchmarkButton () {
-      return this.$store.state.Que.find(que => que.team.name === this.$store.state.Team.name)
+    benchmarkButton (i) {
+      return function (i) { return this.$store.state.Que.find(que => que.team.name === this.$store.state.Team.name) || this.sortedInstance[i - 1].status !== 'ACTIVE' }
     },
     tweetURL () {
       try {
