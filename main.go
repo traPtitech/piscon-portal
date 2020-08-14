@@ -582,9 +582,11 @@ func queBenchmark(c echo.Context) error {
 
 	cmdStr := fmt.Sprintf("/isucon9-qualify/bin/benchmarker "+
 		"-data-dir \"/isucon9-qualify/initial-data\" "+
+		"-payment-url \"118.27.33.195:5555\""+
+		"-shipment-url \"118.27.33.195:7777\""+
 		"-static-dir \"/isucon9-qualify/webapp/public/static\" "+
-		"-target-host \"piscon.koffein.dev\" "+
-		"-target-url https://%s", ip)
+		"-target-host \"%s\" "+
+		"-target-url https://%s", ip, ip)
 	t := &Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
