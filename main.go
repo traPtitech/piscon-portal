@@ -40,6 +40,8 @@ const (
 	NOT_EXIST    = "NOT_EXIST"
 	STARTING     = "STARTING"
 	PRE_SHUTDOWN = "PRE_SHUTDOWN"
+
+	MAX_INSTANCE_NUMBER = 3
 )
 
 type Response struct {
@@ -63,9 +65,10 @@ type Message struct {
 
 type Team struct {
 	gorm.Model
-	Name     string      `gorm:"unique size:50" json:"name"`
-	Instance []*Instance `json:"instance"`
-	Results  []*Result   `json:"results"`
+	Name              string      `gorm:"unique size:50" json:"name"`
+	Instance          []*Instance `json:"instance"`
+	Results           []*Result   `json:"results"`
+	MaxInstanceNumber int         `json:"max_instance_number"`
 }
 
 type User struct {
@@ -232,10 +235,18 @@ func establishConnection() (*gorm.DB, error) {
 	if pass == "" {
 		pass = "isucon"
 	}
-
+	env := os.Getenv("ENV")
 	host := os.Getenv("MARIADB_HOSTNAME")
-	if host == "" {
-		host = "db"
+
+	switch env {
+	case "prod":
+		if host == "" {
+			host = "localhost"
+		}
+	default:
+		if host == "" {
+			host = "db"
+		}
 	}
 
 	dbname := os.Getenv("MARIADB_DATABASE")
@@ -266,6 +277,22 @@ func getTeam(c echo.Context) error {
 
 	db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
 	db.Model(&team).Related(&team.Instance)
+	flag := false
+	for i := 0; i < team.MaxInstanceNumber; i++ {
+		flag = false
+		for _, instance := range team.Instance {
+			if instance.InstanceNumber == uint(i+1) {
+				flag = true
+			}
+		}
+		if !flag {
+			emptyInstance := &Instance{}
+			emptyInstance.InstanceNumber = uint(i + 1)
+			emptyInstance.Status = NOT_EXIST
+			team.Instance = append(team.Instance, emptyInstance)
+		}
+	}
+
 	return c.JSON(http.StatusOK, team)
 }
 
@@ -380,7 +407,8 @@ func createTeam(c echo.Context) error {
 	// pass := genPassword()
 
 	team := &Team{
-		Name: requestBody.Name,
+		Name:              requestBody.Name,
+		MaxInstanceNumber: MAX_INSTANCE_NUMBER,
 		// Instance: make([]*Instance, 0, 3),
 		Instance: []*Instance{},
 	}
@@ -539,11 +567,11 @@ func queBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/xecua/go/src/github.com/isucon/isucon9-qualify/bin/benchmarker "+
+	cmdStr := fmt.Sprintf("/home/piscon/github.com/isucon/isucon9-qualify/bin/benchmarker "+
 		"-shipment-url \"https://shipment.koffein.dev\" "+
 		"-payment-url \"https://payment.koffein.dev\" "+
-		"-data-dir \"/home/xecua/go/src/github.com/isucon/isucon9-qualify/initial-data\" "+
-		"-static-dir \"/home/xecua/go/src/github.com/isucon/isucon9-qualify/webapp/public/static\" "+
+		"-data-dir \"/home/piscon/go/src/github.com/isucon/isucon9-qualify/initial-data\" "+
+		"-static-dir \"/home/piscon/go/src/github.com/isucon/isucon9-qualify/webapp/public/static\" "+
 		"-target-host \"piscon.koffein.dev\" "+
 		"-target-url https://%s", ip)
 	t := &Task{
