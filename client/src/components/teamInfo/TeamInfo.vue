@@ -79,7 +79,7 @@
             </div>
           </div>
           <div class="col-md-12 my-2" v-for="i in $store.state.Team.max_instance_number" :key="i">
-            <button class="btn btn-micro btn-info" @click="benchmark(i)" :disabled="benchmarkButton || betterize === ''">サーバ{{i}}にベンチマークを行う</button>
+            <button class="btn btn-micro btn-info" @click="benchmark(i)" :disabled="benchmarkButton(i) || betterize === ''">サーバ{{i}}にベンチマークを行う</button>
             <button class="btn btn-micro btn-info" @click="setOperationModal(i)" :disabled="instanceButton(i)||waiting">{{instanceButtonMessage(i)}}</button>
             
           </div>
