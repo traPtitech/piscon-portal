@@ -1,5 +1,9 @@
 <template>
 <div class="modal-page">
+  <Modal v-if="showOperationModal" @close="showOperationModal = false" @operation="operationInstance(this.operationInstanceNumber)">
+    <div slot="header">確認</div>
+    <div slot="body">この操作は取り消せません。間違えて行わないように注意してください</div>
+  </Modal>
 <div class="row">
   <div class="col-md-12" v-if="$store.state.Me && $store.state.Team.name">
     <vuestic-widget class="col-md-12" v-if="$store.state.Team.name">
@@ -18,31 +22,40 @@
       <vuestic-widget class="col-md-12">
         <div class="widget-header">サーバー情報</div>
         <div class="widget-body">
-          <table>
+          <h6>チーム名 : {{$store.state.Team.name}}</h6>
+          <br>
+          <table v-for="n in $store.state.Team.max_instance_number" :key="'global'+n">
             <tr>
-              <td><h6><span class="col-md-6">チーム名 :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.name}}</span></h6></td>
+              <td><h6><span class="col-md-6">サーバ{{n}}</span></h6></td>
             </tr>
-            <tr v-for="(instance, index) in $store.state.Team.instance" :key="'global'+index">
-              <td><h6><span class="col-md-6">サーバ{{index+1}} グローバル IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{instance.global_ip_address}}</span></h6></td>
+            <tr>
+              <td><h6><span class="col-md-6">グローバル IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{sortedInstance[n-1].global_ip_address}}</span></h6></td>
             </tr>
-            <tr v-for="(instance, index) in $store.state.Team.instance" :key="'private'+index">
-              <td><h6><span class="col-md-6">サーバ{{index+1}} プライベート IP アドレス :</span></h6></td>
-              <td><h6><span class="col-md-6">{{instance.private_ip_address}}</span></h6></td>
+            <tr>
+              <td><h6><span class="col-md-6">プライベート IP アドレス :</span></h6></td>
+              <td><h6><span class="col-md-6">{{sortedInstance[n-1].private_ip_address}}</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">ユーザー名 :</span></h6></td>
-              <td><h6><span class="col-md-6">isucon</span></h6></td>
+              <td><h6><span class="col-md-6">piscon</span></h6></td>
             </tr>
             <tr>
-              <td><h6><span class="col-md-6">初期パスワード(共通) :</span></h6></td>
-              <td><h6><span class="col-md-6">{{$store.state.Team.instance[0].password}}</span></h6></td>
+              <td><h6><span class="col-md-6">初期パスワード :</span></h6></td>
+              <td><h6><span class="col-md-6">{{sortedInstance[n-1].password}}</span></h6></td>
             </tr>
+            <tr>
+              <td><h6><span class="col-md-6">サーバー作成時間 :</span></h6></td>
+              <td><h6><span class="col-md-6">{{sortedInstance[n-1].CreatedAt}}</span></h6></td>
+            </tr>
+            <br>
+          </table>
+            
             <tr>
               <td><h6><span class="col-md-6">ベンチマーク回数 :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.state.Team.results.length}}</span></h6></td>
             </tr>
+          <table>
             <tr v-if="$store.state.Team.results.length > 0">
               <td><h6><span class="col-md-6">現在のスコア :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.state.Team.results.slice(-1)[0].score}}</span></h6></td>
@@ -50,10 +63,6 @@
             <tr>
               <td><h6><span class="col-md-6">最高スコア :</span></h6></td>
               <td><h6><span class="col-md-6">{{$store.getters.maxScore.score}}</span></h6></td>
-            </tr>
-            <tr v-for="(instance, index) in $store.state.Team.instance" :key="'created'+index">
-              <td><h6><span class="col-md-6">サーバ{{index+1}} 作成時間 :</span></h6></td>
-              <td><h6><span class="col-md-6">{{instance.CreatedAt}}</span></h6></td>
             </tr>
           </table>
           <div class="col-md-12"></div>
@@ -63,8 +72,10 @@
               <label class="control-label" for="simple-textarea">改善点を入力してください(記入しないとベンチマークを行えません)</label><i class="bar"></i>
             </div>
           </div>
-          <div class="col-md-12 my-2" v-for="i in $store.state.Team.instance.length" :key="i">
+          <div class="col-md-12 my-2" v-for="i in $store.state.Team.max_instance_number" :key="i">
             <button class="btn btn-micro btn-info" @click="benchmark(i)" :disabled="benchmarkButton || betterize === ''">サーバ{{i}}にベンチマークを行う</button>
+            <button class="btn btn-micro btn-info" @click="setOperationModal(i)" :disabled="instanceButton(i)">{{instanceButtonMessage(i)}}</button>
+            
           </div>
           <div v-if="error" class="type-articles">
             {{ error }}
@@ -127,6 +138,7 @@
 <script>
 import axios from '../../services/axios'
 import { getMeGroup } from '../../api'
+import Modal from './Modal'
 
 export default {
   name: 'team-info',
@@ -137,7 +149,12 @@ export default {
       betterize: '',
       show: true,
       error: '',
+      showOperationModal: false,
+      operationInstanceNumber: 0,
     }
+  },
+  components: {
+    Modal
   },
   methods: {
     async makeInstance () {
@@ -170,7 +187,35 @@ export default {
     showModal (data) {
       this.modalText = JSON.stringify(data, null, '  ')
       this.$refs.largeModal.open()
-    }
+    },
+    setOperationModal (id) {
+      this.showOperationModal = true
+      this.operationInstanceNumber = id
+    },
+    operationInstance (id) {
+      this.showOperationModal = false
+      if (this.instanceButton(id)) return
+      switch (this.sortedInstance[id - 1].status) {
+        case 'ACTIVE':
+          axios.delete(`/api/instance/${this.$store.state.Team.id}/${id}`)
+          .then(_ => {
+            this.$store.dispatch('getData')
+          })
+          .catch(err => {
+            this.err = err.response.data.message
+          })
+          break
+        case 'NOT_EXIST':
+          axios.post(`/api/instance/${this.$store.state.Team.id}/${id}`)
+          .then(_ => {
+            this.$store.dispatch('getData')
+          })
+          .catch(err => {
+            this.err = err.response.data.message
+          })
+          break
+      }
+    },
   },
   computed: {
     benchmarkButton () {
@@ -182,6 +227,38 @@ export default {
         return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0d&url=https%3A%2F%2Fpiscon.nagatech.work&hashtags=traPiscon`
       } catch (e) {
         return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0d&url=https%3A%2F%2Fpiscon.nagatech.work&hashtags=traPiscon`
+      }
+    },
+    sortedInstance () {
+      // console.log(this.$store.state.Team.instance)
+      return this.$store.state.Team.instance.map(v => v).sort((a, b) => {
+        if (a.instance_number > b.instance_number) {
+          return 1
+        } else {
+          return -1
+        }
+      })
+    },
+    instanceButtonMessage () {
+      return function (i) {
+        switch (this.sortedInstance[i - 1].status) {
+          case 'ACTIVE':
+            return `インスタンス${this.sortedInstance[i - 1].instance_number}を削除する`
+
+          case 'NOT_EXIST':
+            return `インスタンス${this.sortedInstance[i - 1].instance_number}を作成する`
+
+          case 'BUILD':
+            return `作成中`
+
+          default:
+            return this.sortedInstance[i - 1].status
+        }
+      }
+    },
+    instanceButton () {
+      return function (i) {
+        return this.sortedInstance[i - 1].status !== 'ACTIVE' && this.sortedInstance[i - 1].status !== 'NOT_EXIST'
       }
     }
   }
