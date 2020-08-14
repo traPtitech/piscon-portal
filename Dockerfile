@@ -16,6 +16,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 EXPOSE 4000
 
-COPY --from=build /piscon_portal ./
+COPY --from=build /piscon_portal /go/src/github.com/traPtitech/piscon-portal/.env  ./
 
 ENTRYPOINT ./piscon_portal
