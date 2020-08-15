@@ -182,7 +182,7 @@ export default {
         })
     },
     benchmark (id) {
-      if (this.benchmarkButton) return
+      if (this.benchmarkButton(id)) return
       axios.post(`/api/benchmark/${this.$store.state.Team.name}/${id}`, {betterize: this.betterize})
         .then(_ => {
           this.betterize = ''

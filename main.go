@@ -196,13 +196,16 @@ func main() {
 	apiWithAuth.PUT("/questions/:id", putQuestions)
 	apiWithAuth.DELETE("/questions/:id", deleteQuestions)
 
-	switch env {
-	case "prod":
-		e.StartAutoTLS(":443")
-	default:
-		e.Use(middleware.CORS())
-		e.Start(":4000")
-	}
+	// e.AutoTLSManager.HostPolicy = autocert.HostWhitelist(os.Getenv("HOST"))
+	// e.AutoTLSManager.Cache = autocert.DirCache("/etc/letsencrypt/live/piscon-portal.trap.jp/cert.pem")
+	// e.Pre(middleware.HTTPSWWWRedirect())
+	// switch env {
+	// case "prod":
+	// e.StartAutoTLS(":443")
+	// default:
+	e.Use(middleware.CORS())
+	e.Start(":4000")
+	// }
 	fmt.Println("end")
 }
 
@@ -253,7 +256,7 @@ func establishConnection() (*gorm.DB, error) {
 	if dbname == "" {
 		dbname = "isucon"
 	}
-
+	log.Println((fmt.Sprintf("%s:%s@(%s)/%s", user, pass, host, dbname) + "?charset=utf8mb4&parseTime=True&loc=Local"))
 	_db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@(%s)/%s", user, pass, host, dbname)+"?charset=utf8mb4&parseTime=True&loc=Local")
 	_db.BlockGlobalUpdate(true)
 	db = _db
@@ -560,6 +563,7 @@ func queBenchmark(c echo.Context) error {
 			ip = instance.PrivateIPAddress
 		}
 	}
+
 	// if team.Instance[0].PrivateIPAddress == "" {
 	// 	return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
 	// }
@@ -580,13 +584,13 @@ func queBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/isucon9-qualify/bin/benchmarker "+
-		"-data-dir \"/isucon9-qualify/initial-data\" "+
-		"-payment-url \"118.27.33.195:5555\""+
-		"-shipment-url \"118.27.33.195:7000\""+
-		"-static-dir \"/isucon9-qualify/webapp/public/static\" "+
+	cmdStr := fmt.Sprintf("/home/piscon/isucon9-qualify/bin/benchmarker "+
+		"-data-dir \"/home/piscon/isucon9-qualify/initial-data\" "+
+		"-payment-url \"http://118.27.33.195:5555\""+
+		"-shipment-url \"http://118.27.33.195:7000\""+
+		"-static-dir \"/home/piscon/isucon9-qualify/webapp/public/static\" "+
 		"-target-host \"%s\" "+
-		"-target-url https://%s", ip, ip)
+		"-target-url http://%s", ip, ip)
 	t := &Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
