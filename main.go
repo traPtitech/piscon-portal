@@ -586,11 +586,11 @@ func queBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/piscon/isucon9-qualify/bin/benchmarker "+
-		"-data-dir \"/home/piscon/isucon9-qualify/initial-data\" "+
-		"-payment-url \"http://118.27.33.195:5555\""+
-		"-shipment-url \"http://118.27.33.195:7000\""+
-		"-static-dir \"/home/piscon/isucon9-qualify/webapp/public/static\" "+
+	cmdStr := fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
+		"-data-dir \"/home/isucon/isucari/initial-data\" "+
+		"-payment-url \"http://160.251.13.26:5555\""+
+		"-shipment-url \"http://160.251.13.26:7000\""+
+		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url http://%s", ip, ip)
 	t := &Task{
