@@ -42,7 +42,7 @@
             </tr>
             <tr>
               <td><h6><span class="col-md-6">ユーザー名 :</span></h6></td>
-              <td><h6><span class="col-md-6">piscon</span></h6></td>
+              <td><h6><span class="col-md-6">isucon</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">初期パスワード :</span></h6></td>

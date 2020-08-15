@@ -30,7 +30,7 @@ func New(opts gophercloud.AuthOptions) *ConohaClient {
 	return c
 }
 
-func (c *ConohaClient) MakeInstance(name, pass, privateIP string) error {
+func (c *ConohaClient) MakeInstance(name, privateIP string) error {
 	eo := gophercloud.EndpointOpts{
 		Type:   "compute",
 		Region: "tyo2",
@@ -41,10 +41,6 @@ func (c *ConohaClient) MakeInstance(name, pass, privateIP string) error {
 	}
 
 	startUpScript := fmt.Sprintf(`#!/bin/sh
-
-adduser --disabled-password --gecos "" "piscon"
-echo piscon:%s | /usr/sbin/chpasswd
-gpasswd -a "piscon" sudo
 
 sed -e "s/PermitRootLogin yes/PermitRootLogin no/g" -i /etc/ssh/sshd_config
 sed -e "s/#PermitRootLogin yes/PermitRootLogin no/g" -i /etc/ssh/sshd_config
@@ -60,7 +56,7 @@ network:
 EOF
 
 systemctl restart sshd	
-	`, pass, privateIP)
+	`, privateIP)
 
 	copts := servers.CreateOpts{
 		Name:      name,

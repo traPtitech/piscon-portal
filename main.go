@@ -454,7 +454,7 @@ func createInstance(c echo.Context) error {
 
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
 
-	pass := genPassword()
+	pass := os.Getenv("CONOHA_ISUCON_PASSWORD")
 	i := &Instance{}
 	db.Where("name = ?", name).Find(i)
 	if i.Name != "" {
@@ -464,7 +464,7 @@ func createInstance(c echo.Context) error {
 	privateIP := fmt.Sprintf("172.16.0.%d", teamId*10+instanceNumber)
 
 	log.Printf("Makeinstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
-	err = conohaClient.MakeInstance(name, pass, privateIP)
+	err = conohaClient.MakeInstance(name, privateIP)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
