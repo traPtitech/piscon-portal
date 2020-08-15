@@ -555,9 +555,9 @@ func queBenchmark(c echo.Context) error {
 
 	ip := team.Instance[0].PrivateIPAddress
 
-	for i := 0; i < team.MaxInstanceNumber; i++ {
-		if uint(instanceNumber) == team.Instance[i].InstanceNumber {
-			ip = team.Instance[i].PrivateIPAddress
+	for _, instance := range team.Instance {
+		if uint(instanceNumber) == instance.InstanceNumber {
+			ip = instance.PrivateIPAddress
 		}
 	}
 	// if team.Instance[0].PrivateIPAddress == "" {
@@ -583,7 +583,7 @@ func queBenchmark(c echo.Context) error {
 	cmdStr := fmt.Sprintf("/isucon9-qualify/bin/benchmarker "+
 		"-data-dir \"/isucon9-qualify/initial-data\" "+
 		"-payment-url \"118.27.33.195:5555\""+
-		"-shipment-url \"118.27.33.195:7777\""+
+		"-shipment-url \"118.27.33.195:7000\""+
 		"-static-dir \"/isucon9-qualify/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url https://%s", ip, ip)
