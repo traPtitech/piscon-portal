@@ -104,7 +104,7 @@ $ sudo systemctl restart nginx.service</pre>
           <p>DB(isucari)を初期状態にもどすには、次のコマンドを実行します。</p>
           <pre>$ /home/isucon/isucari/webapp/sql/init.sql</pre>
           <hr>
-          <p>この他に、なにかあったらxecuaまで教えてください。</p>
+          <p>この他に、なにかあったらhosshiiまで教えてください。</p>
         </div>
       </vuestic-widget>
     </div>

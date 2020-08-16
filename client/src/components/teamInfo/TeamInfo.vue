@@ -29,7 +29,7 @@
               <td><h6><span class="col-md-6">サーバ{{n}}</span></h6></td>
             </tr>
             <tr>
-              <td><h6><span class="col-md-6">状態 :{{n}}</span></h6></td>
+              <td><h6><span class="col-md-6">状態</span></h6></td>
               <td><h6><span class="col-md-6">{{sortedInstance[n-1].status}}</span></h6></td>
             </tr>
             <tr>
@@ -69,7 +69,6 @@
               <td><h6><span class="col-md-6">{{$store.getters.maxScore.score}}</span></h6></td>
             </tr>
           </table>
-  {{this.operationInstanceNumber}}
 
           <div class="col-md-12"></div>
           <div class="form-group">
