@@ -262,7 +262,7 @@ export default {
           case 'NOT_EXIST':
             return `インスタンス${this.sortedInstance[i - 1].instance_number}を作成する`
 
-          case 'BUILD':
+          case 'BUILDING':
             return `作成中`
 
           default:
@@ -298,7 +298,7 @@ export default {
           case 'NOT_EXIST':
             return 'text-muted'
 
-          case 'BUILD':
+          case 'BUILDING':
             return 'text-info'
 
           default:

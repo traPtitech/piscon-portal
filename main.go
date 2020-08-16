@@ -32,10 +32,10 @@ var (
 )
 
 const (
-	BUILD   = "BUILD"
 	ACTIVE  = "ACTIVE"
 	SHUTOFF = "SHUTOFF"
 
+	BUILDING     = "BUILDING"
 	SHUTDOWNING  = "SHUTDOWNING"
 	NOT_EXIST    = "NOT_EXIST"
 	STARTING     = "STARTING"
@@ -478,7 +478,7 @@ func createInstance(c echo.Context) error {
 		InstanceNumber:   uint(instanceNumber),
 		TeamID:           uint(teamId),
 		Name:             name,
-		Status:           BUILD,
+		Status:           BUILDING,
 		GlobalIPAddress:  "",
 		PrivateIPAddress: privateIP,
 	}
@@ -686,7 +686,7 @@ func instanceInfo() {
 
 		fmt.Println("receive instance")
 		switch instance.Status {
-		case BUILD:
+		case BUILDING:
 			log.Println("wait building")
 			waitBuilding(instance)
 			// instance.Status = SHUTOFF
