@@ -30,7 +30,7 @@
             </tr>
             <tr>
               <td><h6><span class="col-md-6">状態</span></h6></td>
-              <td><h6><span class="col-md-6">{{sortedInstance[n-1].status}}</span></h6></td>
+              <td><h6><span :class="`col-md-6 ${instanceStatusClass(n)}`">{{sortedInstance[n-1].status}}</span></h6></td>
             </tr>
             <tr>
               <td><h6><span class="col-md-6">グローバル IP アドレス :</span></h6></td>
@@ -79,7 +79,7 @@
           </div>
           <div class="col-md-12 my-2" v-for="i in $store.state.Team.max_instance_number" :key="i">
             <button class="btn btn-micro btn-info" @click="benchmark(i)" :disabled="benchmarkButton(i) || betterize === ''">サーバ{{i}}にベンチマークを行う</button>
-            <button class="btn btn-micro btn-info" @click="setOperationModal(i)" :disabled="instanceButton(i)||waiting">{{instanceButtonMessage(i)}}</button>
+            <button :class="instanceButtonClass(i)" @click="setOperationModal(i)" :disabled="instanceButton(i)||waiting">{{instanceButtonMessage(i)}}</button>
             
           </div>
           <div v-if="error" class="type-articles">
@@ -273,6 +273,37 @@ export default {
     instanceButton () {
       return function (i) {
         return this.sortedInstance[i - 1].status !== 'ACTIVE' && this.sortedInstance[i - 1].status !== 'NOT_EXIST'
+      }
+    },
+    instanceButtonClass (i) {
+      return function (i) {
+        switch (this.sortedInstance[i - 1].status) {
+          case 'ACTIVE':
+            return `btn btn-micro btn-danger`
+
+          case 'NOT_EXIST':
+            return `btn btn-micro btn-info`
+
+          default:
+            return `btn btn-micro btn-info`
+        }
+      }
+    },
+    instanceStatusClass (i) {
+      return function (i) {
+        switch (this.sortedInstance[i - 1].status) {
+          case 'ACTIVE':
+            return 'text-primary'
+
+          case 'NOT_EXIST':
+            return 'text-muted'
+
+          case 'BUILD':
+            return 'text-info'
+
+          default:
+            return 'text-primary'
+        }
       }
     }
   }
