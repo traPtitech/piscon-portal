@@ -41,7 +41,7 @@ const (
 	STARTING     = "STARTING"
 	PRE_SHUTDOWN = "PRE_SHUTDOWN"
 
-	MAX_INSTANCE_NUMBER = 3
+	MAX_INSTANCE_NUMBER = 2
 )
 
 type Response struct {
@@ -586,11 +586,11 @@ func queBenchmark(c echo.Context) error {
 
 	cmdStr := fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
 		"-data-dir \"/home/isucon/isucari/initial-data\" "+
-		"-payment-url \"http://160.251.13.26:5555\""+
-		"-shipment-url \"http://160.251.13.26:7000\""+
+		"-payment-url \"http://172.16.0.1:5555\" "+
+		"-shipment-url \"http://172.16.0.1:7000\" "+
 		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
-		"-target-url http://%s", ip, ip)
+		"-target-url \"http://%s\"", ip, ip)
 	t := &Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
@@ -598,6 +598,7 @@ func queBenchmark(c echo.Context) error {
 		TeamID:    team.ID,
 		Betterize: req.Betterize,
 	}
+	fmt.Println(cmdStr)
 	db.Create(t)
 
 	go func() {
