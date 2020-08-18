@@ -413,26 +413,9 @@ func createTeam(c echo.Context) error {
 	team := &Team{
 		Name:              requestBody.Name,
 		MaxInstanceNumber: MAX_INSTANCE_NUMBER,
-		// Instance: make([]*Instance, 0, 3),
-		Instance: []*Instance{},
+		Instance:          []*Instance{},
 	}
-	// team.Instance = append(team.Instance, &instance)
-	// log.Printf("len %d,cap %d", len(team.Instance), cap(team.Instance))
-
-	// log.Println(instance)
-
-	// log.Println(team)
 	db.Create(team)
-
-	// db.Where("name = ?", team.Name).Find(t)
-
-	// for i := 1; i <= 3; i++ {
-	// 	db.Create(&Instance{
-	// 		Status:         NOT_EXIST,
-	// 		InstanceNumber: uint(i),
-	// 		TeamID:         t.ID,
-	// 	})
-	// }
 	return c.JSON(http.StatusCreated, team)
 }
 
@@ -531,7 +514,6 @@ func getAllResults(c echo.Context) error {
 }
 
 func queBenchmark(c echo.Context) error {
-	// id := strconv.atoi(c.Param("id"))
 	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
 	if err != nil {
 		fmt.Println(err)
@@ -562,15 +544,6 @@ func queBenchmark(c echo.Context) error {
 		}
 	}
 
-	// if team.Instance[0].PrivateIPAddress == "" {
-	// 	return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
-	// }
-
-	// if id == "2" {
-	// 	ip = team.Instance[1].PrivateIPAddress
-	// } else if id == "3" {
-	// 	ip = team.Instance[2].PrivateIPAddress
-	// }
 	if ip == "" {
 		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
 	}
@@ -679,7 +652,8 @@ func benchmarkWorker() {
 
 // activeになったらdbにipアドレスとかを含めて登録
 func instanceInfo(opts gophercloud.AuthOptions) {
-	t := time.NewTicker(23 * time.Second)
+	// 23時間ごとにtoken更新
+	t := time.NewTicker(23 * time.Hour)
 	for {
 		select {
 		case instance := <-checkInstance:
@@ -738,30 +712,17 @@ func waitBuilding(instance *Instance) *Instance {
 		IPv4 := ""
 		// instanceのipv4のアドレスを抜き出そうとしてるけどもっといいやり方がありそう
 		for _, v := range _instance.Addresses {
-			// tmp := (([]interface{})(v.([]interface{})))
 			for _, vv := range ([]interface{})(v.([]interface{})) {
 				if (vv.(map[string]interface{})["version"]).(float64) == 4 {
 					IPv4 = (vv.(map[string]interface{})["addr"]).(string)
 				}
-				// if i == 0 {
-				// 	for k, vvv := range vv.(map[string]interface{}) {
-				// 		if k == "addr" {
-				// 			IPv4 = vvv.(string)
-				// 		}
-				// 	}
-				// }
 			}
-			// fmt.Println(tmp)
 		}
 		if IPv4 != "" {
 			instance.GlobalIPAddress = IPv4
 			instance.Status = PRE_SHUTDOWN
-			// db.Model(&Instance{Name: instance.Name}).Update(instance)
 		}
 	}
-	// go func() {
-	// 	checkInstance <- instance
-	// }()
 	return instance
 }
 
@@ -775,8 +736,6 @@ func waitShutdown(instance *Instance) *Instance {
 	if strings.ToUpper(_instance.Status) == SHUTOFF {
 		instance.Status = SHUTOFF
 	}
-	// go func() { checkInstance <- instance }()
-
 	return instance
 }
 
@@ -790,7 +749,5 @@ func waitStarting(instance *Instance) *Instance {
 	if strings.ToUpper(_instance.Status) == ACTIVE {
 		instance.Status = ACTIVE
 	}
-	// go func() { checkInstance <- instance }()
-
 	return instance
 }
