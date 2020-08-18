@@ -19,10 +19,10 @@
             <div class="custom-modal-footer">
             <slot name="footer">
               <div class="custom-modal-default-button">
-                <button  @click="$emit('operation')">
+                <button class="btn btn-micro btn-info"  @click="$emit('operation')">
                 はい
                 </button>
-                <button  @click="$emit('close')">
+                <button class="btn btn-micro btn-light" @click="$emit('close')">
                 やめる
                 </button>
               </div >
