@@ -136,6 +136,11 @@ h4, .h4 {
   @include theme-button-variant($white, theme-color("dark"), $btn-border, $btn-box-dark-shadow);
 }
 
+.btn.btn-light {
+  @include theme-button-variant($white, darken(theme-color("light"),25%), $btn-border, $btn-box-dark-shadow);
+
+}
+
 .btn.btn-pale {
   @include theme-button-variant($white, theme-color("pale"), $btn-border, $btn-box-pale-shadow);
   &:hover {
