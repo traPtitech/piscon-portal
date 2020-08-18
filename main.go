@@ -123,7 +123,6 @@ func main() {
 	checkInstance = make(chan *Instance)
 
 	go benchmarkWorker()
-	go instanceInfo()
 
 	err := godotenv.Load()
 	if err != nil {
@@ -139,6 +138,8 @@ func main() {
 	}
 
 	conohaClient = conoha.New(opts)
+
+	go instanceInfo(opts)
 
 	// _db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
 	_db, err := establishConnection()
@@ -469,10 +470,6 @@ func createInstance(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
-	}
-
 	instance := &Instance{
 		Password:         pass,
 		InstanceNumber:   uint(instanceNumber),
@@ -483,6 +480,7 @@ func createInstance(c echo.Context) error {
 		PrivateIPAddress: privateIP,
 	}
 	go func() {
+		fmt.Println("send chan")
 		checkInstance <- instance
 	}()
 	db.Create(instance)
@@ -680,26 +678,36 @@ func benchmarkWorker() {
 }
 
 // activeになったらdbにipアドレスとかを含めて登録
-func instanceInfo() {
+func instanceInfo(opts gophercloud.AuthOptions) {
+	t := time.NewTicker(23 * time.Second)
 	for {
-		instance := <-checkInstance
+		select {
+		case instance := <-checkInstance:
+			fmt.Println("receive instance")
+			go setupInstance(instance)
+		case <-t.C:
+			conohaClient = conoha.New(opts)
+			fmt.Println("Conoha Client created")
+		}
+	}
+}
 
-		fmt.Println("receive instance")
+func setupInstance(_instance *Instance) {
+	instance := _instance
+L:
+	for {
 		switch instance.Status {
 		case BUILDING:
 			log.Println("wait building")
-			waitBuilding(instance)
-			// instance.Status = SHUTOFF
-			// go func() { checkInstance <- instance }()
+			instance = waitBuilding(instance)
 		case PRE_SHUTDOWN:
 			log.Println("pre shutdown")
 			instance.Status = SHUTDOWNING
 			time.Sleep(5 * time.Second)
 			conohaClient.ShutdownInstance(instance.Name)
-			go func() { checkInstance <- instance }()
 		case SHUTDOWNING:
 			log.Println("shutdowning")
-			waitShutdown(instance)
+			instance = waitShutdown(instance)
 		case SHUTOFF:
 			log.Println("shutoff")
 			networkID := os.Getenv("CONOHA_NETWORK_ID")
@@ -707,18 +715,20 @@ func instanceInfo() {
 			conohaClient.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
 			conohaClient.StartInstance(instance.Name)
 			instance.Status = STARTING
-			go func() { checkInstance <- instance }()
 		case STARTING:
 			log.Println("wait starting")
-			waitStarting(instance)
+			instance = waitStarting(instance)
 		case ACTIVE:
 			log.Println("write to db")
 			db.Model(&Instance{Name: instance.Name}).Update(instance)
+			break L
 		}
 	}
 }
 
-func waitBuilding(instance *Instance) {
+func waitBuilding(instance *Instance) *Instance {
+	time.Sleep(10 * time.Second)
+
 	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
@@ -749,14 +759,15 @@ func waitBuilding(instance *Instance) {
 			// db.Model(&Instance{Name: instance.Name}).Update(instance)
 		}
 	}
-	go func() {
-		checkInstance <- instance
-	}()
-
-	time.Sleep(10 * time.Second)
+	// go func() {
+	// 	checkInstance <- instance
+	// }()
+	return instance
 }
 
-func waitShutdown(instance *Instance) {
+func waitShutdown(instance *Instance) *Instance {
+	time.Sleep(10 * time.Second)
+
 	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
@@ -764,12 +775,14 @@ func waitShutdown(instance *Instance) {
 	if strings.ToUpper(_instance.Status) == SHUTOFF {
 		instance.Status = SHUTOFF
 	}
-	go func() { checkInstance <- instance }()
+	// go func() { checkInstance <- instance }()
 
-	time.Sleep(10 * time.Second)
+	return instance
 }
 
-func waitStarting(instance *Instance) {
+func waitStarting(instance *Instance) *Instance {
+	time.Sleep(10 * time.Second)
+
 	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
@@ -777,7 +790,7 @@ func waitStarting(instance *Instance) {
 	if strings.ToUpper(_instance.Status) == ACTIVE {
 		instance.Status = ACTIVE
 	}
-	go func() { checkInstance <- instance }()
+	// go func() { checkInstance <- instance }()
 
-	time.Sleep(10 * time.Second)
+	return instance
 }
