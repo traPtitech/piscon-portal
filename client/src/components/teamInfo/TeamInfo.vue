@@ -87,7 +87,7 @@
           </div>
         </div>
       </vuestic-widget>
-      <vuestic-widget v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="col-md-12">
+      <!-- <vuestic-widget v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="col-md-12">
         <div class="widget-header">広告</div>
         <div class="widget-body">
           <p>
@@ -95,7 +95,7 @@
             部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけるとSysAd班が泣いて喜びます。
           </p>
         </div>
-      </vuestic-widget>
+      </vuestic-widget> -->
       <vuestic-widget class="col-md-12" headerText="最新の結果">
         <pre>{{$store.getters.lastResult}}</pre>
       </vuestic-widget>
