@@ -69,6 +69,7 @@ type Team struct {
 	Instance          []*Instance `json:"instance"`
 	Results           []*Result   `json:"results"`
 	MaxInstanceNumber int         `json:"max_instance_number"`
+	Group             string      `json:"group"`
 }
 
 type User struct {
@@ -393,7 +394,8 @@ func createUser(c echo.Context) error {
 
 func createTeam(c echo.Context) error {
 	requestBody := &struct {
-		Name string `json:"name"`
+		Name  string `json:"name"`
+		Group string `json:"group"`
 	}{}
 
 	c.Bind(requestBody)
@@ -414,6 +416,7 @@ func createTeam(c echo.Context) error {
 		Name:              requestBody.Name,
 		MaxInstanceNumber: MAX_INSTANCE_NUMBER,
 		Instance:          []*Instance{},
+		Group:             requestBody.Group,
 	}
 	db.Create(team)
 	return c.JSON(http.StatusCreated, team)

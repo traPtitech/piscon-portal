@@ -3,7 +3,14 @@
     <div class="row">
       <div class="col-md-12">
         <vuestic-widget class="chart-widget" headerText="スコア推移(全体)">
-          <vuestic-chart :options="options" :data="scoreData" type="line"></vuestic-chart>
+          <vuestic-chart :options="options" :data="scoreAllData" type="line"></vuestic-chart>
+        </vuestic-widget>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <vuestic-widget class="chart-widget" headerText="スコア推移(20B)">
+          <vuestic-chart :options="options" :data="score20BData" type="line"></vuestic-chart>
         </vuestic-widget>
       </div>
     </div>
@@ -85,11 +92,42 @@
       }
     },
     computed: {
-      scoreData () {
+      scoreAllData () {
         const data = {
           datasets: []
         }
         data.datasets = this.$store.state.AllResults
+        .filter(a => a.results.filter(r => r.pass).length > 0)
+        .map((team, i, c) => {
+          const color = chroma(360 / c.length * i, 0.6, 0.4, 'hsl')
+          const td = {
+            label: team.name,
+            fill: false,
+            lineTension: 0,
+            pointBackgroundColor: color.alpha(0.8).css(),
+            borderColor: color.alpha(0.6).css(),
+            pointBorderColor: color.darken(0.4).alpha(0.8).css(),
+            pointMoverBackgroundColor: color.darken(2).alpha(0.8).css(),
+            data: []
+          }
+          td.data = team.results.filter(r => r.pass && r.score !== 0).map(r => {
+            return {x: r.id, y: r.score, time: r.created_at}
+          })
+          return td
+        }).filter(a => a.data.length > 0).sort((a, b) => {
+          const po = a.data.reduce((c, d) => { return c < d.y ? d.y : c }, 0)
+          const pi = b.data.reduce((c, d) => { return c < d.y ? d.y : c }, 0)
+          return pi - po
+        })
+
+        return data
+      },
+      score20BData () {
+        const data = {
+          datasets: []
+        }
+        data.datasets = this.$store.state.AllResults
+        .filter(a => a.group === '20B')
         .filter(a => a.results.filter(r => r.pass).length > 0)
         .map((team, i, c) => {
           const color = chroma(360 / c.length * i, 0.6, 0.4, 'hsl')
