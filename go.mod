@@ -1,8 +1,10 @@
 module github.com/traPtitech/piscon-portal
 
-go 1.13
+go 1.16
 
 require (
+	github.com/aws/aws-sdk-go-v2/config v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.9.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gophercloud/gophercloud v0.12.0
 	github.com/jinzhu/gorm v1.9.8
