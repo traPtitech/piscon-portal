@@ -17,6 +17,10 @@ type EC2CreateInstanceAPI interface {
 		optFns ...func(*ec2.Options)) (*ec2.CreateTagsOutput, error)
 }
 
+type EC2DeleteInstanceAPI interface {
+	TerminateInstances(ctx context.Context, params *ec2.TerminateInstancesInput, optFns ...func(*ec2.Options)) (*ec2.TerminateInstancesOutput, error)
+}
+
 type AwsClient struct {
 	Client *ec2.Client
 }
@@ -38,4 +42,8 @@ func (a *AwsClient) CreateInstance(c context.Context, api EC2CreateInstanceAPI, 
 
 func (a *AwsClient) CreateTags(c context.Context, api EC2CreateInstanceAPI, input *ec2.CreateTagsInput) (*ec2.CreateTagsOutput, error) {
 	return api.CreateTags(c, input)
+}
+
+func (a *AwsClient) DeleteInstance(c context.Context, api EC2DeleteInstanceAPI, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
+	return api.TerminateInstances(c, input)
 }
