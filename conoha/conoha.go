@@ -132,30 +132,6 @@ func (c *ConohaClient) InstanceList() ([]servers.Server, error) {
 	return list, err
 }
 
-func (c *ConohaClient) ImageList() ([]images.Image, error) {
-	eo := gophercloud.EndpointOpts{
-		Type:   "compute",
-		Region: "tyo2",
-	}
-	compute, err := openstack.NewComputeV2(c.client, eo)
-	if err != nil {
-		panic(err)
-	}
-
-	opts := images.ListOpts{}
-
-	pager := images.ListDetail(compute, opts)
-
-	list := make([]images.Image, 0)
-
-	err = pager.EachPage(func(page pagination.Page) (bool, error) {
-		imageList, _ := images.ExtractImages(page)
-		list = append(list, imageList...)
-		return true, nil
-	})
-	return list, err
-}
-
 func (c *ConohaClient) ShutdownInstance(instanceName string) error {
 	instance, err := c.GetInstanceInfo(instanceName)
 	if err != nil {
@@ -253,4 +229,27 @@ func (c *ConohaClient) CreatePorts(privateIP, networkID string) *ports.Port {
 		panic(err)
 	}
 	return port
+}
+func (c *ConohaClient) ImageList() ([]images.Image, error) {
+	eo := gophercloud.EndpointOpts{
+		Type:   "compute",
+		Region: "tyo2",
+	}
+	compute, err := openstack.NewComputeV2(c.client, eo)
+	if err != nil {
+		panic(err)
+	}
+
+	opts := images.ListOpts{}
+
+	pager := images.ListDetail(compute, opts)
+
+	list := make([]images.Image, 0)
+
+	err = pager.EachPage(func(page pagination.Page) (bool, error) {
+		imageList, _ := images.ExtractImages(page)
+		list = append(list, imageList...)
+		return true, nil
+	})
+	return list, err
 }

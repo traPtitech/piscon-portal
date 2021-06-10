@@ -5,21 +5,14 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/aws-sdk-go/aws"
 )
 
-type EC2CreateInstanceAPI interface {
-	RunInstances(ctx context.Context, params *ec2.RunInstancesInput, optFns ...func(*ec2.Options)) (*ec2.RunInstancesOutput, error)
-	CreateTags(ctx context.Context, params *ec2.CreateTagsInput, optFns ...func(*ec2.Options)) (*ec2.CreateTagsOutput, error)
-}
-
-type EC2DeleteInstanceAPI interface {
-	TerminateInstances(ctx context.Context, params *ec2.TerminateInstancesInput, optFns ...func(*ec2.Options)) (*ec2.TerminateInstancesOutput, error)
-}
-
-type EC2InstanceAPI interface {
-	StartInstances(ctx context.Context, params *ec2.StartInstancesInput, optFns ...func(*ec2.Options)) (*ec2.StartInstancesOutput, error)
-	StopInstances(ctx context.Context, params *ec2.StopInstancesInput, optFns ...func(*ec2.Options)) (*ec2.StopInstancesOutput, error)
-}
+const (
+	ImageId      = "ami-e7527ed7"            //TODO
+	InstanceType = types.InstanceTypeT2Micro //TODO                  //TODO
+)
 
 type AwsClient struct {
 	c *ec2.Client
@@ -36,8 +29,35 @@ func New() *AwsClient {
 	return a
 }
 
-func (a *AwsClient) CreateInstances(c context.Context, input *ec2.RunInstancesInput) (*ec2.RunInstancesOutput, error) {
-	return a.c.RunInstances(c, input)
+func (a *AwsClient) CreateInstances(c context.Context, name string, num int32, subnetId string, privateIp string) error {
+	var k string
+	k = "Name"
+	i := &ec2.RunInstancesInput{
+		ImageId:          aws.String(ImageId),
+		InstanceType:     InstanceType,
+		MinCount:         &num,
+		MaxCount:         &num,
+		SubnetId:         &subnetId,
+		PrivateIpAddress: &privateIp,
+	}
+	res, err := a.c.RunInstances(c, i)
+	if err != nil {
+		return err
+	}
+	ti := &ec2.CreateTagsInput{
+		Resources: []string{*res.Instances[0].InstanceId},
+		Tags: []types.Tag{
+			{
+				Key:   &k,
+				Value: &name,
+			},
+		},
+	}
+	_, err = a.CreateTags(c, ti)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AwsClient) CreateTags(c context.Context, input *ec2.CreateTagsInput) (*ec2.CreateTagsOutput, error) {
