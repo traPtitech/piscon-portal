@@ -22,7 +22,7 @@ type EC2InstanceAPI interface {
 }
 
 type AwsClient struct {
-	Client *ec2.Client
+	c *ec2.Client
 }
 
 func New() *AwsClient {
@@ -32,24 +32,26 @@ func New() *AwsClient {
 		panic(err)
 	}
 	client := ec2.NewFromConfig(cfg)
-	a.Client = client
+	a.c = client
 	return a
 }
 
-func (a *AwsClient) CreateInstance(c context.Context, api EC2CreateInstanceAPI, input *ec2.RunInstancesInput) (*ec2.RunInstancesOutput, error) {
-	return api.RunInstances(c, input)
+func (a *AwsClient) CreateInstance(c context.Context, input *ec2.RunInstancesInput) (*ec2.RunInstancesOutput, error) {
+	return a.c.RunInstances(c, input)
 }
 
-func (a *AwsClient) CreateTags(c context.Context, api EC2CreateInstanceAPI, input *ec2.CreateTagsInput) (*ec2.CreateTagsOutput, error) {
-	return api.CreateTags(c, input)
+func (a *AwsClient) CreateTags(c context.Context, input *ec2.CreateTagsInput) (*ec2.CreateTagsOutput, error) {
+	return a.c.CreateTags(c, input)
 }
 
-func (a *AwsClient) DeleteInstance(c context.Context, api EC2DeleteInstanceAPI, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
-	return api.TerminateInstances(c, input)
+func (a *AwsClient) DeleteInstance(c context.Context, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
+	return a.c.TerminateInstances(c, input)
 }
-func (a *AwsClient) StartInstances(c context.Context, api EC2InstanceAPI, input *ec2.StartInstancesInput) (*ec2.StartInstancesOutput, error) {
-	return api.StartInstances(c, input)
+
+func (a *AwsClient) StartInstances(c context.Context, input *ec2.StartInstancesInput) (*ec2.StartInstancesOutput, error) {
+	return a.c.StartInstances(c, input)
 }
-func (a *AwsClient) StopInstances(c context.Context, api EC2InstanceAPI, input *ec2.StopInstancesInput) (*ec2.StopInstancesOutput, error) {
-	return api.StopInstances(c, input)
+
+func (a *AwsClient) StopInstances(c context.Context, input *ec2.StopInstancesInput) (*ec2.StopInstancesOutput, error) {
+	return a.c.StopInstances(c, input)
 }
