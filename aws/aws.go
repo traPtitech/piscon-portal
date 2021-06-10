@@ -36,7 +36,7 @@ func New() *AwsClient {
 	return a
 }
 
-func (a *AwsClient) CreateInstance(c context.Context, input *ec2.RunInstancesInput) (*ec2.RunInstancesOutput, error) {
+func (a *AwsClient) CreateInstances(c context.Context, input *ec2.RunInstancesInput) (*ec2.RunInstancesOutput, error) {
 	return a.c.RunInstances(c, input)
 }
 
@@ -44,7 +44,7 @@ func (a *AwsClient) CreateTags(c context.Context, input *ec2.CreateTagsInput) (*
 	return a.c.CreateTags(c, input)
 }
 
-func (a *AwsClient) DeleteInstance(c context.Context, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
+func (a *AwsClient) DeleteInstances(c context.Context, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
 	return a.c.TerminateInstances(c, input)
 }
 
