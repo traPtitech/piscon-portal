@@ -55,3 +55,7 @@ func (a *AwsClient) StartInstances(c context.Context, input *ec2.StartInstancesI
 func (a *AwsClient) StopInstances(c context.Context, input *ec2.StopInstancesInput) (*ec2.StopInstancesOutput, error) {
 	return a.c.StopInstances(c, input)
 }
+
+func (a *AwsClient) GetInstancesInfo(c context.Context, input *ec2.DescribeInstancesInput) (*ec2.DescribeInstancesOutput, error) {
+	return a.c.DescribeInstances(c, input)
+}
