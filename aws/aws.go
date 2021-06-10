@@ -30,8 +30,6 @@ func New() *AwsClient {
 }
 
 func (a *AwsClient) CreateInstances(c context.Context, name string, num int32, subnetId string, privateIp string) error {
-	var k string
-	k = "Name"
 	i := &ec2.RunInstancesInput{
 		ImageId:          aws.String(ImageId),
 		InstanceType:     InstanceType,
@@ -44,24 +42,29 @@ func (a *AwsClient) CreateInstances(c context.Context, name string, num int32, s
 	if err != nil {
 		return err
 	}
-	ti := &ec2.CreateTagsInput{
-		Resources: []string{*res.Instances[0].InstanceId},
-		Tags: []types.Tag{
-			{
-				Key:   &k,
-				Value: &name,
-			},
-		},
-	}
-	_, err = a.CreateTags(c, ti)
+
+	err = a.CreateTags(c, *res.Instances[0].InstanceId, "Name", name)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *AwsClient) CreateTags(c context.Context, input *ec2.CreateTagsInput) (*ec2.CreateTagsOutput, error) {
-	return a.c.CreateTags(c, input)
+func (a *AwsClient) CreateTags(c context.Context, instanceId string, key string, value string) error {
+	i := &ec2.CreateTagsInput{
+		Resources: []string{instanceId},
+		Tags: []types.Tag{
+			{
+				Key:   &key,
+				Value: &value,
+			},
+		},
+	}
+	_, err := a.c.CreateTags(c, i)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AwsClient) DeleteInstances(c context.Context, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
