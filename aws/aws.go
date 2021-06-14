@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/traPtitech/piscon-portal/model"
 )
 
 const (
@@ -16,6 +17,13 @@ const (
 
 var (
 	defaultInstanceNum = int32(1)
+	status             = map[string]string{
+		string(types.InstanceStateNamePending):    model.STARTING, //TODO buildingと被っている
+		string(types.InstanceStateNameRunning):    model.ACTIVE,
+		string(types.InstanceStateNameTerminated): model.NOT_EXIST,
+		string(types.InstanceStateNameStopping):   model.SHUTDOWNING,
+		string(types.InstanceStateNameStopped):    model.SHUTOFF,
+	}
 )
 
 type AwsClient struct {
