@@ -17,7 +17,8 @@ const (
 
 var (
 	defaultInstanceNum = int32(1)
-	status             = map[string]string{
+	InstanceNameKey    = "Name"
+	statusmap          = map[string]string{
 		string(types.InstanceStateNamePending):    model.STARTING, //TODO buildingと被っている
 		string(types.InstanceStateNameRunning):    model.ACTIVE,
 		string(types.InstanceStateNameTerminated): model.NOT_EXIST,
@@ -112,6 +113,23 @@ func (a *AwsClient) StopInstance(c context.Context, instanceId string) error {
 	return nil
 }
 
-func (a *AwsClient) GetInstancesInfo(c context.Context, instanceId string) error {
-	return a.c.DescribeInstances(c, input)
+func (a *AwsClient) GetInstancesInfo(c context.Context, instanceName string) (*model.Instance, error) {
+	i := &ec2.DescribeInstancesInput{
+		Filters: []types.Filter{
+			{
+				Name:   &InstanceNameKey,
+				Values: []string{instanceName},
+			},
+		},
+	}
+	res, err := a.c.DescribeInstances(c, i)
+	if err != nil {
+		return nil, err
+	}
+	instance := &model.Instance{
+		GlobalIPAddress:  *res.Reservations[0].Instances[0].PublicIpAddress,
+		PrivateIPAddress: *res.Reservations[0].Instances[0].PrivateIpAddress,
+		Status:           statusmap[string(res.Reservations[0].Instances[0].State.Name)],
+	}
+	return instance, nil
 }
