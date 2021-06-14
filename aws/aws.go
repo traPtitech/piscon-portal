@@ -11,7 +11,7 @@ import (
 
 const (
 	ImageId      = "ami-e7527ed7"            //TODO
-	InstanceType = types.InstanceTypeT2Micro //TODO                  //TODO
+	InstanceType = types.InstanceTypeT2Micro //TODO
 )
 
 type AwsClient struct {
@@ -67,18 +67,39 @@ func (a *AwsClient) CreateTags(c context.Context, instanceId string, key string,
 	return nil
 }
 
-func (a *AwsClient) DeleteInstances(c context.Context, input *ec2.TerminateInstancesInput) (*ec2.TerminateInstancesOutput, error) {
-	return a.c.TerminateInstances(c, input)
+func (a *AwsClient) DeleteInstances(c context.Context, instanceId string) error {
+	i := &ec2.TerminateInstancesInput{
+		InstanceIds: []string{instanceId},
+	}
+	_, err := a.c.TerminateInstances(c, i)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (a *AwsClient) StartInstances(c context.Context, input *ec2.StartInstancesInput) (*ec2.StartInstancesOutput, error) {
-	return a.c.StartInstances(c, input)
+func (a *AwsClient) StartInstances(c context.Context, instanceId string) error {
+	i := &ec2.StartInstancesInput{
+		InstanceIds: []string{instanceId},
+	}
+	_, err := a.c.StartInstances(c, i)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (a *AwsClient) StopInstances(c context.Context, input *ec2.StopInstancesInput) (*ec2.StopInstancesOutput, error) {
-	return a.c.StopInstances(c, input)
+func (a *AwsClient) StopInstances(c context.Context, instanceId string) error {
+	i := &ec2.StopInstancesInput{
+		InstanceIds: []string{instanceId},
+	}
+	_, err := a.c.StopInstances(c, i)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (a *AwsClient) GetInstancesInfo(c context.Context, input *ec2.DescribeInstancesInput) (*ec2.DescribeInstancesOutput, error) {
+func (a *AwsClient) GetInstancesInfo(c context.Context, instanceId string) error {
 	return a.c.DescribeInstances(c, input)
 }
