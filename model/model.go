@@ -15,12 +15,10 @@ const (
 	NOT_EXIST    = "NOT_EXIST"
 	STARTING     = "STARTING"
 	PRE_SHUTDOWN = "PRE_SHUTDOWN"
-
-	MAX_INSTANCE_NUMBER = 2
 )
 
 type Response struct {
-	Suceess bool   `json:"suceess"`
+	Success bool   `json:"suceess"`
 	Message string `json:"message"`
 }
 

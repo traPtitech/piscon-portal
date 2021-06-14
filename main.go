@@ -20,108 +20,26 @@ import (
 	"github.com/labstack/echo/middleware"
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/traPtitech/piscon-portal/conoha"
+	"github.com/traPtitech/piscon-portal/model"
 	"golang.org/x/crypto/acme/autocert"
 )
 
 var (
 	checkTask     chan struct{}
-	sendWorker    chan *Task
-	checkInstance chan *Instance
+	sendWorker    chan *model.Task
+	checkInstance chan *model.Instance
 	db            *gorm.DB
 	conohaClient  *conoha.ConohaClient
 )
 
 const (
-	ACTIVE  = "ACTIVE"
-	SHUTOFF = "SHUTOFF"
-
-	BUILDING     = "BUILDING"
-	SHUTDOWNING  = "SHUTDOWNING"
-	NOT_EXIST    = "NOT_EXIST"
-	STARTING     = "STARTING"
-	PRE_SHUTDOWN = "PRE_SHUTDOWN"
-
 	MAX_INSTANCE_NUMBER = 2
 )
 
-type Response struct {
-	Suceess bool   `json:"suceess"`
-	Message string `json:"message"`
-}
-
-type Output struct {
-	Pass     bool     `json:"pass"`
-	Score    int64    `json:"score"`
-	Campaign int64    `json:"campaign`
-	Language string   `json:"language`
-	Messages []string `json:"messages"`
-}
-
-type Message struct {
-	gorm.Model
-	ResultId uint
-	Text     string
-}
-
-type Team struct {
-	gorm.Model
-	Name              string      `gorm:"unique size:50" json:"name"`
-	Instance          []*Instance `json:"instance"`
-	Results           []*Result   `json:"results"`
-	MaxInstanceNumber int         `json:"max_instance_number"`
-	Group             string      `json:"group"`
-}
-
-type User struct {
-	gorm.Model
-	Name       string `gorm:"unique size:50" json:"name"`
-	ScreenName string `json:"screen_name"`
-	TeamID     uint   `json:"team_id"`
-}
-
-type Instance struct {
-	gorm.Model
-	TeamID           uint   `json:"team_id"`
-	GlobalIPAddress  string `json:"global_ip_address"`
-	PrivateIPAddress string `json:"private_ip_address"`
-	Password         string `json:"password"`
-	InstanceNumber   uint   `json:"instance_number"`
-	Status           string `json:"status"`
-	Name             string `json:"name"`
-}
-
-type Result struct {
-	ID        int        `gorm:"AUTO_INCREMENT" json:"id"`
-	TeamID    uint       `json:"team_id"`
-	TaskID    uint       `json:"task_id"`
-	Pass      bool       `json:"pass"`
-	Score     int64      `json:"score"`
-	Campaign  int64      `json:"campaign`
-	Betterize string     `json:"betterize"`
-	Messages  []*Message `json:"messages"`
-	CreatedAt time.Time  `json:"created_at"`
-}
-
-type Task struct {
-	gorm.Model
-	CmdStr    string `json:"cmd_str" sql:"type:text;"`
-	IP        string `json:"ip"`
-	State     string `json:"state"`
-	Betterize string `json:"betterize"`
-	TeamID    uint   `json:"team_id"`
-	Team      Team   `json:"team"`
-}
-
-type Question struct {
-	gorm.Model
-	Question string `json:"question"`
-	Answer   string `json:"answer"`
-}
-
 func main() {
-	sendWorker = make(chan *Task, 10)
+	sendWorker = make(chan *model.Task, 10)
 	checkTask = make(chan struct{})
-	checkInstance = make(chan *Instance)
+	checkInstance = make(chan *model.Instance)
 
 	go benchmarkWorker()
 
@@ -152,12 +70,12 @@ func main() {
 	db = _db
 	// db.LogMode(true)
 
-	db.AutoMigrate(&Task{}, &Message{}, &Result{}, &Instance{}, &Team{}, &User{}, &Question{})
+	db.AutoMigrate(&model.Task{}, &model.Message{}, &model.Result{}, &model.Instance{}, &model.Team{}, &model.User{}, &model.Question{})
 
-	tasks := []*Task{}
+	tasks := []*model.Task{}
 	db.Not("state = 'done'").Find(&tasks)
 	for _, t := range tasks {
-		go func(task *Task) {
+		go func(task *model.Task) {
 			sendWorker <- task
 		}(t)
 	}
@@ -266,18 +184,20 @@ func establishConnection() (*gorm.DB, error) {
 }
 
 func getNewer(c echo.Context) error {
-	teams := []Team{}
+	teams := []model.Team{}
 	db.Raw("SELECT * FROM results AS PI LEFT JOIN teams ON PI.team_id = teams.id WHERE PI.id =( SELECT po.id FROM results AS po LEFT JOIN teams ON po.team_id = teams.id WHERE pass = 1 AND PI.team_id = po.team_id AND score > 0 ORDER BY po.score DESC LIMIT 1 ) AND (PI.created_at > (CURRENT_TIME() - INTERVAL 1 day))").Scan(&teams)
 	return c.JSON(http.StatusOK, teams)
 }
 
 func getTeam(c echo.Context) error {
 	id := c.Param("id")
-	team := Team{}
+	team := model.Team{}
 	db.Where("id = ?", id).Find(&team)
 
 	if team.Name == "" {
-		return c.JSON(http.StatusNotFound, Response{false, "登録されていません"})
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: "登録されていません"})
 	}
 
 	db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
@@ -291,9 +211,9 @@ func getTeam(c echo.Context) error {
 			}
 		}
 		if !flag {
-			emptyInstance := &Instance{}
+			emptyInstance := &model.Instance{}
 			emptyInstance.InstanceNumber = uint(i + 1)
-			emptyInstance.Status = NOT_EXIST
+			emptyInstance.Status = model.NOT_EXIST
 			team.Instance = append(team.Instance, emptyInstance)
 		}
 	}
@@ -303,18 +223,20 @@ func getTeam(c echo.Context) error {
 
 func getUser(c echo.Context) error {
 	name := c.Param("name")
-	user := User{}
+	user := model.User{}
 	db.Where("name = ?", name).Find(&user)
 
 	if user.Name == "" {
-		return c.JSON(http.StatusNotFound, Response{false, "登録されていません"})
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: "登録されていません"})
 	}
 
 	return c.JSON(http.StatusOK, user)
 }
 
 func getAllTeam(c echo.Context) error {
-	teams := []*Team{}
+	teams := []*model.Team{}
 	db.Find(&teams)
 	for _, team := range teams {
 		db.Model(team).Related(&team.Results)
@@ -327,7 +249,7 @@ func getAllTeam(c echo.Context) error {
 }
 
 func getQuestions(c echo.Context) error {
-	questions := []*Question{}
+	questions := []*model.Question{}
 	db.Find(&questions)
 	// TODO: 改行対応
 
@@ -339,7 +261,7 @@ func postQuestions(c echo.Context) error {
 		Question string `json:"question"`
 	}{}
 	c.Bind(&req)
-	question := &Question{
+	question := &model.Question{
 		Question: req.Question,
 	}
 	db.Create(question)
@@ -352,7 +274,7 @@ func putQuestions(c echo.Context) error {
 		Answer string `json:"answer"`
 	}{}
 	c.Bind(&req)
-	question := &Question{
+	question := &model.Question{
 		Answer: req.Answer,
 	}
 	db.Model(question).Where("id = ?", id).Update(&question)
@@ -362,7 +284,7 @@ func putQuestions(c echo.Context) error {
 
 func deleteQuestions(c echo.Context) error {
 	id := c.Param("id")
-	question := &Question{}
+	question := &model.Question{}
 	db.Model(question).Where("id = ?", id).Delete(&question)
 
 	return c.JSON(http.StatusOK, question)
@@ -378,14 +300,16 @@ func genPassword() string {
 }
 
 func createUser(c echo.Context) error {
-	user := &User{}
+	user := &model.User{}
 	c.Bind(user)
 
-	u := &User{}
+	u := &model.User{}
 	db.Where("name = ?", user.Name).Find(u)
 
 	if u.Name != "" {
-		return c.JSON(http.StatusNotFound, Response{false, "登録されています"})
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: "登録されています"})
 	}
 
 	db.Create(user)
@@ -401,21 +325,25 @@ func createTeam(c echo.Context) error {
 	c.Bind(requestBody)
 
 	if requestBody.Name == "" {
-		return c.JSON(http.StatusBadRequest, Response{false, "リクエストボディの要素が足りません"})
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: "リクエストボディの要素が足りません"})
 	}
 
-	t := &Team{}
+	t := &model.Team{}
 	db.Where("name = ?", requestBody.Name).Find(t)
 
 	if t.Name != "" {
-		return c.JSON(http.StatusNotFound, Response{false, "登録されています"})
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: "登録されています"})
 	}
 	// pass := genPassword()
 
-	team := &Team{
+	team := &model.Team{
 		Name:              requestBody.Name,
 		MaxInstanceNumber: MAX_INSTANCE_NUMBER,
-		Instance:          []*Instance{},
+		Instance:          []*model.Instance{},
 		Group:             requestBody.Group,
 	}
 	db.Create(team)
@@ -436,13 +364,15 @@ func createInstance(c echo.Context) error {
 	}
 
 	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
-		return c.JSON(http.StatusBadRequest, Response{false, "instance number should be 1 or 2 or 3"})
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: "instance number should be 1 or 2 or 3"})
 	}
 
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
 
 	pass := os.Getenv("CONOHA_ISUCON_PASSWORD")
-	i := &Instance{}
+	i := &model.Instance{}
 	db.Where("name = ?", name).Find(i)
 	if i.Name != "" {
 		return c.JSON(http.StatusConflict, "既に登録されています")
@@ -456,12 +386,12 @@ func createInstance(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	instance := &Instance{
+	instance := &model.Instance{
 		Password:         pass,
 		InstanceNumber:   uint(instanceNumber),
 		TeamID:           uint(teamId),
 		Name:             name,
-		Status:           BUILDING,
+		Status:           model.BUILDING,
 		GlobalIPAddress:  "",
 		PrivateIPAddress: privateIP,
 	}
@@ -488,11 +418,13 @@ func deleteInstance(c echo.Context) error {
 	}
 
 	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
-		return c.JSON(http.StatusBadRequest, Response{false, "instance number should be 1 or 2 or 3"})
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: "instance number should be 1 or 2 or 3"})
 	}
 
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
-	i := &Instance{}
+	i := &model.Instance{}
 	if db.Where("name = ?", name).First(i).RecordNotFound() {
 		return c.JSON(http.StatusNotFound, "指定したインスタンスが見つかりません")
 	}
@@ -501,14 +433,14 @@ func deleteInstance(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	i = &Instance{}
+	i = &model.Instance{}
 	db.Where("name = ?", name).Delete(i)
 
 	return nil
 }
 
 func getAllResults(c echo.Context) error {
-	teams := []*Team{}
+	teams := []*model.Team{}
 	db.Find(&teams)
 	for _, team := range teams {
 		db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
@@ -530,11 +462,13 @@ func queBenchmark(c echo.Context) error {
 
 	c.Bind(&req)
 
-	team := &Team{}
+	team := &model.Team{}
 	db.Where("name = ?", name).Find(team)
 
 	if team.Name == "" {
-		return c.JSON(http.StatusNotFound, Response{false, "登録されていません"})
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: "登録されていません"})
 	}
 
 	db.Model(team).Related(&team.Instance)
@@ -548,14 +482,18 @@ func queBenchmark(c echo.Context) error {
 	}
 
 	if ip == "" {
-		return c.JSON(http.StatusBadRequest, Response{false, "インスタンスが存在しません"})
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: "インスタンスが存在しません"})
 	}
 
-	task := &Task{}
+	task := &model.Task{}
 
 	db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task)
 	if task.CmdStr != "" {
-		return c.JSON(http.StatusNotAcceptable, Response{false, "すでに登録されています"})
+		return c.JSON(http.StatusNotAcceptable, model.Response{
+			Success: false,
+			Message: "既に登録されています"})
 	}
 
 	cmdStr := fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
@@ -565,7 +503,7 @@ func queBenchmark(c echo.Context) error {
 		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url \"http://%s\"", ip, ip)
-	t := &Task{
+	t := &model.Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
 		State:     "waiting",
@@ -579,7 +517,9 @@ func queBenchmark(c echo.Context) error {
 		sendWorker <- t
 	}()
 
-	return c.JSON(http.StatusCreated, Response{true, "キューに追加しました"})
+	return c.JSON(http.StatusCreated, model.Response{
+		Success: false,
+		Message: "キューに追加しました"})
 }
 
 func getBenchmarkQueue(c echo.Context) error {
@@ -590,8 +530,8 @@ func getBenchmarkQueue(c echo.Context) error {
 	return c.JSON(http.StatusOK, tasks)
 }
 
-func getTaskQueInfo() []*Task {
-	tasks := []*Task{}
+func getTaskQueInfo() []*model.Task {
+	tasks := []*model.Task{}
 	db.Table("tasks").Joins("LEFT JOIN teams ON `teams`.id = `tasks`.team_id").Not("state = 'done'").Find(&tasks)
 	return tasks
 }
@@ -613,17 +553,17 @@ func benchmarkWorker() {
 		fmt.Println("end benchmark")
 
 		fmt.Println(string(res))
-		data := &Output{}
+		data := &model.Output{}
 		err = json.Unmarshal(res, data)
 		if err != nil {
-			result := &Result{
+			result := &model.Result{
 				TeamID:    task.TeamID,
 				TaskID:    task.ID,
 				Pass:      false,
 				Score:     0,
 				Campaign:  0,
 				Betterize: task.Betterize,
-				Messages:  []*Message{{Text: err.Error()}},
+				Messages:  []*model.Message{{Text: err.Error()}},
 			}
 			db.Create(result)
 
@@ -631,12 +571,12 @@ func benchmarkWorker() {
 			db.Save(task)
 			continue
 		}
-		messages := make([]*Message, len(data.Messages))
+		messages := make([]*model.Message, len(data.Messages))
 		for i, text := range data.Messages {
-			messages[i] = &Message{Text: text}
+			messages[i] = &model.Message{Text: text}
 		}
 
-		result := &Result{
+		result := &model.Result{
 			TeamID:    task.TeamID,
 			TaskID:    task.ID,
 			Pass:      data.Pass,
@@ -669,41 +609,41 @@ func instanceInfo(opts gophercloud.AuthOptions) {
 	}
 }
 
-func setupInstance(_instance *Instance) {
+func setupInstance(_instance *model.Instance) {
 	instance := _instance
 L:
 	for {
 		switch instance.Status {
-		case BUILDING:
+		case model.BUILDING:
 			log.Println("wait building")
 			instance = waitBuilding(instance)
-		case PRE_SHUTDOWN:
+		case model.PRE_SHUTDOWN:
 			log.Println("pre shutdown")
-			instance.Status = SHUTDOWNING
+			instance.Status = model.SHUTDOWNING
 			time.Sleep(5 * time.Second)
 			conohaClient.ShutdownInstance(instance.Name)
-		case SHUTDOWNING:
+		case model.SHUTDOWNING:
 			log.Println("shutdowning")
 			instance = waitShutdown(instance)
-		case SHUTOFF:
+		case model.SHUTOFF:
 			log.Println("shutoff")
 			networkID := os.Getenv("CONOHA_NETWORK_ID")
 			log.Printf("AttachPrivateNetwork name:%s networkID %s privateIP:%s\n", instance.Name, os.Getenv("CONOHA_NETWORK_ID"), instance.PrivateIPAddress)
 			conohaClient.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
 			conohaClient.StartInstance(instance.Name)
-			instance.Status = STARTING
-		case STARTING:
+			instance.Status = model.STARTING
+		case model.STARTING:
 			log.Println("wait starting")
 			instance = waitStarting(instance)
-		case ACTIVE:
+		case model.ACTIVE:
 			log.Println("write to db")
-			db.Model(&Instance{Name: instance.Name}).Update(instance)
+			db.Model(&model.Instance{Name: instance.Name}).Update(instance)
 			break L
 		}
 	}
 }
 
-func waitBuilding(instance *Instance) *Instance {
+func waitBuilding(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
 	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
@@ -711,7 +651,7 @@ func waitBuilding(instance *Instance) *Instance {
 		fmt.Println(err)
 	}
 
-	if strings.ToUpper(_instance.Status) == ACTIVE {
+	if strings.ToUpper(_instance.Status) == model.ACTIVE {
 		IPv4 := ""
 		// instanceのipv4のアドレスを抜き出そうとしてるけどもっといいやり方がありそう
 		for _, v := range _instance.Addresses {
@@ -723,34 +663,34 @@ func waitBuilding(instance *Instance) *Instance {
 		}
 		if IPv4 != "" {
 			instance.GlobalIPAddress = IPv4
-			instance.Status = PRE_SHUTDOWN
+			instance.Status = model.PRE_SHUTDOWN
 		}
 	}
 	return instance
 }
 
-func waitShutdown(instance *Instance) *Instance {
+func waitShutdown(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
 	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
 	}
-	if strings.ToUpper(_instance.Status) == SHUTOFF {
-		instance.Status = SHUTOFF
+	if strings.ToUpper(_instance.Status) == model.SHUTOFF {
+		instance.Status = model.SHUTOFF
 	}
 	return instance
 }
 
-func waitStarting(instance *Instance) *Instance {
+func waitStarting(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
 	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
 	}
-	if strings.ToUpper(_instance.Status) == ACTIVE {
-		instance.Status = ACTIVE
+	if strings.ToUpper(_instance.Status) == model.ACTIVE {
+		instance.Status = model.ACTIVE
 	}
 	return instance
 }
