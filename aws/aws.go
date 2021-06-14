@@ -14,6 +14,10 @@ const (
 	InstanceType = types.InstanceTypeT2Micro //TODO
 )
 
+var (
+	defaultInstanceNum = int32(1)
+)
+
 type AwsClient struct {
 	c *ec2.Client
 }
@@ -29,12 +33,12 @@ func New() *AwsClient {
 	return a
 }
 
-func (a *AwsClient) CreateInstances(c context.Context, name string, num int32, subnetId string, privateIp string) error {
+func (a *AwsClient) CreateInstance(c context.Context, name string, subnetId string, privateIp string) error {
 	i := &ec2.RunInstancesInput{
 		ImageId:          aws.String(ImageId),
 		InstanceType:     InstanceType,
-		MinCount:         &num,
-		MaxCount:         &num,
+		MinCount:         &defaultInstanceNum,
+		MaxCount:         &defaultInstanceNum,
 		SubnetId:         &subnetId,
 		PrivateIpAddress: &privateIp,
 	}
@@ -43,14 +47,14 @@ func (a *AwsClient) CreateInstances(c context.Context, name string, num int32, s
 		return err
 	}
 
-	err = a.CreateTags(c, *res.Instances[0].InstanceId, "Name", name)
+	err = a.CreateTag(c, *res.Instances[0].InstanceId, "Name", name)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *AwsClient) CreateTags(c context.Context, instanceId string, key string, value string) error {
+func (a *AwsClient) CreateTag(c context.Context, instanceId string, key string, value string) error {
 	i := &ec2.CreateTagsInput{
 		Resources: []string{instanceId},
 		Tags: []types.Tag{
@@ -67,7 +71,7 @@ func (a *AwsClient) CreateTags(c context.Context, instanceId string, key string,
 	return nil
 }
 
-func (a *AwsClient) DeleteInstances(c context.Context, instanceId string) error {
+func (a *AwsClient) DeleteInstance(c context.Context, instanceId string) error {
 	i := &ec2.TerminateInstancesInput{
 		InstanceIds: []string{instanceId},
 	}
@@ -78,7 +82,7 @@ func (a *AwsClient) DeleteInstances(c context.Context, instanceId string) error 
 	return nil
 }
 
-func (a *AwsClient) StartInstances(c context.Context, instanceId string) error {
+func (a *AwsClient) StartInstance(c context.Context, instanceId string) error {
 	i := &ec2.StartInstancesInput{
 		InstanceIds: []string{instanceId},
 	}
@@ -89,7 +93,7 @@ func (a *AwsClient) StartInstances(c context.Context, instanceId string) error {
 	return nil
 }
 
-func (a *AwsClient) StopInstances(c context.Context, instanceId string) error {
+func (a *AwsClient) StopInstance(c context.Context, instanceId string) error {
 	i := &ec2.StopInstancesInput{
 		InstanceIds: []string{instanceId},
 	}
