@@ -128,7 +128,7 @@ func (a *AwsClient) StopInstance(c context.Context, instanceId string) error {
 	return nil
 }
 
-func (a *AwsClient) GetInstancesInfo(c context.Context, instanceName string) (*model.Instance, error) {
+func (a *AwsClient) GetInstanceInfo(c context.Context, instanceName string) (*model.Instance, error) {
 	i := &ec2.DescribeInstancesInput{
 		Filters: []types.Filter{
 			{

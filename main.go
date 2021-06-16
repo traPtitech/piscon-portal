@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/gophercloud/gophercloud"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
@@ -24,6 +23,7 @@ import (
 	"github.com/traPtitech/piscon-portal/conoha"
 	"github.com/traPtitech/piscon-portal/model"
 	"golang.org/x/crypto/acme/autocert"
+	"gorm.io/gorm"
 )
 
 type serverClient interface {
@@ -31,7 +31,7 @@ type serverClient interface {
 	DeleteInstance(c context.Context, instanceId string) error
 	StartInstance(c context.Context, instanceId string) error
 	StopInstance(c context.Context, instanceId string) error
-	GetInstancesInfo(c context.Context, instanceName string) (*model.Instance, error)
+	GetInstanceInfo(c context.Context, instanceName string) (*model.Instance, error)
 }
 
 var (
