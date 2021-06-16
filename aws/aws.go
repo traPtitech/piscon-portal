@@ -2,11 +2,13 @@ package aws
 
 import (
 	"context"
+	"os"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/traPtitech/piscon-portal/model"
 )
 
@@ -31,15 +33,32 @@ type AwsClient struct {
 	c *ec2.Client
 }
 
-func New() *AwsClient {
+func New(cfg aws.Config) (*AwsClient, error) {
 	a := &AwsClient{}
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	client := ec2.NewFromConfig(cfg)
 	a.c = client
-	return a
+	return a, nil
+}
+
+func CreateDefaultConfig() (*aws.Config, error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithCredentialsProvider(
+			credentials.StaticCredentialsProvider{
+				Value: aws.Credentials{
+					AccessKeyID:     os.Getenv("ACCESS_ID"),
+					SecretAccessKey: os.Getenv("ACCESS_SECRET_KEY"),
+				},
+			},
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &cfg, nil
 }
 
 func (a *AwsClient) CreateInstance(c context.Context, name string, subnetId string, privateIp string) error {

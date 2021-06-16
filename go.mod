@@ -3,8 +3,9 @@ module github.com/traPtitech/piscon-portal
 go 1.16
 
 require (
-	github.com/aws/aws-sdk-go v1.38.58
+	github.com/aws/aws-sdk-go-v2 v1.6.0
 	github.com/aws/aws-sdk-go-v2/config v1.3.0
+	github.com/aws/aws-sdk-go-v2/credentials v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.9.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gophercloud/gophercloud v0.12.0
@@ -16,6 +17,7 @@ require (
 	github.com/mattn/go-shellwords v1.0.5
 	github.com/valyala/fasttemplate v1.0.1 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	google.golang.org/appengine v1.6.0 // indirect
 	gorm.io/gorm v1.21.10
 )
