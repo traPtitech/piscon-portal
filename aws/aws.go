@@ -35,10 +35,6 @@ type AwsClient struct {
 
 func New(cfg aws.Config) (*AwsClient, error) {
 	a := &AwsClient{}
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return nil, err
-	}
 	client := ec2.NewFromConfig(cfg)
 	a.c = client
 	return a, nil

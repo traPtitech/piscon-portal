@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -19,17 +20,26 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	shellwords "github.com/mattn/go-shellwords"
+	"github.com/traPtitech/piscon-portal/aws"
 	"github.com/traPtitech/piscon-portal/conoha"
 	"github.com/traPtitech/piscon-portal/model"
 	"golang.org/x/crypto/acme/autocert"
 )
+
+type serverClient interface {
+	CreateInstance(c context.Context, name string, subnetId string, privateIp string) error
+	DeleteInstance(c context.Context, instanceId string) error
+	StartInstance(c context.Context, instanceId string) error
+	StopInstance(c context.Context, instanceId string) error
+	GetInstancesInfo(c context.Context, instanceName string) (*model.Instance, error)
+}
 
 var (
 	checkTask     chan struct{}
 	sendWorker    chan *model.Task
 	checkInstance chan *model.Instance
 	db            *gorm.DB
-	conohaClient  *conoha.ConohaClient
+	client        serverClient
 )
 
 const (
@@ -48,15 +58,15 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 
-	opts := gophercloud.AuthOptions{
-		IdentityEndpoint: "https://identity.tyo2.conoha.io/v2.0",
-		Username:         os.Getenv("CONOHA_USERNAME"),
-		TenantName:       os.Getenv("CONOHA_TENANT_NAME"),
-		TenantID:         os.Getenv("CONOHA_TENANT_ID"),
-		Password:         os.Getenv("CONOHA_PASSWORD"),
+	cfg, err := aws.CreateDefaultConfig()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	conohaClient = conoha.New(opts)
+	client, err = aws.New(*cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	go instanceInfo(opts)
 
@@ -381,7 +391,7 @@ func createInstance(c echo.Context) error {
 	privateIP := fmt.Sprintf("172.16.0.%d", teamId*10+instanceNumber)
 
 	log.Printf("Makeinstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
-	err = conohaClient.MakeInstance(name, privateIP)
+	err = client.MakeInstance(name, privateIP)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -429,7 +439,7 @@ func deleteInstance(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, "指定したインスタンスが見つかりません")
 	}
 
-	err = conohaClient.DeleteInstance(name)
+	err = client.DeleteInstance(name)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -603,7 +613,7 @@ func instanceInfo(opts gophercloud.AuthOptions) {
 			fmt.Println("receive instance")
 			go setupInstance(instance)
 		case <-t.C:
-			conohaClient = conoha.New(opts)
+			client = conoha.New(opts)
 			fmt.Println("Conoha Client created")
 		}
 	}
@@ -621,7 +631,7 @@ L:
 			log.Println("pre shutdown")
 			instance.Status = model.SHUTDOWNING
 			time.Sleep(5 * time.Second)
-			conohaClient.ShutdownInstance(instance.Name)
+			client.ShutdownInstance(instance.Name)
 		case model.SHUTDOWNING:
 			log.Println("shutdowning")
 			instance = waitShutdown(instance)
@@ -629,8 +639,8 @@ L:
 			log.Println("shutoff")
 			networkID := os.Getenv("CONOHA_NETWORK_ID")
 			log.Printf("AttachPrivateNetwork name:%s networkID %s privateIP:%s\n", instance.Name, os.Getenv("CONOHA_NETWORK_ID"), instance.PrivateIPAddress)
-			conohaClient.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
-			conohaClient.StartInstance(instance.Name)
+			client.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
+			client.StartInstance(instance.Name)
 			instance.Status = model.STARTING
 		case model.STARTING:
 			log.Println("wait starting")
@@ -646,7 +656,7 @@ L:
 func waitBuilding(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
-	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
+	_instance, err := client.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -672,7 +682,7 @@ func waitBuilding(instance *model.Instance) *model.Instance {
 func waitShutdown(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
-	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
+	_instance, err := client.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -685,7 +695,7 @@ func waitShutdown(instance *model.Instance) *model.Instance {
 func waitStarting(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
-	_instance, err := conohaClient.GetInstanceInfo(instance.Name)
+	_instance, err := client.GetInstanceInfo(instance.Name)
 	if err != nil {
 		fmt.Println(err)
 	}
