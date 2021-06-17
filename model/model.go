@@ -33,8 +33,8 @@ type Response struct {
 type Output struct {
 	Pass     bool     `json:"pass"`
 	Score    int64    `json:"score"`
-	Campaign int64    `json:"campaign`
-	Language string   `json:"language`
+	Campaign int64    `json:"campaign"`
+	Language string   `json:"language"`
 	Messages []string `json:"messages"`
 }
 
@@ -78,7 +78,7 @@ type Result struct {
 	TaskID    uint       `json:"task_id"`
 	Pass      bool       `json:"pass"`
 	Score     int64      `json:"score"`
-	Campaign  int64      `json:"campaign`
+	Campaign  int64      `json:"campaign"`
 	Betterize string     `json:"betterize"`
 	Messages  []*Message `json:"messages"`
 	CreatedAt time.Time  `json:"created_at"`
