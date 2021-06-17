@@ -29,18 +29,20 @@ var (
 	}
 )
 
+type Config aws.Config //TODO 苦肉の策、いい感じに分離したい
+
 type AwsClient struct {
 	c *ec2.Client
 }
 
-func New(cfg aws.Config) (*AwsClient, error) {
+func New(cfg Config) (*AwsClient, error) {
 	a := &AwsClient{}
-	client := ec2.NewFromConfig(cfg)
+	client := ec2.NewFromConfig(aws.Config(cfg))
 	a.c = client
 	return a, nil
 }
 
-func CreateDefaultConfig() (*aws.Config, error) {
+func CreateDefaultConfig() (*Config, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithCredentialsProvider(
 			credentials.StaticCredentialsProvider{
@@ -54,7 +56,8 @@ func CreateDefaultConfig() (*aws.Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &cfg, nil
+	res := Config(cfg)
+	return &res, nil
 }
 
 func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, error) {

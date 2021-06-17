@@ -10,16 +10,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	shellwords "github.com/mattn/go-shellwords"
-	"github.com/traPtitech/piscon-portal/aws"
-	"github.com/traPtitech/piscon-portal/conoha"
+	plugin "github.com/traPtitech/piscon-portal/aws"
 	"github.com/traPtitech/piscon-portal/model"
+	"github.com/traPtitech/piscon-portal/router"
 	"golang.org/x/crypto/acme/autocert"
-	_ "gorm.io/driver/mysql"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +34,8 @@ const (
 	MAX_INSTANCE_NUMBER = 2
 )
 
+type Config plugin.Config
+
 func main() {
 	sendWorker = make(chan *model.Task, 10)
 	checkTask = make(chan struct{})
@@ -47,17 +48,17 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 
-	cfg, err := aws.CreateDefaultConfig()
+	cfg, err := plugin.CreateDefaultConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	client, err = aws.New(*cfg)
+	client, err = plugin.New(*cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	go instanceInfo(opts)
+	go instanceInfo(*cfg)
 
 	// _db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
 	_db, err := establishConnection()
@@ -65,7 +66,11 @@ func main() {
 		panic(err)
 	}
 	//_db.LogMode(true)
-	defer _db.Close()
+	_cl, err := _db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer _cl.Close()
 	db = _db
 	// db.LogMode(true)
 
@@ -89,39 +94,8 @@ func main() {
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})
-
-	api := e.Group("/api")
-	api.GET("/results", getAllResults)
-	api.GET("/benchmark/queue", getBenchmarkQueue)
-	api.GET("/newer", getNewer)
-	api.GET("/questions", getQuestions)
-	// api.POST("/instancelog", postInstanceLog)
-
-	apiWithAuth := e.Group("/api", middlewareAuthUser)
-	apiWithAuth.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
-	apiWithAuth.POST("/team", createTeam)
-	apiWithAuth.POST("/user", createUser)
-	apiWithAuth.POST("/instance/:team_id/:instance_number", createInstance)
-	apiWithAuth.DELETE("/instance/:team_id/:instance_number", deleteInstance)
-	// TODO: ユーザー名で認証してないので修正する必要がある
-	apiWithAuth.GET("/team/:id", getTeam)
-	apiWithAuth.GET("/user/:name", getUser)
-	apiWithAuth.POST("/benchmark/:name/:instance_number", queBenchmark)
-	apiWithAuth.GET("/admin/team", getAllTeam)
-
-	apiWithAuth.POST("/questions", postQuestions)
-	apiWithAuth.PUT("/questions/:id", putQuestions)
-	apiWithAuth.DELETE("/questions/:id", deleteQuestions)
-
-	// e.AutoTLSManager.HostPolicy = autocert.HostWhitelist(os.Getenv("HOST"))
-	// e.AutoTLSManager.Cache = autocert.DirCache("/etc/letsencrypt/live/piscon-portal.trap.jp/cert.pem")
-	// e.Pre(middleware.HTTPSWWWRedirect())
-	// switch env {
-	// case "prod":
-	// e.StartAutoTLS(":443")
-	// default:
+	h := router.NewHandlers(client, db, checkInstance, sendWorker)
+	h.SetUp(e)
 	e.Use(middleware.CORS())
 	e.Start(":4000")
 	// }
@@ -186,7 +160,7 @@ func benchmarkWorker() {
 }
 
 // activeになったらdbにipアドレスとかを含めて登録
-func instanceInfo(opts gophercloud.AuthOptions) {
+func instanceInfo(cfg plugin.Config) {
 	// 23時間ごとにtoken更新
 	t := time.NewTicker(23 * time.Hour)
 	for {
@@ -195,8 +169,12 @@ func instanceInfo(opts gophercloud.AuthOptions) {
 			fmt.Println("receive instance")
 			go setupInstance(instance)
 		case <-t.C:
-			client = conoha.New(opts)
-			fmt.Println("Conoha Client created")
+			_client, err := plugin.New(cfg)
+			if err != nil {
+				log.Fatal(err)
+			}
+			client = _client
+			fmt.Println("Client created")
 		}
 	}
 }
@@ -219,9 +197,9 @@ L:
 			instance = waitShutdown(instance)
 		case model.SHUTOFF:
 			log.Println("shutoff")
-			networkID := os.Getenv("CONOHA_NETWORK_ID")
-			log.Printf("AttachPrivateNetwork name:%s networkID %s privateIP:%s\n", instance.Name, os.Getenv("CONOHA_NETWORK_ID"), instance.PrivateIPAddress)
-			client.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
+			// networkID := os.Getenv("CONOHA_NETWORK_ID")
+			// log.Printf("AttachPrivateNetwork name:%s networkID %s privateIP:%s\n", instance.Name, os.Getenv("CONOHA_NETWORK_ID"), instance.PrivateIPAddress)
+			// client.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
 			client.StartInstance(instance.Name)
 			instance.Status = model.STARTING
 		case model.STARTING:
@@ -229,7 +207,7 @@ L:
 			instance = waitStarting(instance)
 		case model.ACTIVE:
 			log.Println("write to db")
-			db.Model(&model.Instance{Name: instance.Name}).Update(instance)
+			db.Model(&model.Instance{Name: instance.Name}).Updates(instance)
 			break L
 		}
 	}
@@ -244,19 +222,21 @@ func waitBuilding(instance *model.Instance) *model.Instance {
 	}
 
 	if strings.ToUpper(_instance.Status) == model.ACTIVE {
-		IPv4 := ""
-		// instanceのipv4のアドレスを抜き出そうとしてるけどもっといいやり方がありそう
-		for _, v := range _instance.Addresses {
-			for _, vv := range ([]interface{})(v.([]interface{})) {
-				if (vv.(map[string]interface{})["version"]).(float64) == 4 {
-					IPv4 = (vv.(map[string]interface{})["addr"]).(string)
-				}
-			}
-		}
-		if IPv4 != "" {
-			instance.GlobalIPAddress = IPv4
-			instance.Status = model.PRE_SHUTDOWN
-		}
+		instance.GlobalIPAddress = _instance.GlobalIPAddress
+		instance.Status = model.ACTIVE
+
+		// // instanceのipv4のアドレスを抜き出そうとしてるけどもっといいやり方がありそう
+		// for _, v := range _instance.Addresses {
+		// 	for _, vv := range ([]interface{})(v.([]interface{})) {
+		// 		if (vv.(map[string]interface{})["version"]).(float64) == 4 {
+		// 			IPv4 = (vv.(map[string]interface{})["addr"]).(string)
+		// 		}
+		// 	}
+		// }
+		// if IPv4 != "" {
+		// 	instance.GlobalIPAddress = IPv4
+		// 	instance.Status = model.PRE_SHUTDOWN
+		// }
 	}
 	return instance
 }
@@ -285,4 +265,39 @@ func waitStarting(instance *model.Instance) *model.Instance {
 		instance.Status = model.ACTIVE
 	}
 	return instance
+}
+
+func establishConnection() (*gorm.DB, error) {
+	user := os.Getenv("MARIADB_USERNAME")
+	if user == "" {
+		user = "isucon"
+	}
+
+	pass := os.Getenv("MARIADB_PASSWORD")
+	if pass == "" {
+		pass = "isucon"
+	}
+	env := os.Getenv("ENV")
+	host := os.Getenv("MARIADB_HOSTNAME")
+
+	switch env {
+	case "prod":
+		if host == "" {
+			host = "localhost"
+		}
+	default:
+		if host == "" {
+			host = "db"
+		}
+	}
+
+	dbname := os.Getenv("MARIADB_DATABASE")
+	if dbname == "" {
+		dbname = "isucon"
+	}
+	dsn := fmt.Sprintf("%s:%s@(%s)/%s", user, pass, host, dbname) + "?charset=utf8mb4&parseTime=True&loc=Local"
+	log.Println(dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// _db.BlockGlobalUpdate(true) <= GOrm v2でデフォルト有効になったらしい(要調査)
+	return db, err
 }

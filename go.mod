@@ -9,9 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.9.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gophercloud/gophercloud v0.12.0
-	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
-	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/mattn/go-shellwords v1.0.5
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
