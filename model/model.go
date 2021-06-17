@@ -1,7 +1,6 @@
 package model
 
 import (
-	"context"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,11 +18,11 @@ const (
 )
 
 type ServerClient interface {
-	CreateInstance(c context.Context, name string, privateIp string) (*string, error) //return InstanceID (TODO)
-	DeleteInstance(c context.Context, instanceId string) error
-	StartInstance(c context.Context, instanceId string) error
-	StopInstance(c context.Context, instanceId string) error
-	GetInstanceInfo(c context.Context, instanceName string) (*Instance, error) //TODO IDにする
+	CreateInstance(name string, privateIp string) (*string, error) //return InstanceID (TODO)
+	DeleteInstance(instanceId string) error
+	StartInstance(instanceId string) error
+	StopInstance(instanceId string) error
+	GetInstanceInfo(instanceName string) (*Instance, error) //TODO IDにする
 }
 
 type Response struct {

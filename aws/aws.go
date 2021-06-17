@@ -57,7 +57,7 @@ func CreateDefaultConfig() (*aws.Config, error) {
 	return &cfg, nil
 }
 
-func (a *AwsClient) CreateInstance(c context.Context, name string, privateIp string) (*string, error) {
+func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, error) {
 	subnetId := os.Getenv("AWS_SUBNET_ID")
 	i := &ec2.RunInstancesInput{
 		ImageId:          aws.String(ImageId),
@@ -67,19 +67,19 @@ func (a *AwsClient) CreateInstance(c context.Context, name string, privateIp str
 		SubnetId:         &subnetId,
 		PrivateIpAddress: &privateIp,
 	}
-	res, err := a.c.RunInstances(c, i)
+	res, err := a.c.RunInstances(context.TODO(), i)
 	if err != nil {
 		return nil, err
 	}
 
-	err = a.CreateTag(c, *res.Instances[0].InstanceId, "Name", name)
+	err = a.CreateTag(*res.Instances[0].InstanceId, "Name", name)
 	if err != nil {
 		return nil, err
 	}
 	return res.Instances[0].InstanceId, nil
 }
 
-func (a *AwsClient) CreateTag(c context.Context, instanceId string, key string, value string) error {
+func (a *AwsClient) CreateTag(instanceId string, key string, value string) error {
 	i := &ec2.CreateTagsInput{
 		Resources: []string{instanceId},
 		Tags: []types.Tag{
@@ -89,47 +89,47 @@ func (a *AwsClient) CreateTag(c context.Context, instanceId string, key string, 
 			},
 		},
 	}
-	_, err := a.c.CreateTags(c, i)
+	_, err := a.c.CreateTags(context.TODO(), i)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *AwsClient) DeleteInstance(c context.Context, instanceId string) error {
+func (a *AwsClient) DeleteInstance(instanceId string) error {
 	i := &ec2.TerminateInstancesInput{
 		InstanceIds: []string{instanceId},
 	}
-	_, err := a.c.TerminateInstances(c, i)
+	_, err := a.c.TerminateInstances(context.TODO(), i)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *AwsClient) StartInstance(c context.Context, instanceId string) error {
+func (a *AwsClient) StartInstance(instanceId string) error {
 	i := &ec2.StartInstancesInput{
 		InstanceIds: []string{instanceId},
 	}
-	_, err := a.c.StartInstances(c, i)
+	_, err := a.c.StartInstances(context.TODO(), i)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *AwsClient) StopInstance(c context.Context, instanceId string) error {
+func (a *AwsClient) StopInstance(instanceId string) error {
 	i := &ec2.StopInstancesInput{
 		InstanceIds: []string{instanceId},
 	}
-	_, err := a.c.StopInstances(c, i)
+	_, err := a.c.StopInstances(context.TODO(), i)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *AwsClient) GetInstanceInfo(c context.Context, instanceName string) (*model.Instance, error) {
+func (a *AwsClient) GetInstanceInfo(instanceName string) (*model.Instance, error) {
 	i := &ec2.DescribeInstancesInput{
 		Filters: []types.Filter{
 			{
@@ -138,7 +138,7 @@ func (a *AwsClient) GetInstanceInfo(c context.Context, instanceName string) (*mo
 			},
 		},
 	}
-	res, err := a.c.DescribeInstances(c, i)
+	res, err := a.c.DescribeInstances(context.TODO(), i)
 	if err != nil {
 		return nil, err
 	}

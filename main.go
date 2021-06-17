@@ -11,8 +11,6 @@ import (
 	"time"
 
 	"github.com/gophercloud/gophercloud"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -21,6 +19,8 @@ import (
 	"github.com/traPtitech/piscon-portal/conoha"
 	"github.com/traPtitech/piscon-portal/model"
 	"golang.org/x/crypto/acme/autocert"
+	_ "gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var (
@@ -213,7 +213,7 @@ L:
 			log.Println("pre shutdown")
 			instance.Status = model.SHUTDOWNING
 			time.Sleep(5 * time.Second)
-			client.ShutdownInstance(instance.Name)
+			client.StopInstance(instance.InstanceId)
 		case model.SHUTDOWNING:
 			log.Println("shutdowning")
 			instance = waitShutdown(instance)
