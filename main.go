@@ -98,7 +98,6 @@ func main() {
 	h.SetUp(e)
 	e.Use(middleware.CORS())
 	e.Start(":4000")
-	// }
 	fmt.Println("end")
 }
 

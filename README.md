@@ -2,21 +2,23 @@
 
 piscon用のポータルサイト
 
-memo
+## 環境変数
+| key                 | value                            |
+| ------------------- | -------------------------------- |
+| `ENV`               | `prod`or `""`                    |
+| `ACCESS_ID`         | AWSのアクセスID                  |
+| `ACCESS_SECRET_KEY` | AWSのシークレットキー            |
+| `MARIADB_USERNAME`  | DBのユーザーネーム               |
+| `MARIADB_PASSWORD`  | DBのパスワード                   |
+| `MARIADB_DATABASE`  | DBの名前(デフォルトだと`isucon`) |
 
-中途半端に分割してるからきれいにしたい
-Conohaのほうも書き換えないと分離の意味がない…
-(まあこれ以降Conoha使わん気がやや)
+### AWSのみ
+| key             | value             |
+| --------------- | ----------------- |
+| `AWS_SUBNET_ID` | VPCのサブネットIP |
 
-ENV
-```
-ACCESS_ID
-ACCESS_SECRET_KEY
-MARIADB_USERNAME
-MARIADB_PASSWORD
-MARIADB_DATABASE
 
-IF AWS
-
-AWS_SUBNET_ID
-```
+### 謎
+| key               | value        |
+| ----------------- | ------------ |
+| `ISUCON_PASSWORD` | 存在するが謎 |
