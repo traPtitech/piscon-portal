@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -24,20 +23,12 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-type serverClient interface {
-	CreateInstance(c context.Context, name string, subnetId string, privateIp string) error
-	DeleteInstance(c context.Context, instanceId string) error
-	StartInstance(c context.Context, instanceId string) error
-	StopInstance(c context.Context, instanceId string) error
-	GetInstanceInfo(c context.Context, instanceName string) (*model.Instance, error)
-}
-
 var (
 	checkTask     chan struct{}
 	sendWorker    chan *model.Task
 	checkInstance chan *model.Instance
 	db            *gorm.DB
-	client        serverClient
+	client        model.ServerClient
 )
 
 const (

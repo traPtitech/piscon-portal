@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,6 +17,14 @@ const (
 	STARTING     = "STARTING"
 	PRE_SHUTDOWN = "PRE_SHUTDOWN"
 )
+
+type ServerClient interface {
+	CreateInstance(c context.Context, name string, privateIp string) (*string, error) //return InstanceID (TODO)
+	DeleteInstance(c context.Context, instanceId string) error
+	StartInstance(c context.Context, instanceId string) error
+	StopInstance(c context.Context, instanceId string) error
+	GetInstanceInfo(c context.Context, instanceName string) (*Instance, error) //TODO IDにする
+}
 
 type Response struct {
 	Success bool   `json:"suceess"`
@@ -59,6 +68,7 @@ type Instance struct {
 	PrivateIPAddress string `json:"private_ip_address"`
 	Password         string `json:"password"`
 	InstanceNumber   uint   `json:"instance_number"`
+	InstanceId       string `json:"instance_id"`
 	Status           string `json:"status"`
 	Name             string `json:"name"`
 }

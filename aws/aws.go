@@ -57,7 +57,8 @@ func CreateDefaultConfig() (*aws.Config, error) {
 	return &cfg, nil
 }
 
-func (a *AwsClient) CreateInstance(c context.Context, name string, subnetId string, privateIp string) error {
+func (a *AwsClient) CreateInstance(c context.Context, name string, privateIp string) (*string, error) {
+	subnetId := os.Getenv("AWS_SUBNET_ID")
 	i := &ec2.RunInstancesInput{
 		ImageId:          aws.String(ImageId),
 		InstanceType:     InstanceType,
@@ -68,14 +69,14 @@ func (a *AwsClient) CreateInstance(c context.Context, name string, subnetId stri
 	}
 	res, err := a.c.RunInstances(c, i)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = a.CreateTag(c, *res.Instances[0].InstanceId, "Name", name)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return res.Instances[0].InstanceId, nil
 }
 
 func (a *AwsClient) CreateTag(c context.Context, instanceId string, key string, value string) error {

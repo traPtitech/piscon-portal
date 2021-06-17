@@ -1,6 +1,8 @@
 package router
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -14,8 +16,34 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	MAX_INSTANCE_NUMBER = 2
+)
+
 type Handlers struct {
-	db *gorm.DB
+	client        model.ServerClient
+	db            *gorm.DB
+	checkInstance chan *model.Instance
+	sendWorker    chan *model.Task
+}
+
+func genPassword() string {
+	pass := ""
+	gen := "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+	for i := 0; i < 12; i++ {
+		pass += string(gen[rand.Intn(len(gen))])
+	}
+	return pass
+}
+
+func formatCommand(ip string) string {
+	return fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
+		"-data-dir \"/home/isucon/isucari/initial-data\" "+
+		"-payment-url \"http://172.16.0.1:5555\" "+
+		"-shipment-url \"http://172.16.0.1:7000\" "+
+		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
+		"-target-host \"%s\" "+
+		"-target-url \"http://%s\"", ip, ip)
 }
 
 func EstablishConnection() (*gorm.DB, error) {
@@ -161,34 +189,25 @@ func (h *Handlers) PutQuestions(c echo.Context) error {
 	question := &model.Question{
 		Answer: req.Answer,
 	}
-	h.db.Model(question).Where("id = ?", id).Update(question)
+	h.db.Model(question).Where("id = ?", id).Updates(question)
 
 	return c.JSON(http.StatusOK, question)
 }
 
-func deleteQuestions(c echo.Context) error {
+func (h *Handlers) DeleteQuestions(c echo.Context) error {
 	id := c.Param("id")
 	question := &model.Question{}
-	db.Model(question).Where("id = ?", id).Delete(&question)
+	h.db.Model(question).Where("id = ?", id).Delete(question)
 
 	return c.JSON(http.StatusOK, question)
 }
 
-func genPassword() string {
-	pass := ""
-	gen := "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
-	for i := 0; i < 12; i++ {
-		pass += string(gen[rand.Intn(len(gen))])
-	}
-	return pass
-}
-
-func createUser(c echo.Context) error {
+func (h *Handlers) CreateUser(c echo.Context) error {
 	user := &model.User{}
 	c.Bind(user)
 
 	u := &model.User{}
-	db.Where("name = ?", user.Name).Find(u)
+	h.db.Where("name = ?", user.Name).Find(u)
 
 	if u.Name != "" {
 		return c.JSON(http.StatusNotFound, model.Response{
@@ -196,11 +215,11 @@ func createUser(c echo.Context) error {
 			Message: "登録されています"})
 	}
 
-	db.Create(user)
+	h.db.Create(user)
 	return c.JSON(http.StatusCreated, user)
 }
 
-func createTeam(c echo.Context) error {
+func (h *Handlers) CreateTeam(c echo.Context) error {
 	requestBody := &struct {
 		Name  string `json:"name"`
 		Group string `json:"group"`
@@ -215,7 +234,7 @@ func createTeam(c echo.Context) error {
 	}
 
 	t := &model.Team{}
-	db.Where("name = ?", requestBody.Name).Find(t)
+	h.db.Where("name = ?", requestBody.Name).Find(t)
 
 	if t.Name != "" {
 		return c.JSON(http.StatusNotFound, model.Response{
@@ -230,11 +249,11 @@ func createTeam(c echo.Context) error {
 		Instance:          []*model.Instance{},
 		Group:             requestBody.Group,
 	}
-	db.Create(team)
+	h.db.Create(team)
 	return c.JSON(http.StatusCreated, team)
 }
 
-func createInstance(c echo.Context) error {
+func (h *Handlers) CreateInstance(c echo.Context) error {
 
 	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
 	if err != nil {
@@ -255,17 +274,17 @@ func createInstance(c echo.Context) error {
 
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
 
-	pass := os.Getenv("CONOHA_ISUCON_PASSWORD")
+	pass := os.Getenv("ISUCON_PASSWORD") //???情報はあるけど使われてなさそう
 	i := &model.Instance{}
-	db.Where("name = ?", name).Find(i)
+	h.db.Where("name = ?", name).Find(i)
 	if i.Name != "" {
 		return c.JSON(http.StatusConflict, "既に登録されています")
 	}
 
 	privateIP := fmt.Sprintf("172.16.0.%d", teamId*10+instanceNumber)
 
-	log.Printf("Makeinstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
-	err = client.MakeInstance(name, privateIP)
+	log.Printf("CreateInstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
+	id, err := h.client.CreateInstance(context.TODO(), name, privateIP)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -273,6 +292,7 @@ func createInstance(c echo.Context) error {
 	instance := &model.Instance{
 		Password:         pass,
 		InstanceNumber:   uint(instanceNumber),
+		InstanceId:       *id,
 		TeamID:           uint(teamId),
 		Name:             name,
 		Status:           model.BUILDING,
@@ -281,14 +301,14 @@ func createInstance(c echo.Context) error {
 	}
 	go func() {
 		fmt.Println("send chan")
-		checkInstance <- instance
+		h.checkInstance <- instance
 	}()
-	db.Create(instance)
+	h.db.Create(instance)
 
 	return nil
 }
 
-func deleteInstance(c echo.Context) error {
+func (h *Handlers) DeleteInstance(c echo.Context) error {
 	log.Println("delete command received")
 	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
 	if err != nil {
@@ -309,30 +329,30 @@ func deleteInstance(c echo.Context) error {
 
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
 	i := &model.Instance{}
-	if db.Where("name = ?", name).First(i).RecordNotFound() {
+	if err := h.db.Where("name = ?", name).First(i).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return c.JSON(http.StatusNotFound, "指定したインスタンスが見つかりません")
 	}
 
-	err = client.DeleteInstance(name)
+	err = h.client.DeleteInstance(context.TODO(), i.InstanceId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	i = &model.Instance{}
-	db.Where("name = ?", name).Delete(i)
+	h.db.Where("name = ?", name).Delete(i)
 
 	return nil
 }
 
-func getAllResults(c echo.Context) error {
+func (h *Handlers) GetAllResults(c echo.Context) error {
 	teams := []*model.Team{}
-	db.Find(&teams)
+	h.db.Find(&teams)
 	for _, team := range teams {
-		db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
+		h.db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
 	}
 	return c.JSON(http.StatusOK, teams)
 }
 
-func queBenchmark(c echo.Context) error {
+func (h *Handlers) QueBenchmark(c echo.Context) error {
 	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
 	if err != nil {
 		fmt.Println(err)
@@ -347,7 +367,7 @@ func queBenchmark(c echo.Context) error {
 	c.Bind(&req)
 
 	team := &model.Team{}
-	db.Where("name = ?", name).Find(team)
+	h.db.Where("name = ?", name).Find(team)
 
 	if team.Name == "" {
 		return c.JSON(http.StatusNotFound, model.Response{
@@ -355,7 +375,7 @@ func queBenchmark(c echo.Context) error {
 			Message: "登録されていません"})
 	}
 
-	db.Model(team).Related(&team.Instance)
+	h.db.Model(team).Preload("Instance").Find(team.Instance)
 
 	ip := team.Instance[0].PrivateIPAddress
 
@@ -373,20 +393,14 @@ func queBenchmark(c echo.Context) error {
 
 	task := &model.Task{}
 
-	db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task)
+	h.db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task)
 	if task.CmdStr != "" {
 		return c.JSON(http.StatusNotAcceptable, model.Response{
 			Success: false,
 			Message: "既に登録されています"})
 	}
 
-	cmdStr := fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
-		"-data-dir \"/home/isucon/isucari/initial-data\" "+
-		"-payment-url \"http://172.16.0.1:5555\" "+
-		"-shipment-url \"http://172.16.0.1:7000\" "+
-		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
-		"-target-host \"%s\" "+
-		"-target-url \"http://%s\"", ip, ip)
+	cmdStr := formatCommand(ip)
 	t := &model.Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
@@ -395,10 +409,10 @@ func queBenchmark(c echo.Context) error {
 		Betterize: req.Betterize,
 	}
 	fmt.Println(cmdStr)
-	db.Create(t)
+	h.db.Create(t)
 
 	go func() {
-		sendWorker <- t
+		h.sendWorker <- t
 	}()
 
 	return c.JSON(http.StatusCreated, model.Response{
@@ -406,16 +420,16 @@ func queBenchmark(c echo.Context) error {
 		Message: "キューに追加しました"})
 }
 
-func getBenchmarkQueue(c echo.Context) error {
-	tasks := getTaskQueInfo()
+func (h *Handlers) GetBenchmarkQueue(c echo.Context) error {
+	tasks := h.getTaskQueInfo()
 	for _, task := range tasks {
-		db.Model(task).Related(&task.Team)
+		h.db.Model(task).Preload("Team").Find(&task.Team)
 	}
 	return c.JSON(http.StatusOK, tasks)
 }
 
-func getTaskQueInfo() []*model.Task {
+func (h *Handlers) getTaskQueInfo() []*model.Task {
 	tasks := []*model.Task{}
-	db.Table("tasks").Joins("LEFT JOIN teams ON `teams`.id = `tasks`.team_id").Not("state = 'done'").Find(&tasks)
+	h.db.Table("tasks").Joins("LEFT JOIN teams ON `teams`.id = `tasks`.team_id").Not("state = 'done'").Find(&tasks)
 	return tasks
 }
