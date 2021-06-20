@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine AS build
+FROM golang:1.16-alpine AS build
 WORKDIR /go/src/github.com/traPtitech/piscon-portal
 COPY ./go.* ./
 RUN go mod download

@@ -15,10 +15,26 @@ piscon用のポータルサイト
 ### AWSのみ
 | key             | value             |
 | --------------- | ----------------- |
-| `AWS_SUBNET_ID` | VPCのサブネットIP |
+| `AWS_SUBNET_IP` | VPCのサブネットIP |
 
 
 ### 謎
 | key               | value        |
 | ----------------- | ------------ |
 | `ISUCON_PASSWORD` | 存在するが謎 |
+
+### ISUCON9-qualify以外を使いたい場合
+
+ここを書き換えてください
+```go
+func formatCommand(ip string) string {
+	return fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
+		"-data-dir \"/home/isucon/isucari/initial-data\" "+
+		"-payment-url \"http://172.16.0.1:5555\" "+
+		"-shipment-url \"http://172.16.0.1:7000\" "+
+		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
+		"-target-host \"%s\" "+
+		"-target-url \"http://%s\"", ip, ip)
+}
+
+````
