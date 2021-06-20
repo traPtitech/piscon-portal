@@ -6,7 +6,7 @@ COPY . .
 RUN go build -o /piscon_portal main.go
 
 
-FROM alpine:3.12.0
+FROM alpine:3.14.0
 WORKDIR /app
 
 ENV DOCKERIZE_VERSION v0.6.1
