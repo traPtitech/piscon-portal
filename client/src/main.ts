@@ -1,4 +1,4 @@
-import { VuesticPlugin, useGlobalConfig } from 'vuestic-ui';
+import { VuesticPlugin } from 'vuestic-ui'
 import { createApp } from 'vue'
 import { createGtm } from 'vue-gtm'
 import { createI18n } from 'vue-i18n'
@@ -7,7 +7,6 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuesticGlobalConfig from './services/vuestic-ui/global-config'
-
 
 const i18nConfig = {
   locale: 'en',
@@ -28,11 +27,10 @@ if (process.env.VUE_APP_GTM_ENABLED === 'true') {
   const gtmConfig = {
     id: process.env.VUE_APP_GTM_KEY,
     debug: false,
-    vueRouter: router,
+    vueRouter: router
   }
   app.use(createGtm(gtmConfig))
 }
 app.use(createI18n(i18nConfig))
 app.use(VuesticPlugin, vuesticGlobalConfig)
 app.mount('#app')
-
