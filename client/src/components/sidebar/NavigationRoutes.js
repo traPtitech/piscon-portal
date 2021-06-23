@@ -15,19 +15,36 @@ export default {
       name: 'statistics',
       displayName: 'menu.statistics',
       meta: {
-        icon: 'vuestic-iconset-statistics'
-      },
-      disabled: true,
-      children: [
-        {
-          name: 'charts',
-          displayName: 'menu.charts'
-        },
-        {
-          name: 'progress-bars',
-          displayName: 'menu.progressBars'
-        }
-      ]
+        icon: 'vuestic-iconset-graph'
+      }
+    },
+    {
+      name: 'statistics',
+      displayName: 'menu.team',
+      meta: {
+        icon: 'vuestic-iconset-user'
+      }
+    },
+    {
+      name: 'statistics',
+      displayName: 'menu.readme',
+      meta: {
+        icon: 'vuestic-iconset-forms'
+      }
+    },
+    {
+      name: 'statistics',
+      displayName: 'menu.manual',
+      meta: {
+        icon: 'vuestic-iconset-files'
+      }
+    },
+    {
+      name: 'statistics',
+      displayName: 'menu.faq',
+      meta: {
+        icon: 'vuestic-iconset-comments'
+      }
     }
   ]
 }
