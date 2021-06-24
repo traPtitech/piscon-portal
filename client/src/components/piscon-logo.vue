@@ -1,7 +1,7 @@
 <template>
-  <span>
+  <div class="logo">
     PISCON
-  </span>
+  </div>
 </template>
 <script>
 import { useColors } from "vuestic-ui";
@@ -24,3 +24,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.logo {
+  font-size: 1.5rem;
+}
+</style>
