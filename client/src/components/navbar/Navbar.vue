@@ -10,7 +10,7 @@
             :color="colors.primary"
           />
           <router-link to="/dashboard">
-            <vuestic-logo class="logo"/>
+            <piscon-logo class="logo"/>
           </router-link>          
         </div>
       </template>
@@ -28,12 +28,12 @@
 import { useColors } from 'vuestic-ui'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
-import VuesticLogo from '@/components/vuestic-logo'
+import PisconLogo from '@/components/piscon-logo'
 import VaIconMenuCollapsed from '@/components/icons/VaIconMenuCollapsed'
 import AppNavbarActions from './components/AppNavbarActions'
 
 export default {
-  components: { VuesticLogo, AppNavbarActions, VaIconMenuCollapsed },
+  components: { PisconLogo, AppNavbarActions, VaIconMenuCollapsed },
   setup() {
     const { getColors } = useColors()
     const colors = computed(() => getColors() )

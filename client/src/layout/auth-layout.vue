@@ -2,7 +2,7 @@
   <div class="auth-layout row align-content--center">
     <div class="flex xs12 pa-3 flex-center">
       <router-link class="py-5 flex-center" to="/">
-        <vuestic-logo height="32"/>
+        <piscon-logo height="32"/>
       </router-link>
     </div>
 
@@ -30,11 +30,11 @@
 </template>
 
 <script>
-import VuesticLogo from "@/components/vuestic-logo";
+import PisconLogo from "@/components/piscon-logo";
 
 export default {
   name: "AuthLayout",
-  components: { VuesticLogo },
+  components: { PisconLogo },
   data() {
     return {
       selectedTabIndex: 0

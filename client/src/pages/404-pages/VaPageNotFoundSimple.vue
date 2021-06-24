@@ -1,7 +1,7 @@
 <template>
   <va-page-not-found class="va-page-not-found-simple">
     <template #image>
-      <vuestic-logo />
+      <piscon-logo />
     </template>
     <va-button :to="{name: 'dashboard'}">
       Back to dashboard
@@ -10,14 +10,14 @@
 </template>
 
 <script>
-import VuesticLogo from '@/components/vuestic-logo'
+import PisconLogo from '@/components/piscon-logo'
 import VaPageNotFound from './VaPageNotFound'
 
 export default {
   name: 'vuestic-page-not-found-simple',
   components: {
     VaPageNotFound,
-    VuesticLogo,
+    PisconLogo,
   },
 }
 </script>
