@@ -19,28 +19,28 @@ export default {
       }
     },
     {
-      name: 'statistics',
+      name: 'team',
       displayName: 'menu.team',
       meta: {
         icon: 'vuestic-iconset-user'
       }
     },
     {
-      name: 'statistics',
+      name: 'readme',
       displayName: 'menu.readme',
       meta: {
         icon: 'vuestic-iconset-forms'
       }
     },
     {
-      name: 'statistics',
+      name: 'manual',
       displayName: 'menu.manual',
       meta: {
         icon: 'vuestic-iconset-files'
       }
     },
     {
-      name: 'statistics',
+      name: 'faq',
       displayName: 'menu.faq',
       meta: {
         icon: 'vuestic-iconset-comments'

@@ -48,124 +48,24 @@ const routes: Array<RouteRecordRaw> = [
         ]
       },
       {
-        name: 'forms',
-        path: 'forms',
-        component: RouteViewComponent,
-        children: [
-          {
-            name: 'form-elements',
-            path: 'form-elements',
-            component: () =>
-              import('@/pages/admin/forms/form-elements/FormElements.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/inputs'
-            }
-          },
-          {
-            name: 'medium-editor',
-            path: 'medium-editor',
-            component: () =>
-              import('@/pages/admin/forms/medium-editor/MediumEditor.vue'),
-            meta: {
-              wikiLink:
-                'https://github.com/epicmaxco/vuestic-admin/wiki/Medium-Editor'
-            }
-          }
-        ]
+        name: 'team',
+        path: 'team',
+        component: RouteViewComponent
       },
       {
-        name: 'maps',
-        path: 'maps',
-        component: RouteViewComponent,
-        children: [
-          {
-            name: 'google-maps',
-            path: 'google-maps',
-            component: () =>
-              import('@/pages/admin/maps/google-maps/GoogleMapsPage.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Maps'
-            }
-          },
-          {
-            name: 'yandex-maps',
-            path: 'yandex-maps',
-            component: () =>
-              import('@/pages/admin/maps/yandex-maps/YandexMapsPage.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Maps'
-            }
-          },
-          {
-            name: 'leaflet-maps',
-            path: 'leaflet-maps',
-            component: () =>
-              import('@/pages/admin/maps/leaflet-maps/LeafletMapsPage.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Maps'
-            }
-          },
-          {
-            name: 'bubble-maps',
-            path: 'bubble-maps',
-            component: () =>
-              import('@/pages/admin/maps/bubble-maps/BubbleMapsPage.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Maps'
-            }
-          },
-          {
-            name: 'line-maps',
-            path: 'line-maps',
-            component: () =>
-              import('@/pages/admin/maps/line-maps/LineMapsPage.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Maps'
-            }
-          }
-        ]
+        name: 'readme',
+        path: 'readme',
+        component: RouteViewComponent
       },
       {
-        name: 'tables',
-        path: 'tables',
-        component: RouteViewComponent,
-        children: [
-          {
-            name: 'markup',
-            path: 'markup',
-            component: () =>
-              import('@/pages/admin/tables/markup-tables/MarkupTables.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Tables'
-            }
-          },
-          {
-            name: 'data',
-            path: 'data',
-            component: () =>
-              import('@/pages/admin/tables/data-tables/DataTables.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Tables'
-            }
-          }
-        ]
+        name: 'manual',
+        path: 'manual',
+        component: RouteViewComponent
       },
       {
-        name: 'pages',
-        path: 'pages',
-        component: RouteViewComponent,
-        children: [
-          {
-            name: '404-pages',
-            path: '404-pages',
-            component: () => import('@/pages/admin/pages/404PagesPage.vue')
-          },
-          {
-            name: 'faq',
-            path: 'faq',
-            component: () => import('@/pages/admin/pages/FaqPage.vue')
-          }
-        ]
+        name: 'faq',
+        path: 'faq',
+        component: RouteViewComponent
       },
       UIRoute
     ]
