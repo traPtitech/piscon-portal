@@ -28,5 +28,6 @@ export default {
 <style lang="scss" scoped>
 .logo {
   font-size: 1.5rem;
+  color: var(--va-primary);
 }
 </style>
