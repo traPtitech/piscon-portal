@@ -108,6 +108,20 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Team'
+        '400':
+          description: リクエストボディの要素が足りません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '409':
+          description: 登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
   /user:
     post:
       tags:
@@ -129,6 +143,13 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/User'
+        '409':
+          description: 登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
   /instance/{team_id}/{instance_number}:
     post:
       tags:
@@ -156,6 +177,20 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Instance'
+        '400':
+          description: error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '409':
+          description: 登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
     delete:
       tags:
         - instance
@@ -177,6 +212,27 @@ paths:
       responses:
         '204':
           description: No content
+        '400':
+          description: error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '404':
+          description: 指定したインスタンスが見つかりません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
   /team/{id}:
     get:
       tags:

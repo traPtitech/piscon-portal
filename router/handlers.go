@@ -182,7 +182,7 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 	h.db.Where("name = ?", user.Name).Find(u)
 
 	if u.Name != "" {
-		return c.JSON(http.StatusNotFound, model.Response{
+		return c.JSON(http.StatusConflict, model.Response{
 			Success: false,
 			Message: "登録されています"})
 	}
@@ -209,7 +209,7 @@ func (h *Handlers) CreateTeam(c echo.Context) error {
 	h.db.Where("name = ?", requestBody.Name).Find(t)
 
 	if t.Name != "" {
-		return c.JSON(http.StatusNotFound, model.Response{
+		return c.JSON(http.StatusConflict, model.Response{
 			Success: false,
 			Message: "登録されています"})
 	}
