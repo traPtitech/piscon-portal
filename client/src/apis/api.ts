@@ -1,7 +1,23 @@
-import axios from 'axios'
-import { randomString, pkce } from './utils'
-export const traQBaseURL = 'https://q.trap.jp/api/v3'
+import axios, { AxiosError } from 'axios'
+import { randomString, pkce } from '../utils'
+import {
+  Apis,
+  Configuration,
+  OAuth2ResponseType,
+  OAuth2Scope
+} from '@traptitech/traq'
+
+export const BASE_PATH = '/api/v3'
+
 export const traQClientID = 'J0RR7Auk9OVa4LZnQ4pD37hupkEkYloEHiIU'
+
+const RedirectURL = 'http://localhost:8080/dashboard' //todo:分岐
+
+const api = new Apis(
+  new Configuration({
+    basePath: BASE_PATH
+  })
+)
 /* eslint-disable @typescript-eslint/camelcase */
 export function setAuthToken(token: string) {
   if (token) {
@@ -17,16 +33,14 @@ export async function redirectAuthorizationEndpoint() {
   const codeChallenge = await pkce(codeVerifier)
 
   sessionStorage.setItem(`login-code-verifier-${state}`, codeVerifier)
-
-  const authorizationEndpointUrl = new URL(`${traQBaseURL}/oauth2/authorize`)
-  authorizationEndpointUrl.search = new URLSearchParams({
-    client_id: traQClientID,
-    response_type: 'code',
-    code_challenge: codeChallenge,
-    code_challenge_method: 'S256',
-    state
-  }).toString()
-  window.location.assign(authorizationEndpointUrl.toString())
+  await api.getOAuth2Authorize(
+    traQClientID,
+    OAuth2ResponseType.Code,
+    RedirectURL,
+    OAuth2Scope.Write,
+    state,
+    codeChallenge
+  )
 }
 
 export function fetchAuthToken(code: string, verifier: string) {
