@@ -1,6 +1,6 @@
 import { createDirectStore } from 'direct-vuex'
 import { User } from '@traptitech/traq'
-import { api } from '@/apis/api'
+import { getMe } from '@/apis/api'
 
 const { store, rootActionContext } = createDirectStore({
   state: {
@@ -14,7 +14,7 @@ const { store, rootActionContext } = createDirectStore({
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      const { data: me } = await api.getMe()
+      const { data: me } = await getMe()
       commit.setMe(me)
     }
   }

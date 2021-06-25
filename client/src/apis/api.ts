@@ -1,14 +1,11 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import { randomString, pkce } from '../utils'
 
-export const BASE_PATH = 'https://q.trap.jp/api/1.0'
+export const BASE_PATH = 'https://q.trap.jp/api/v3'
 
 export const traQClientID = 'J0RR7Auk9OVa4LZnQ4pD37hupkEkYloEHiIU'
 
-const CallbackURL = 'http://localhost:8080/auth/callback' //todo:分岐
-const RedirectURL = 'http://localhost:8080'
-
-/* eslint-disable @typescript-eslint/camelcase */
 export function setAuthToken(token: string) {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -45,19 +42,23 @@ export function fetchAuthToken(code: string, verifier: string) {
       code: code
     })
   )
-  return
 }
 
+// TODO:型バリデーション
 export function revokeAuthToken(token: string) {
-  return axios.post(`$/oauth2/revoke`, new URLSearchParams({ token }))
+  return axios.post(
+    `${BASE_PATH}/oauth2/revoke`,
+    new URLSearchParams({ token })
+  )
 }
 
 export function getMe() {
-  return axios.get(`$/users/me`)
+  return axios.get(`${BASE_PATH}/users/me`)
 }
 
+// たぶんいらない
 export function getMeGroup() {
-  return axios.get(`$/users/me/groups`)
+  return axios.get(`${BASE_PATH}/users/me/groups`)
 }
 
 export function getRsults() {
