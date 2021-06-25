@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { randomString, pkce } from '../utils'
 import {
   Apis,
@@ -13,7 +13,7 @@ export const traQClientID = 'J0RR7Auk9OVa4LZnQ4pD37hupkEkYloEHiIU'
 
 const RedirectURL = 'http://localhost:8080/dashboard' //todo:分岐
 
-const api = new Apis(
+export const api = new Apis(
   new Configuration({
     basePath: BASE_PATH
   })
@@ -27,7 +27,7 @@ export function setAuthToken(token: string) {
   }
 }
 
-export async function redirectAuthorizationEndpoint() {
+export async function redirectAuthorizationEndpoint(): Promise<void> {
   const state = randomString(10)
   const codeVerifier = randomString(43)
   const codeChallenge = await pkce(codeVerifier)
@@ -41,11 +41,12 @@ export async function redirectAuthorizationEndpoint() {
     state,
     codeChallenge
   )
+  return
 }
 
 export function fetchAuthToken(code: string, verifier: string) {
   return axios.post(
-    `${traQBaseURL}/oauth2/token`,
+    `$/oauth2/token`,
     new URLSearchParams({
       client_id: traQClientID,
       grant_type: 'authorization_code',
@@ -56,18 +57,15 @@ export function fetchAuthToken(code: string, verifier: string) {
 }
 
 export function revokeAuthToken(token: string) {
-  return axios.post(
-    `${traQBaseURL}/oauth2/revoke`,
-    new URLSearchParams({ token })
-  )
+  return axios.post(`$/oauth2/revoke`, new URLSearchParams({ token }))
 }
 
 export function getMe() {
-  return axios.get(`${traQBaseURL}/users/me`)
+  return axios.get(`$/users/me`)
 }
 
 export function getMeGroup() {
-  return axios.get(`${traQBaseURL}/users/me/groups`)
+  return axios.get(`$/users/me/groups`)
 }
 
 export function getRsults() {
@@ -78,11 +76,11 @@ export function getNewer() {
   return axios.get(`/api/newer`)
 }
 
-export function getTeam(id) {
+export function getTeam(id: string) {
   return axios.get(`/api/team/${id}`)
 }
 
-export function getUser(id) {
+export function getUser(id: string) {
   return axios.get(`/api/user/${id}`)
 }
 

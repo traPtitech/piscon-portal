@@ -1,17 +1,26 @@
-import { createStore } from 'vuex'
+import { createDirectStore } from 'direct-vuex'
+import { User } from '@traptitech/traq'
+import { api } from '@/apis/api'
 
-export default createStore({
-  strict: true, // process.env.NODE_ENV !== 'production',
+const { store, rootActionContext } = createDirectStore({
   state: {
-    isSidebarMinimized: false,
-    userName: 'Vasili S'
+    me: null as User | null
   },
   mutations: {
-    updateSidebarCollapsedState(state, isSidebarMinimized) {
-      state.isSidebarMinimized = isSidebarMinimized
-    },
-    changeUserName(state, newUserName) {
-      state.userName = newUserName
+    setMe(state, me: User) {
+      state.me = me
     }
   },
+  actions: {
+    async fetchMe(context) {
+      const { commit } = rootActionContext(context)
+      const { data: me } = await api.getMe()
+      commit.setMe(me)
+    }
+  }
 })
+
+export default store.original
+
+export type Store = typeof store
+export const useStore = (): Store => store
