@@ -277,7 +277,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	}()
 	h.db.Create(instance)
 
-	return nil
+	return c.JSON(http.StatusCreated, instance)
 }
 
 func (h *Handlers) DeleteInstance(c echo.Context) error {
@@ -312,7 +312,7 @@ func (h *Handlers) DeleteInstance(c echo.Context) error {
 	i = &model.Instance{}
 	h.db.Where("name = ?", name).Delete(i)
 
-	return nil
+	return c.JSON(http.StatusNoContent, nil)
 }
 
 func (h *Handlers) GetAllResults(c echo.Context) error {

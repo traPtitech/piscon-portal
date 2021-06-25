@@ -1,0 +1,429 @@
+openapi: 3.0.0
+info:
+  title: Piscon-portal API
+  description: this is a api docment of piscon-portal.
+  version: 2.0.0
+
+servers:
+  - url: https://piscon.trap.jp/api
+    description: production(予定)
+paths:
+  /results:
+    get:
+      tags:
+        - default
+      summary: Get all result data.
+      description: Returns an array of team model
+      responses:
+        '200':
+          description: A JSON array of team model
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Team'
+  /newer:
+    get:
+      tags:
+        - default
+      summary: Get top team data.
+      description: Returns an array of team model
+      responses:
+        '200':
+          description: A JSON array of team model
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Team'
+  /questions:
+    get:
+      tags:
+        - default
+        - questions
+      summary: Get question data.
+      description: Returns an array of question model
+      responses:
+        '200':
+          description: A JSON array of question model
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Questions'
+    post:
+      tags:
+        - questions
+      summary: Post new question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                question:
+                  type: string
+      responses:
+        '201':
+          description: No content
+  /benchmark/queue:
+    get:
+      tags:
+        - default
+        - bench
+      summary: Get bench queue data
+      description: Returns an array of task model
+      responses:
+        '200':
+          description: A JSON array of task model
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Task'
+  /team:
+    post:
+      tags:
+        - team
+      summary: Create team
+      description: Returns an new Team model
+      requestBody:
+        description: Team to create
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                group:
+                  type: string
+      responses:
+        '201':
+          description: A JSON model of team(some param will be empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Team'
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create User
+      description: Create new user
+      requestBody:
+        description: User to create
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: A JSON model of user(some param will be empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+  /instance/{team_id}/{instance_number}:
+    post:
+      tags:
+        - instance
+      summary: Start new instance
+      description: Start new instance but its numbers are restricted by admin
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          schema: 
+            type: integer
+        - name: instance_number
+          in: path
+          description: current instance number
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: A JSON model of Instance(some param will be empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Instance'
+    delete:
+      tags:
+        - instance
+      summary: Delete instance
+      description: Delete instance 
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          schema: 
+            type: integer
+        - name: instance_number
+          in: path
+          description: current instance number
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: No content
+  /team/{id}:
+    get:
+      tags:
+        - team
+      summary: Get team description
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON model of Team
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Team'
+  /user/{name}:
+    get:
+      tags:
+        - user
+      summary: Get team description
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON model of User
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+  /benchmark/{name}/{instance_number}:
+    post:
+      tags:
+        - bench
+      summary: Queue benchmark task
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: instance_number
+        in: path
+        description: current instance number
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: bettersize (Sorry, but I dont understand)
+        content:
+          application/json:
+            schema:
+              properties:
+                betterize:
+                  type: string
+      responses:
+        '201':
+          description: A JSON model of Responce
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+  /admin/team:
+    get:
+      tags:
+        - admin
+        - team
+      summary: Get All team description
+      responses:
+        '200':
+          description: A JSON array of Team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+  /questions/{id}:
+    put:
+      tags:
+        - questions
+      summary: Answer question
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: answer
+        content:
+          application/json:
+            schema:
+              properties:
+                answer:
+                  type: string
+      responses:
+        '200':
+          description: A JSON model of Question
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Questions'
+    delete:
+      tags:
+        - questions
+      summary: Answer question
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON model of Question
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Questions'
+components:
+  schemas:
+    Instance:
+      type: object
+      properties:
+        team_id:
+          type: integer
+          format: uint
+        grobal_ip_address:
+          type: string
+        private_ip_address:
+          type: string
+        password: 
+          type: string
+        instance_number:
+          type: integer
+          format: uint
+        instance_id:
+          type: string
+        status:
+          type: string
+        name:
+          type: string
+    Message:
+      type: object
+      properties:
+        result_id:
+          type: integer
+          format: uint
+        text: 
+          type: string
+    Questions:
+      type: object
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+    Responce:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    Result:
+      type: object
+      properties:
+        id: 
+          type: integer
+        team_id:
+          type: integer
+          format: uint
+        task_id: 
+          type: integer
+          format: uint
+        pass:
+          type: boolean
+        score: 
+          type: integer
+          format: int64
+        capmpaign:
+          type: integer
+          format: int64
+        bettrize:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        created_at:
+          type: string
+          format: date
+    Task:
+      type: object
+      properties:
+        cmd_str:
+          type: string
+        ip:
+          type: string
+        state:
+          type: string
+        bettersize:
+          type: string
+        team_id:
+          type: integer
+          format: uint
+        team:
+          type: object
+          $ref: '#/components/schemas/Team'
+    Team:
+      type: object
+      properties:
+        name: 
+          type: string
+        instance:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Instance'
+        results:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Result'
+        max_instance_number:
+          type: integer
+        group:
+          type: string
+    User:
+      type: object
+      properties:
+        name: 
+          type: string
+        screen_name:
+          type: string
+        team_id:
+          type: integer
+          format: uint

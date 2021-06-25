@@ -40,8 +40,8 @@ type Output struct {
 
 type Message struct {
 	gorm.Model
-	ResultId uint
-	Text     string
+	ResultId uint   `json:"result_id"`
+	Text     string `json:"text"`
 }
 
 type Team struct {
