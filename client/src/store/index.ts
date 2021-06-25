@@ -1,10 +1,11 @@
 import { createDirectStore } from 'direct-vuex'
-import { User } from '@traptitech/traq'
+import { User, OAuth2Token } from '@traptitech/traq'
 import { getMe } from '@/apis/api'
 
 const { store, rootActionContext } = createDirectStore({
   state: {
-    me: null as User | null
+    me: null as User | null,
+    authToken: null as OAuth2Token | null
   },
   mutations: {
     setMe(state, me: User) {
