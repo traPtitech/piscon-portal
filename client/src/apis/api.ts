@@ -44,18 +44,6 @@ export async function redirectAuthorizationEndpoint(): Promise<void> {
   return
 }
 
-export function fetchAuthToken(code: string, verifier: string) {
-  return axios.post(
-    `$/oauth2/token`,
-    new URLSearchParams({
-      client_id: traQClientID,
-      grant_type: 'authorization_code',
-      code_verifier: verifier,
-      code
-    })
-  )
-}
-
 export function revokeAuthToken(token: string) {
   return axios.post(`$/oauth2/revoke`, new URLSearchParams({ token }))
 }
