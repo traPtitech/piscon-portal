@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
-import { randomString, pkce } from '../utils'
+import { randomString, pkce } from '../../utils'
 
 export const BASE_PATH = 'https://q.trap.jp/api/v3'
 

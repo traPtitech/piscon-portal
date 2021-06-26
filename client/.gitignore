@@ -22,3 +22,5 @@ inspect.js
 *.sln
 *.sw*
 *.orig
+
+/src/lib/apis/generated

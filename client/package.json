@@ -7,7 +7,9 @@
     "build": "vue-cli-service build",
     "build:ci": "NODE_OPTIONS=--max_old_space_size=4096 vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "type-check": "tsc",
+    "gen-apis": "node scripts/generate-apis.js"
   },
   "dependencies": {
     "@traptitech/traq": "^3.7.5-4",
@@ -37,6 +39,7 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.3.5",
     "@types/jest": "^24.0.19",
     "@types/medium-editor": "^5.0.3",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
@@ -57,6 +60,7 @@
     "lint-staged": "^9.5.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.3.1",
+    "ts-morph": "^11.0.0",
     "typescript": "~3.9.3",
     "webpack": "^4.46.0"
   },
