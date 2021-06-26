@@ -1,7 +1,7 @@
 import { createDirectStore } from 'direct-vuex'
 import { User, OAuth2Token } from '@traptitech/traq'
-import { getMe } from '@/apis/api'
-
+import TraqApis from '@/lib/apis/traq'
+import { setAuthToken } from '@/lib/apis/api'
 const { store, rootActionContext } = createDirectStore({
   state: {
     me: null as User | null,
@@ -10,12 +10,16 @@ const { store, rootActionContext } = createDirectStore({
   mutations: {
     setMe(state, me: User) {
       state.me = me
+    },
+    setToken(state, data: OAuth2Token) {
+      state.authToken = data
+      setAuthToken(data)
     }
   },
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      const { data: me } = await getMe()
+      const { data: me } = await TraqApis.getMe()
       commit.setMe(me)
     }
   }
