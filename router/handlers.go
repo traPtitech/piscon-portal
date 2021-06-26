@@ -235,7 +235,9 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	teamId, err := strconv.Atoi(c.Param("team_id"))
 	if err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
 	}
 
 	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
@@ -250,7 +252,9 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	i := &model.Instance{}
 	h.db.Where("name = ?", name).Find(i)
 	if i.Name != "" {
-		return c.JSON(http.StatusConflict, "既に登録されています")
+		return c.JSON(http.StatusConflict, model.Response{
+			Success: false,
+			Message: "既に登録されています"})
 	}
 
 	privateIP := fmt.Sprintf("172.16.0.%d", teamId*10+instanceNumber)
@@ -258,7 +262,9 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	log.Printf("CreateInstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
 	id, err := h.client.CreateInstance(name, privateIP)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: "Internal server error"})
 	}
 
 	instance := &model.Instance{
@@ -285,12 +291,16 @@ func (h *Handlers) DeleteInstance(c echo.Context) error {
 	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
 	if err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
 	}
 	teamId, err := strconv.Atoi(c.Param("team_id"))
 	if err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
 	}
 
 	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
@@ -302,12 +312,16 @@ func (h *Handlers) DeleteInstance(c echo.Context) error {
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
 	i := &model.Instance{}
 	if err := h.db.Where("name = ?", name).First(i).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		return c.JSON(http.StatusNotFound, "指定したインスタンスが見つかりません")
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: "指定したインスタンスが見つかりません"})
 	}
 
 	err = h.client.DeleteInstance(i.InstanceId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: "Internal server error"})
 	}
 	i = &model.Instance{}
 	h.db.Where("name = ?", name).Delete(i)
@@ -328,7 +342,9 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 	instanceNumber, err := strconv.Atoi(c.Param("instance_number"))
 	if err != nil {
 		fmt.Println(err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
 	}
 	name := c.Param("name")
 
@@ -367,7 +383,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 
 	h.db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task)
 	if task.CmdStr != "" {
-		return c.JSON(http.StatusNotAcceptable, model.Response{
+		return c.JSON(http.StatusConflict, model.Response{
 			Success: false,
 			Message: "既に登録されています"})
 	}

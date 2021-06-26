@@ -252,6 +252,13 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Team'
+        '404':
+          description: 登録されていません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
   /user/{name}:
     get:
       tags:
@@ -271,6 +278,13 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/User'
+        '404':
+          description: 登録されていません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
   /benchmark/{name}/{instance_number}:
     post:
       tags:
@@ -298,7 +312,28 @@ paths:
                   type: string
       responses:
         '201':
-          description: A JSON model of Responce
+          description: キューに追加しました
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '400':
+          description: インスタンスが存在しません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '409':
+          description: 既に登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Responce'
+        '404':
+          description: 登録されていません
           content:
             application/json:
               schema:
