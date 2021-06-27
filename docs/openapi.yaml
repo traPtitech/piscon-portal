@@ -512,6 +512,7 @@ components:
         - instance
         - max_instance_number
         - group
+        - results
       properties:
         name: 
           type: string
