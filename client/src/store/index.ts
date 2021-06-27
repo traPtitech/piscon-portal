@@ -19,7 +19,7 @@ const { store, rootActionContext } = createDirectStore({
       if (!state.AllResults) {
         return
       }
-      state.AllResults.map(team => {
+      return state.AllResults.map(team => {
         const res = {
           name: team.name,
           results: (team.results || [])

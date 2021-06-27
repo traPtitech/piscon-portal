@@ -1,25 +1,20 @@
 <template>
-  <div class="va-table-responsive">
+  <div class="va-table-responsive" headerText="順位表">
     <table class="va-table va-table--hoverable">
       <thead>
         <tr>
-          <th>RANK</th>
-          <th>TEAM</th>
-          <th>SCORE</th>
+          <td>ID</td>
+          <td>TEAM ID</td>
+          <td>PASS</td>
+          <td>SCORE</td>
+          <td>TIME</td>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(r,i) in results" :key="r.name">
+        <tr v-for="(r,i) in results" :key="r.name" headerText="最近のベンチマーク">
           <td>{{i+1}}</td>
           <td>{{r.name}}</td>
           <td>{{r.score}}</td>
-          <!-- <td>
-            <va-badge
-              :text="user.status"
-              :color="user.status"
-              TODO:failedとかのステータスを表示する
-            />
-          </td> -->
         </tr>
       </tbody>
     </table>

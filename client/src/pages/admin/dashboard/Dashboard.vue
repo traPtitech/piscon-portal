@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <dashboard-charts />
+    <ranking />
     <dashboard-info-block />
     <div class="row row-equal">
       <div class="flex xs12 lg6">
@@ -18,6 +18,7 @@ import DashboardCharts from './DashboardCharts'
 import DashboardInfoBlock from './DashboardInfoBlock'
 import DashboardTabs from './DashboardTabs'
 import DashboardMap from './DashboardMap'
+import Ranking from './dashboard-cards/Ranking.vue'
 
 export default {
   name: 'dashboard',
@@ -26,6 +27,7 @@ export default {
     DashboardInfoBlock,
     DashboardTabs,
     DashboardMap,
+    Ranking,
   },
   methods: {
     addAddressToMap ({ city, country }) {

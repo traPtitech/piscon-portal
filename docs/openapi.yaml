@@ -62,9 +62,7 @@ paths:
         content:
           application/json:
             schema:
-              properties:
-                question:
-                  type: string
+              $ref: '#/components/schemas/Questions'
       responses:
         '201':
           description: No content
@@ -95,11 +93,8 @@ paths:
         content:
           application/json:
             schema:
-              properties:
-                name:
-                  type: string
-                group:
-                  type: string
+              type: object
+              $ref: '#/components/schemas/PostTeamRequest'
       responses:
         '201':
           description: A JSON model of team(some param will be empty)
@@ -307,9 +302,8 @@ paths:
         content:
           application/json:
             schema:
-              properties:
-                betterize:
-                  type: string
+              type: object
+              $ref: '#/components/schemas/PostBenchmarkRequest'
       responses:
         '201':
           description: キューに追加しました
@@ -370,9 +364,7 @@ paths:
         content:
           application/json:
             schema:
-              properties:
-                answer:
-                  type: string
+              $ref: '#/components/schemas/Questions'
       responses:
         '200':
           description: A JSON model of Question
@@ -549,3 +541,19 @@ components:
         team_id:
           type: integer
           format: uint
+    PostTeamRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name: 
+          type: string
+        group:
+          type: string
+    PostBenchmarkRequest:
+      type: object
+      required:
+        - name
+      properties:
+        betterize: 
+          type: string
