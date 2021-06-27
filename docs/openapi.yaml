@@ -465,6 +465,7 @@ components:
         - team_id
         - pass
         - messages
+        - score
       properties:
         id: 
           type: integer
