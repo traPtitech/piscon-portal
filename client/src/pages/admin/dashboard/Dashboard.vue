@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import DashboardCharts from './DashboardCharts'
 import DashboardInfoBlock from './DashboardInfoBlock'
 import DashboardTabs from './DashboardTabs'
 import DashboardMap from './DashboardMap'
@@ -23,7 +22,6 @@ import Ranking from './dashboard-cards/Ranking.vue'
 export default {
   name: 'dashboard',
   components: {
-    DashboardCharts,
     DashboardInfoBlock,
     DashboardTabs,
     DashboardMap,
