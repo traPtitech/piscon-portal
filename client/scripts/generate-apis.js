@@ -8,7 +8,7 @@ const execPromise = promisify(exec)
 const addApis = require('./add-apis')
 
 const SWAGGER_PATH = '../docs/openapi.yaml'
-const GENERATED_DIR = 'src/apis/generated'
+const GENERATED_DIR = 'src/lib/apis/generated'
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx'
 
