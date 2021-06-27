@@ -14,6 +14,26 @@ const { store, rootActionContext } = createDirectStore({
     Queue: null as Task[] | null,
     Newer: null as Team[] | null
   },
+  getters: {
+    rankingData(state) {
+      if (!state.AllResults) {
+        return
+      }
+      state.AllResults.map(team => {
+        const res: Team = {}
+        res.name = team.name
+        res.result = (team.results || [])
+          .filter(result => result.pass)
+          .reduce(
+            (a, b) => {
+              return a.score < b.score ? b : a
+            },
+            { score: 0 }
+          )
+        return res
+      }).sort((a, b) => b.result.score - a.result.score)
+    }
+  },
   mutations: {
     setMe(state, me: MyUserDetail) {
       state.me = me
