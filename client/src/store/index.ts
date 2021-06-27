@@ -2,7 +2,7 @@ import { createDirectStore } from 'direct-vuex'
 import { OAuth2Token, MyUserDetail } from '@traptitech/traq'
 import TraqApis from '@/lib/apis/traq'
 import { setAuthToken } from '@/lib/apis/api'
-import apis, { Task, Team, User } from '@/lib/apis'
+import apis, { Result, Task, Team, User } from '@/lib/apis'
 
 const { store, rootActionContext } = createDirectStore({
   state: {
@@ -30,6 +30,19 @@ const { store, rootActionContext } = createDirectStore({
         }
         return res
       }).sort((a, b) => b.results.score - a.results.score)
+    },
+    resentResults(state) {
+      if (!state.AllResults) {
+        return
+      }
+      const results = state.AllResults.reduce(
+        (a, b) => a.concat(b.results || []),
+        [] as Result[]
+      ).sort((a, b) => b.id - a.id)
+      if (results.length > 20) {
+        return results.splice(0, 20)
+      }
+      return results
     }
   },
   mutations: {

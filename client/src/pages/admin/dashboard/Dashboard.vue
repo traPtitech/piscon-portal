@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard">
     <ranking />
+    <resent-benchmark />
     <dashboard-info-block />
     <div class="row row-equal">
       <div class="flex xs12 lg6">
@@ -18,6 +19,7 @@ import DashboardInfoBlock from './DashboardInfoBlock'
 import DashboardTabs from './DashboardTabs'
 import DashboardMap from './DashboardMap'
 import Ranking from './dashboard-cards/Ranking.vue'
+import ResentBenchmark from './dashboard-cards/ResentBenchmark.vue'
 
 export default {
   name: 'dashboard',
@@ -26,6 +28,7 @@ export default {
     DashboardTabs,
     DashboardMap,
     Ranking,
+    ResentBenchmark,
   },
   methods: {
     addAddressToMap ({ city, country }) {

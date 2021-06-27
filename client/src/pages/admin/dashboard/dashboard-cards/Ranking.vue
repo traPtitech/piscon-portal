@@ -7,15 +7,13 @@
     </va-card-title>
     <div class="va-table-responsive">
       <table class="va-table va-table--hoverable">
-        <div class="display-5">
-          <thead>
-            <tr>
-              <th>RANK</th>
-              <th>TEAM</th>
-              <th>SCORE</th>
-            </tr>
-          </thead>
-        </div>
+        <thead>
+          <tr>
+            <th>RANK</th>
+            <th>TEAM</th>
+            <th>SCORE</th>
+          </tr>
+        </thead>
         <tbody>
           <tr v-for="(r,i) in results" :key="r.name">
             <td>{{i+1}}aaa</td>
