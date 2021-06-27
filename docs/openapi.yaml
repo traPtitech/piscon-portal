@@ -405,6 +405,11 @@ components:
   schemas:
     Instance:
       type: object
+      required:
+        - team_id
+        - instance_number
+        - status
+        - name
       properties:
         team_id:
           type: integer
@@ -426,6 +431,8 @@ components:
           type: string
     Message:
       type: object
+      required:
+        - result_id
       properties:
         result_id:
           type: integer
@@ -434,6 +441,8 @@ components:
           type: string
     Questions:
       type: object
+      required:
+        - question
       properties:
         question:
           type: string
@@ -441,6 +450,9 @@ components:
           type: string
     Responce:
       type: object
+      required:
+        - success
+        - message
       properties:
         success:
           type: boolean
@@ -448,6 +460,11 @@ components:
           type: string
     Result:
       type: object
+      required:
+        - id
+        - team_id
+        - pass
+        - messages
       properties:
         id: 
           type: integer
@@ -476,6 +493,10 @@ components:
           format: date
     Task:
       type: object
+      required:
+        - state
+        - team_id
+        - team
       properties:
         cmd_str:
           type: string
@@ -493,6 +514,11 @@ components:
           $ref: '#/components/schemas/Team'
     Team:
       type: object
+      required:
+        - name
+        - instance
+        - max_instance_number
+        - group
       properties:
         name: 
           type: string
@@ -510,6 +536,10 @@ components:
           type: string
     User:
       type: object
+      required:
+        - name
+        - screen_name
+        - team_id
       properties:
         name: 
           type: string
