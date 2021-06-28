@@ -35,7 +35,7 @@
       </div>
     </va-card-content>
   </va-card>
-<!-- TODO:間隔開ける -->
+  <!-- TODO:間隔開ける -->
   <va-card color="background" style="padding: 0.75rem;">
     <va-card-title>
       <div class="display-4">

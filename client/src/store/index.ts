@@ -43,6 +43,12 @@ const { store, rootActionContext } = createDirectStore({
         return results.splice(0, 20)
       }
       return results
+    },
+    resultCount(state) {
+      if (!state.AllResults) {
+        return 0
+      }
+      return state.AllResults.reduce((a, b) => a + (b.results || []).length, 0)
     }
   },
   mutations: {

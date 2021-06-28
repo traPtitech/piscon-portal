@@ -1,30 +1,18 @@
 <template>
   <div class="dashboard">
-    <score-tables />
     <dashboard-info-block />
-    <div class="row row-equal">
-      <div class="flex xs12 lg6">
-        <dashboard-tabs @submit="addAddressToMap"/>
-      </div>
-      <div class="flex xs12 lg6">
-        <dashboard-map ref="dashboardMap"/>
-      </div>
-    </div>
+    <score-tables />
   </div>
 </template>
 
 <script>
 import DashboardInfoBlock from './DashboardInfoBlock'
-import DashboardTabs from './DashboardTabs'
-import DashboardMap from './DashboardMap'
 import ScoreTables from './dashboard-cards/ScoreTables.vue'
 
 export default {
   name: 'dashboard',
   components: {
     DashboardInfoBlock,
-    DashboardTabs,
-    DashboardMap,
     ScoreTables
   },
   methods: {
