@@ -3,6 +3,13 @@
     <div class="flex xl12 xs12">
       <div class="row">
         <div
+          class="flex xs12 sm12"
+        >
+          <benchmark-queue />
+        </div>
+      </div>
+      <div class="row">
+        <div
           class="flex xs12 sm6"
         >
           <va-card class="mb-6" :color="'success'">
@@ -30,7 +37,9 @@
 <script>
 import { computed } from '@vue/runtime-core'
 import { useStore } from '@/store'
+import BenchmarkQueue from './dashboard-breadcrump/BenchmarkQueue.vue'
 export default {
+  components: { BenchmarkQueue },
   name: 'DashboardInfoBlock',
   setup(){
     const store = useStore()

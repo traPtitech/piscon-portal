@@ -19,7 +19,7 @@
         />
       </div>
       <div class="app-layout__page">
-        <div class="layout fluid gutter--xl">
+        <div class="layout fluid gutter--xl" style="max-width: 1600px;">
           <router-view/>
         </div>
       </div>
