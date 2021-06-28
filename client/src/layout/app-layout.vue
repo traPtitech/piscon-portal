@@ -34,7 +34,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { onBeforeRouteUpdate } from 'vue-router';
 import Sidebar from '@/components/sidebar/Sidebar';
 import Navbar from '@/components/navbar/Navbar.vue';
-import BenchmarkQueue from '../pages/admin/Queue/BenchmarkQueue.vue'
+import BenchmarkQueue from '../pages/admin/queue/BenchmarkQueue.vue'
 
 export default {
   name: 'app-layout',
