@@ -458,6 +458,7 @@ components:
         - pass
         - messages
         - score
+        - created_at
       properties:
         id: 
           type: integer
