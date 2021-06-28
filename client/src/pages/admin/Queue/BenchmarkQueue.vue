@@ -1,13 +1,21 @@
 <template>
-  <div>
-    <va-card color="background" style="padding: 0.75rem;">
-      <div class="flex xs12">
-        <span class="mr-2"> 現在のキュー </span>
-        <va-chip square class="mr-2" v-for="que in queue" :key="que.team_id">
-          {{que.team}}
-        </va-chip>
+  <div class="row row-equal">
+    <div class="flex xl12 xs12">
+      <div class="row">
+        <div
+          class="flex xs12 sm12"
+        >
+          <va-card color="background" style="padding: 0.75rem;">
+            <div class="flex xs12">
+              <span class="mr-2"> 現在のキュー </span>
+              <va-chip square class="mr-2" v-for="que in queue" :key="que.team_id">
+                {{que.team}}
+              </va-chip>
+            </div>
+          </va-card>
+        </div>
       </div>
-    </va-card>
+    </div>
   </div>
 </template>
 <script lang="ts">

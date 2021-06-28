@@ -20,17 +20,7 @@
       </div>
       <div class="app-layout__page">
         <div class="layout fluid gutter--xl" style="max-width: 1600px;">
-          <div class="row row-equal">
-            <div class="flex xl12 xs12">
-              <div class="row">
-                <div
-                  class="flex xs12 sm12"
-                >
-                  <benchmark-queue />
-                </div>
-              </div>
-            </div>
-          </div>
+          <benchmark-queue />
           <router-view/>
         </div>
       </div>
