@@ -24,28 +24,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'statistics',
         path: 'statistics',
-        component: RouteViewComponent,
-        children: [
-          {
-            name: 'charts',
-            path: 'charts',
-            component: () =>
-              import('@/pages/admin/statistics/charts/Charts.vue'),
-            meta: {
-              wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Charts'
-            }
-          },
-          {
-            name: 'progress-bars',
-            path: 'progress-bars',
-            component: () =>
-              import('@/pages/admin/statistics/progress-bars/ProgressBars.vue'),
-            meta: {
-              wikiLink:
-                'https://github.com/epicmaxco/vuestic-admin/wiki/Progress-Bars'
-            }
-          }
-        ]
+        component: () => import('@/pages/admin/statistics/Statistics.vue')
       },
       {
         name: 'team',

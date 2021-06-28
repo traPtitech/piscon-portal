@@ -20,6 +20,17 @@
       </div>
       <div class="app-layout__page">
         <div class="layout fluid gutter--xl" style="max-width: 1600px;">
+          <div class="row row-equal">
+            <div class="flex xl12 xs12">
+              <div class="row">
+                <div
+                  class="flex xs12 sm12"
+                >
+                  <benchmark-queue />
+                </div>
+              </div>
+            </div>
+          </div>
           <router-view/>
         </div>
       </div>
@@ -33,13 +44,13 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { onBeforeRouteUpdate } from 'vue-router';
 import Sidebar from '@/components/sidebar/Sidebar';
 import Navbar from '@/components/navbar/Navbar.vue';
-
+import BenchmarkQueue from '../pages/admin/Queue/BenchmarkQueue.vue'
 
 export default {
   name: 'app-layout',
 
   components: {
-    Navbar, Sidebar
+    Navbar, Sidebar,BenchmarkQueue
   },
 
   setup() {   

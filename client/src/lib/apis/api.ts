@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { OAuth2ResponseType, OAuth2Scope, OAuth2Token } from '@traptitech/traq'
-import axios, { AxiosPromise } from 'axios'
+import axios from 'axios'
 import { randomString, pkce } from '../../utils'
 import traqApis from './traq'
 
-const BASE_PATH = 'https://q.trap.jp/api/v3'
+// const BASE_PATH = 'https://q.trap.jp/api/v3'
 const REDIRECT_URL = 'https://piscon.trap.jp'
 
 export const traQClientID = 'J0RR7Auk9OVa4LZnQ4pD37hupkEkYloEHiIU'
