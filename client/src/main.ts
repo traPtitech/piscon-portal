@@ -21,7 +21,7 @@ const i18nConfig = {
 }
 
 const app = createApp(App)
-app.use(store)
+app.use(store.original)
 app.use(router)
 if (process.env.VUE_APP_GTM_ENABLED === 'true') {
   const gtmConfig = {

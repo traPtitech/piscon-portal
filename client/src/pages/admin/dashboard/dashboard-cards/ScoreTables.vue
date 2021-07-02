@@ -74,10 +74,9 @@
 </template>
 <script lang="ts">
 import { computed } from '@vue/runtime-core'
-import { useStore } from '@/store'
+import store from '@/store'
 export default {
   setup(){
-    const store = useStore()
     return{
       results : computed(() => store.getters.resentResults),
       ranking : computed(() => store.getters.rankingData)

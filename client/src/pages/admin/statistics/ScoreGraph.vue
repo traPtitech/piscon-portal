@@ -27,12 +27,11 @@
   </div>
 </template>
 <script lang="ts">
-import { useStore } from '@/store'
+import store from '@/store'
 import chroma from 'chroma-js'
 import {LineChartDataSets} from '@/lib/apis/types'
 export default {
   setup(){
-    const store = useStore()
     const scoreAllData= () => {
         const data = {
           datasets: [] as LineChartDataSets[]

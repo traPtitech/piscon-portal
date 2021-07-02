@@ -20,11 +20,10 @@
 </template>
 <script lang="ts">
 import { computed } from '@vue/runtime-core'
-import { useStore } from '@/store'
+import store from '@/store'
 import { Task } from '@/lib/apis'
 export default{
   setup(){
-    const store = useStore()
     return{
       queue : computed(() => !store.state.Queue ? [] :store.state.Queue.filter(
         (a: Task): boolean => a.state === 'benchmark' 
