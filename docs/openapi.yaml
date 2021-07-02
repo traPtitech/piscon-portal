@@ -403,6 +403,9 @@ components:
         - status
         - name
       properties:
+        id:
+          type: integer
+          format: uint 
         team_id:
           type: integer
           format: uint
@@ -426,6 +429,9 @@ components:
       required:
         - result_id
       properties:
+        id:
+          type: integer
+          format: uint 
         result_id:
           type: integer
           format: uint
@@ -492,6 +498,9 @@ components:
         - team_id
         - team
       properties:
+        id:
+          type: integer
+          format: uint 
         cmd_str:
           type: string
         ip:
@@ -514,7 +523,11 @@ components:
         - max_instance_number
         - group
         - results
+        - id
       properties:
+        id:
+          type: integer
+          format: uint 
         name: 
           type: string
           description: team name
@@ -537,6 +550,9 @@ components:
         - screen_name
         - team_id
       properties:
+        id:
+          type: integer
+          format: uint 
         name: 
           type: string
         screen_name:
