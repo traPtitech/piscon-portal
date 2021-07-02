@@ -117,7 +117,6 @@ const { store, rootActionContext } = createDirectStore({
   }
 })
 
-export default store.original
+export default store
 
 export type Store = typeof store
-export const useStore = (): Store => store
