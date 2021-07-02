@@ -49,6 +49,15 @@ const { store, rootActionContext } = createDirectStore({
         return 0
       }
       return state.AllResults.reduce((a, b) => a + (b.results || []).length, 0)
+    },
+    lastResult(state) {
+      if (!state.Team) {
+        return
+      }
+      const l = state.Team.results.length
+      return l > 0
+        ? JSON.stringify(state.Team.results[l - 1], null, '  ')
+        : 'まだベンチマークは行われていません'
     }
   },
   mutations: {
