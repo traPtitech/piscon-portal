@@ -132,10 +132,9 @@
         </vuestic-widget>
       </div>
     </div>
-    <vuestic-modal :large="true" :show.sync="show" :okText="'閉じる'" :cancelClass="'none'" ref="largeModal">
-      <div slot="title">結果詳細</div>
+    <va-modal :okText="'閉じる'" ref="largeModal" title="結果詳細">
       <pre>{{modalText}}</pre>
-    </vuestic-modal>
+    </va-modal>
   </div>
 </template>
 
@@ -143,7 +142,7 @@
 import {AxiosError} from 'axios'
 import traqApis from '@/lib/apis/traq'
 import Modal from './Modal.vue'
-import apis, { PostBenchmarkRequest, PostTeamRequest, Responce } from '@/lib/apis'
+import apis, { PostBenchmarkRequest, PostTeamRequest, Responce, Response, Result } from '@/lib/apis'
 import store from '@/store'
 import { computed, ref } from 'vue'
 export default { 
@@ -154,11 +153,11 @@ export default {
       const makeInstanceButton= ref(false)
       const modalText= ref('')
       const betterize= ref('')
-      const show= ref(true)
       const error= ref('')
       const showOperationModal= ref(false)
       const operationInstanceNumber= ref(0)
       const waiting= ref(false)
+      const largeModal = ref(false)
       const sortedInstance = computed(() => store.state.Team?.instance.map(v => v).sort((a,b) =>{
         if(a.instance_number > b.instance_number){
           return 1
@@ -167,8 +166,61 @@ export default {
           return -1
         }
       })) 
-      const benchmarkButton = (i: number) =>  computed(()=> store.state.Queue?.find(que => que.team.name === store.state.Team?.name) || (!sortedInstance.value ? false : sortedInstance.value[i-1].status !== 'ACTIVE'))
+      const tweetURL = computed(()=>{
+        try{
+          const result = JSON.parse(this.$store.getters.lastResult)
+          return `https://twitter.com/intent/tweet?text=Pisconで${result.score}点を取りました！%0d&url=https%3A%2F%2Fpiscon.nagatech.work&hashtags=traPiscon`
+        } catch (e) {
+          return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0d&url=https%3A%2F%2Fpiscon.nagatech.work&hashtags=traPiscon`
+        }
+      })
+      const instanceButtonMessage =(i: number) => computed(() => {
+        if (!sortedInstance.value) {return}
+        switch(sortedInstance.value[i-1].status) {
+          case 'ACTIVE':
+            return `インスタンス${sortedInstance.value[i - 1].instance_number}を削除する`
 
+          case 'NOT_EXIST':
+            return `インスタンス${sortedInstance.value[i - 1].instance_number}を作成する`
+
+          case 'BUILDING':
+            return `作成中`
+
+          default:
+            return sortedInstance.value[i - 1].status
+      }
+    })
+      const benchmarkButton = (i: number) =>  computed(()=> store.state.Queue?.find(que => que.team.name === store.state.Team?.name) || (!sortedInstance.value ? false : sortedInstance.value[i-1].status !== 'ACTIVE'))
+      const instanceButton = (i: number) => computed(()=> (!sortedInstance.value ? false : sortedInstance.value[i-1].status !== 'ACTIVE') && (!sortedInstance.value ? false : sortedInstance.value[i-1].status !== 'NOT_EXIST'))
+      const instanceButtonClass = (i: number) => computed(() => {
+        if (!sortedInstance.value) {return}
+        switch (sortedInstance.value[i - 1].status) {
+          case 'ACTIVE':
+            return `btn btn-micro btn-danger`
+
+          case 'NOT_EXIST':
+            return `btn btn-micro btn-info`
+
+          default:
+            return `btn btn-micro btn-info`
+        }
+      })
+      const instanceStatusClass = (i: number) => computed(() => {
+        if (!sortedInstance.value) {return}
+        switch (sortedInstance.value[i - 1].status) {
+          case 'ACTIVE':
+            return 'text-primary'
+
+          case 'NOT_EXIST':
+            return 'text-muted'
+
+          case 'BUILDING':
+            return 'text-info'
+
+          default:
+            return 'text-primary'
+        }
+      })
       const makeInstance = async () => {
         if (makeInstanceButton.value) {return}
         makeInstanceButton.value = true
@@ -191,18 +243,54 @@ export default {
         }).catch((err: AxiosError<Responce>)=> {
           error.value = !err.response?.data.message ? "" : err.response?.data.message
         })
-
+      }
+      const showModal = (data: Result) => {
+        modalText.value = JSON.stringify(data,null, '  ')
+        largeModal.value = true
+      }
+      const setOperationModal = (id :number) => {
+        showOperationModal.value =true
+        operationInstanceNumber.value =id
+      } 
+      const operationInstance = (id) => {
+        showOperationModal.value = false
+        waiting.value = true
+        if(instanceButton(id) || !sortedInstance.value || !store.state.Team) {return}
+        switch(sortedInstance.value[id-1].status) {
+          case 'ACTIVE':
+            apis.instanceTeamIdInstanceNumberDelete(store.state.Team?.id,id).then(()=>{
+              store.dispatch.getData()
+              waiting.value = false
+              }).catch((err: AxiosError<Response>) => {
+                error.value = !err.response?.data.message ? "" : err.response?.data.message
+                waiting.value =false
+              })
+              break
+          case 'NOT_EXIST':
+            apis.instanceTeamIdInstanceNumberPost(store.state.Team.id,id).then(()=>{
+              store.dispatch.getData()
+              waiting.value = false
+            }).catch((err: AxiosError<Response>) => {
+                error.value = !err.response?.data.message ? "" : err.response?.data.message
+                waiting.value =false
+              })
+              break
+        }
       }
       return{
         makeInstance,
+        benchmark,
+        showModal,
+        setOperationModal,
+        operationInstance,
+        instanceButtonMessage,
+        instanceButtonClass,
+        instanceStatusClass,
         error,
+        tweetURL,
       }
   }, 
-  data () {
-    return {
-      
-    }
-  }
+
 }
 </script>
 
