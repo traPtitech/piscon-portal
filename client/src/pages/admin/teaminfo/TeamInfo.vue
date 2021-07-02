@@ -12,7 +12,7 @@
     </Modal>
     <div class="row">
       <div class="col-md-12" v-if="me && team.name">
-        <vuestic-widget class="col-md-12" v-if="team.name">
+        <va-card class="col-md-12" v-if="team.name">
           <div>
             <img
               :src="
@@ -22,8 +22,8 @@
             />
             <h3 style="padding: 1rem 0 0 5rem;">{{ team.name }}</h3>
           </div>
-        </vuestic-widget>
-        <vuestic-widget class="col-md-12">
+        </va-card>
+        <va-card class="col-md-12">
           <div>
             <img
               :src="`https://q.trap.jp/api/1.0/public/icon/${me.name}`"
@@ -33,9 +33,9 @@
               {{ me.displayname }}(@{{ me.name }})
             </h3>
           </div>
-        </vuestic-widget>
-        <div v-if="$store.state.User && team.instance">
-          <vuestic-widget class="col-md-12">
+        </va-card>
+        <div v-if="user && team.instance">
+          <va-card class="col-md-12">
             <div class="widget-header">サーバー情報</div>
             <div class="widget-body">
               <h6>チーム名 : {{ team.name }}</h6>
@@ -134,7 +134,7 @@
                 </td>
               </tr>
               <table>
-                <tr v-if="$store.state.Team.results.length > 0">
+                <tr v-if="team.results.length > 0">
                   <td>
                     <h6><span class="col-md-6">現在のスコア :</span></h6>
                   </td>
@@ -153,7 +153,7 @@
                   <td>
                     <h6>
                       <span class="col-md-6">{{
-                        $store.getters.maxScore.score
+                        maxScore.score
                       }}</span>
                     </h6>
                   </td>
@@ -176,7 +176,7 @@
               </div>
               <div
                 class="col-md-12 my-2"
-                v-for="i in $team.max_instance_number"
+                v-for="i in team.max_instance_number"
                 :key="i"
               >
                 <button
@@ -198,8 +198,8 @@
                 {{ error }}
               </div>
             </div>
-          </vuestic-widget>
-          <!-- <vuestic-widget v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="col-md-12">
+          </va-card>
+          <!-- <va-card v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="col-md-12">
             <div class="widget-header">広告</div>
             <div class="widget-body">
               <p>
@@ -207,11 +207,11 @@
                 部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけるとSysAd班が泣いて喜びます。
               </p>
             </div>
-          </vuestic-widget> -->
-          <vuestic-widget class="col-md-12" headerText="最新の結果">
-            <pre>{{ $store.getters.lastResult }}</pre>
-          </vuestic-widget>
-          <vuestic-widget class="col-md-12" headerText="これまでの結果">
+          </va-card> -->
+          <va-card class="col-md-12" headerText="最新の結果">
+            <pre>{{ lastResult }}</pre>
+          </va-card>
+          <va-card class="col-md-12" headerText="これまでの結果">
             <div class="table-responsible">
               <table class="table table-striped table-sm">
                 <thead>
@@ -226,7 +226,7 @@
                 <tbody>
                   <tr
                     :class="{ 'table-danger': !result.pass }"
-                    v-for="result in $store.state.Team.results"
+                    v-for="result in team.results"
                     :key="result.id"
                   >
                     <td>{{ result.id }}</td>
@@ -245,15 +245,15 @@
                 </tbody>
               </table>
             </div>
-          </vuestic-widget>
+          </va-card>
         </div>
       </div>
       <div v-else class="col-md-12">
-        <vuestic-widget headerText="参加者専用ページ">
+        <va-card headerText="参加者専用ページ">
           <div class="widget-body">
             <p>このページは参加者専用です！</p>
           </div>
-        </vuestic-widget>
+        </va-card>
       </div>
     </div>
     <va-modal :okText="'閉じる'" ref="largeModal" title="結果詳細">
@@ -289,6 +289,9 @@ export default {
     const largeModal = ref(false)
     const team = computed(() => store.state.Team)
     const me = computed(() => store.state.me)
+    const user = computed(() => store.state.User)
+    const lastResult = computed(() => store.getters.lastResult)
+    const maxScore = computed(()=>store.getters.maxScore)
     const sortedInstance = computed(() =>
       store.state.Team?.instance
         .map(v => v)
@@ -487,7 +490,10 @@ export default {
       error,
       tweetURL,
       team,
-      me
+      me,
+      user,
+      lastResult,
+      maxScore
     }
   }
 }

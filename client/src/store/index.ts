@@ -58,6 +58,18 @@ const { store, rootActionContext } = createDirectStore({
       return l > 0
         ? JSON.stringify(state.Team.results[l - 1], null, '  ')
         : 'まだベンチマークは行われていません'
+    },
+    maxScore(state) {
+      if (!state.Team) {
+        return
+      } else {
+        return state.Team.results.reduce(
+          (a, b) => {
+            return a.score < b.score ? b : a
+          },
+          { score: 0 }
+        )
+      }
     }
   },
   mutations: {

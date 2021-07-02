@@ -29,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'team',
         path: 'team',
-        component: RouteViewComponent
+        component: () => import('@/pages/admin/teaminfo/TeamInfo.vue')
       },
       {
         name: 'readme',

@@ -29,11 +29,10 @@
 
 <script>
 import { computed } from '@vue/runtime-core'
-import { useStore } from '@/store'
+import store from '@/store'
 export default {
   name: 'DashboardInfoBlock',
   setup(){
-    const store = useStore()
     return{
       resultCount : computed(() => store.getters.resultCount),
       length : computed(() => store.state.AllResults ? store.state.AllResults.length : 0 ) //TODO:型修正
