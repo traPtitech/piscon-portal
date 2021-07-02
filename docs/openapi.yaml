@@ -109,14 +109,14 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '409':
           description: 登録されています
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
   /user:
     post:
       tags:
@@ -144,7 +144,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
   /instance/{team_id}/{instance_number}:
     post:
       tags:
@@ -178,14 +178,14 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '409':
           description: 登録されています
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
     delete:
       tags:
         - instance
@@ -213,21 +213,21 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '404':
           description: 指定したインスタンスが見つかりません
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
   /team/{id}:
     get:
       tags:
@@ -253,7 +253,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
   /user/{name}:
     get:
       tags:
@@ -279,7 +279,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
   /benchmark/{name}/{instance_number}:
     post:
       tags:
@@ -311,28 +311,28 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '400':
           description: インスタンスが存在しません
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '409':
           description: 既に登録されています
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
         '404':
           description: 登録されていません
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Responce'
+                $ref: '#/components/schemas/Response'
   /admin/team:
     get:
       tags:
@@ -440,7 +440,7 @@ components:
           type: string
         answer:
           type: string
-    Responce:
+    Response:
       type: object
       required:
         - success
@@ -517,6 +517,7 @@ components:
       properties:
         name: 
           type: string
+          description: team name
         instance:
           type: array
           items: 
