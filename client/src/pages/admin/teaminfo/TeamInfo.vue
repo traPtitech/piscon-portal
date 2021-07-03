@@ -15,12 +15,10 @@
         <va-card class="flex md12" v-if="team.name">
           <div>
             <img
-              :src="
-                `https://q.trap.jp/api/1.0/files/8fc25ba6-a0c9-493d-81d2-11f0870d711f`
-              "
+              :src="`https://q.trap.jp/api/1.0/files/8fc25ba6-a0c9-493d-81d2-11f0870d711f`"
               class="profile-image"
             />
-            <h3 style="padding: 1rem 0 0 5rem;">{{ team.name }}</h3>
+            <h3 style="padding: 1rem 0 0 5rem">{{ team.name }}</h3>
           </div>
         </va-card>
         <va-card class="flex md12">
@@ -29,7 +27,7 @@
               :src="`https://q.trap.jp/api/1.0/public/icon/${me.name}`"
               class="profile-image"
             />
-            <h3 style="padding: 1rem 0 0 5rem;">
+            <h3 style="padding: 1rem 0 0 5rem">
               {{ me.displayname }}(@{{ me.name }})
             </h3>
           </div>
@@ -152,9 +150,7 @@
                   </td>
                   <td>
                     <h6>
-                      <span class="md6">{{
-                        maxScore.score
-                      }}</span>
+                      <span class="md6">{{ maxScore.score }}</span>
                     </h6>
                   </td>
                 </tr>
@@ -211,7 +207,7 @@
           <va-card class="flex md12" headerText="最新の結果">
             <pre>{{ lastResult }}</pre>
           </va-card>
-          <va-card class="flex md12" headerText="これまでの結果">
+          <va-card class="md12" headerText="これまでの結果">
             <div class="table-responsible">
               <table class="table table-striped table-sm">
                 <thead>
@@ -248,11 +244,9 @@
           </va-card>
         </div>
       </div>
-      <div v-else class=" flex md12">
+      <div v-else class="flex md12">
         <va-card>
-          <va-card-title>
-            参加者専用ページ
-          </va-card-title>
+          <va-card-title> 参加者専用ページ </va-card-title>
           <va-card-content>
             <p>このページは参加者専用です！</p>
           </va-card-content>
@@ -294,7 +288,7 @@ export default {
     const me = computed(() => store.state.me)
     const user = computed(() => store.state.User)
     const lastResult = computed(() => store.getters.lastResult)
-    const maxScore = computed(()=>store.getters.maxScore)
+    const maxScore = computed(() => store.getters.maxScore)
     const sortedInstance = computed(() =>
       store.state.Team?.instance
         .map(v => v)

@@ -3,7 +3,6 @@ import AuthLayout from '@/layout/auth-layout.vue'
 import AppLayout from '@/layout/app-layout.vue'
 import Page404Layout from '@/layout/page-404-layout.vue'
 
-import RouteViewComponent from './route-view.vue'
 import UIRoute from '@/pages/admin/ui/route'
 
 const routes: Array<RouteRecordRaw> = [
@@ -34,17 +33,17 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'readme',
         path: 'readme',
-        component: () => import('@/pages/admin/manual/Manual.vue')
+        component: () => import('@/pages/admin/readme/Readme.vue')
       },
       {
         name: 'manual',
         path: 'manual',
-        component: RouteViewComponent
+        component: () => import('@/pages/admin/manual/Manual.vue')
       },
       {
         name: 'faq',
         path: 'faq',
-        component: RouteViewComponent
+        component: () => import('@/pages/admin/pages/FaqPage.vue')
       },
       UIRoute
     ]
