@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'readme',
         path: 'readme',
-        component: RouteViewComponent
+        component: () => import('@/pages/admin/manual/Manual.vue')
       },
       {
         name: 'manual',
