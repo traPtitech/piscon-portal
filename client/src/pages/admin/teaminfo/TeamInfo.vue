@@ -11,8 +11,8 @@
       >
     </Modal>
     <div class="row">
-      <div class="col-md-12" v-if="me && team.name">
-        <va-card class="col-md-12" v-if="team.name">
+      <div class="flex md12" v-if="me && team.name">
+        <va-card class="flex md12" v-if="team.name">
           <div>
             <img
               :src="
@@ -23,7 +23,7 @@
             <h3 style="padding: 1rem 0 0 5rem;">{{ team.name }}</h3>
           </div>
         </va-card>
-        <va-card class="col-md-12">
+        <va-card class="flex md12">
           <div>
             <img
               :src="`https://q.trap.jp/api/1.0/public/icon/${me.name}`"
@@ -35,7 +35,7 @@
           </div>
         </va-card>
         <div v-if="user && team.instance">
-          <va-card class="col-md-12">
+          <va-card class="flex md12">
             <div class="widget-header">サーバー情報</div>
             <div class="widget-body">
               <h6>チーム名 : {{ team.name }}</h6>
@@ -44,17 +44,17 @@
                 <tr>
                   <td>
                     <h6>
-                      <span class="col-md-6">サーバ{{ n }}</span>
+                      <span class="md6">サーバ{{ n }}</span>
                     </h6>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <h6><span class="col-md-6">状態</span></h6>
+                    <h6><span class="md6">状態</span></h6>
                   </td>
                   <td>
                     <h6>
-                      <span :class="`col-md-6 ${instanceStatusClass(n)}`">{{
+                      <span :class="`md6 ${instanceStatusClass(n)}`">{{
                         sortedInstance.value[n - 1].status
                       }}</span>
                     </h6>
@@ -63,12 +63,12 @@
                 <tr>
                   <td>
                     <h6>
-                      <span class="col-md-6">グローバル IP アドレス :</span>
+                      <span class="md6">グローバル IP アドレス :</span>
                     </h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="col-md-6">{{
+                      <span class="md6">{{
                         sortedInstance.value[n - 1].global_ip_address
                       }}</span>
                     </h6>
@@ -77,12 +77,12 @@
                 <tr>
                   <td>
                     <h6>
-                      <span class="col-md-6">プライベート IP アドレス :</span>
+                      <span class="md6">プライベート IP アドレス :</span>
                     </h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="col-md-6">{{
+                      <span class="md6">{{
                         sortedInstance.value[n - 1].private_ip_address
                       }}</span>
                     </h6>
@@ -90,19 +90,19 @@
                 </tr>
                 <tr>
                   <td>
-                    <h6><span class="col-md-6">ユーザー名 :</span></h6>
+                    <h6><span class="md6">ユーザー名 :</span></h6>
                   </td>
                   <td>
-                    <h6><span class="col-md-6">isucon</span></h6>
+                    <h6><span class="md6">isucon</span></h6>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <h6><span class="col-md-6">初期パスワード :</span></h6>
+                    <h6><span class="md6">初期パスワード :</span></h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="col-md-6">{{
+                      <span class="md6">{{
                         sortedInstance.value[n - 1].password
                       }}</span>
                     </h6>
@@ -110,11 +110,11 @@
                 </tr>
                 <tr>
                   <td>
-                    <h6><span class="col-md-6">サーバー作成時間 :</span></h6>
+                    <h6><span class="md6">サーバー作成時間 :</span></h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="col-md-6">{{
+                      <span class="md6">{{
                         sortedInstance.value[n - 1].CreatedAt
                       }}</span>
                     </h6>
@@ -125,22 +125,22 @@
 
               <tr>
                 <td>
-                  <h6><span class="col-md-6">ベンチマーク回数 :</span></h6>
+                  <h6><span class="md6">ベンチマーク回数 :</span></h6>
                 </td>
                 <td>
                   <h6>
-                    <span class="col-md-6">{{ team.results.length }}</span>
+                    <span class="md6">{{ team.results.length }}</span>
                   </h6>
                 </td>
               </tr>
               <table>
                 <tr v-if="team.results.length > 0">
                   <td>
-                    <h6><span class="col-md-6">現在のスコア :</span></h6>
+                    <h6><span class="md6">現在のスコア :</span></h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="col-md-6">{{
+                      <span class="md6">{{
                         team.results.slice(-1)[0].score
                       }}</span>
                     </h6>
@@ -148,11 +148,11 @@
                 </tr>
                 <tr>
                   <td>
-                    <h6><span class="col-md-6">最高スコア :</span></h6>
+                    <h6><span class="md6">最高スコア :</span></h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="col-md-6">{{
+                      <span class="md6">{{
                         maxScore.score
                       }}</span>
                     </h6>
@@ -160,7 +160,7 @@
                 </tr>
               </table>
 
-              <div class="col-md-12"></div>
+              <div class="flex md12"></div>
               <div class="form-group">
                 <div class="input-group">
                   <textarea
@@ -175,7 +175,7 @@
                 </div>
               </div>
               <div
-                class="col-md-12 my-2"
+                class="flex md12 my-2"
                 v-for="i in team.max_instance_number"
                 :key="i"
               >
@@ -199,7 +199,7 @@
               </div>
             </div>
           </va-card>
-          <!-- <va-card v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="col-md-12">
+          <!-- <va-card v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="flex md12">
             <div class="widget-header">広告</div>
             <div class="widget-body">
               <p>
@@ -208,10 +208,10 @@
               </p>
             </div>
           </va-card> -->
-          <va-card class="col-md-12" headerText="最新の結果">
+          <va-card class="flex md12" headerText="最新の結果">
             <pre>{{ lastResult }}</pre>
           </va-card>
-          <va-card class="col-md-12" headerText="これまでの結果">
+          <va-card class="flex md12" headerText="これまでの結果">
             <div class="table-responsible">
               <table class="table table-striped table-sm">
                 <thead>
@@ -248,11 +248,14 @@
           </va-card>
         </div>
       </div>
-      <div v-else class="col-md-12">
-        <va-card headerText="参加者専用ページ">
-          <div class="widget-body">
+      <div v-else class=" flex md12">
+        <va-card>
+          <va-card-title>
+            参加者専用ページ
+          </va-card-title>
+          <va-card-content>
             <p>このページは参加者専用です！</p>
-          </div>
+          </va-card-content>
         </va-card>
       </div>
     </div>
