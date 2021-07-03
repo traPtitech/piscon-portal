@@ -1,9 +1,14 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import AuthLayout from '@/layout/auth-layout.vue'
 import AppLayout from '@/layout/app-layout.vue'
 import Page404Layout from '@/layout/page-404-layout.vue'
 
 import UIRoute from '@/pages/admin/ui/route'
+import store from '@/store'
+import {
+  fetchAuthToken,
+  redirectAuthorizationEndpoint,
+  revokeAuthToken
+} from '@/lib/apis/api'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -46,33 +51,77 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/pages/admin/pages/FaqPage.vue')
       },
       UIRoute
-    ]
+    ],
+    beforeEnter: async (to, from, next) => {
+      try {
+        await store.dispatch.getData()
+        if (to.path === '/') {
+          next('/dashboard')
+        }
+        next()
+      } catch (e) {
+        console.error(e)
+      }
+    }
   },
   {
-    path: '/auth',
-    component: AuthLayout,
-    children: [
-      {
-        name: 'login',
-        path: 'login',
-        component: () => import('@/pages/auth/login/Login.vue')
-      },
-      {
-        name: 'signup',
-        path: 'signup',
-        component: () => import('@/pages/auth/signup/Signup.vue')
-      },
-      {
-        name: 'recover-password',
-        path: 'recover-password',
-        component: () =>
-          import('@/pages/auth/recover-password/RecoverPassword.vue')
-      },
-      {
-        path: '',
-        redirect: { name: 'login' }
+    path: '/auth/login',
+    name: 'login',
+    component: () => import('@/pages/auth/Callback.vue'),
+    beforeEnter: async (to, from, next) => {
+      try {
+        await store.dispatch.getData()
+        if (!store.state.me) {
+          await redirectAuthorizationEndpoint()
+        }
+        next()
+      } catch (e) {
+        console.error(e)
       }
-    ]
+    }
+  },
+  {
+    path: '/auth/callback',
+    name: 'callback',
+    component: () => import('@/pages/auth/Callback.vue'),
+    beforeEnter: async (to, from, next) => {
+      const code = to.query.code?.toString()
+      const state = to.query.state
+      const codeVerifier = sessionStorage.getItem(
+        `login-code-verifier-${state}`
+      )
+      if (!code || !codeVerifier) {
+        next('/')
+        return
+      }
+
+      try {
+        const res = await fetchAuthToken(code, codeVerifier)
+        store.commit.setToken(res.data)
+        store.dispatch.getData()
+        next('/team-info')
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  },
+  {
+    path: '/auth/logout',
+    name: 'logout',
+    component: () => import('@/pages/auth/Callback.vue'),
+    beforeEnter: async (to, from, next) => {
+      if (!store.state.authToken) {
+        return
+      }
+      try {
+        await revokeAuthToken(store.state.authToken)
+        await store.commit.destroySession()
+        await store.dispatch.getData()
+        next('/dashboard')
+      } catch (e) {
+        console.error(e)
+      }
+    }
   },
   {
     path: '/404',

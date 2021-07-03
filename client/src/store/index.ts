@@ -8,11 +8,11 @@ const { store, rootActionContext } = createDirectStore({
   state: {
     me: null as MyUserDetail | null,
     User: null as User | null,
-    authToken: null as OAuth2Token | null,
     Team: null as Team | null,
     AllResults: null as Team[] | null,
     Queue: null as Task[] | null,
-    Newer: null as Team[] | null
+    Newer: null as Team[] | null,
+    authToken: null as OAuth2Token | null
   },
   getters: {
     rankingData(state) {
@@ -94,6 +94,15 @@ const { store, rootActionContext } = createDirectStore({
     },
     setNewer(state, data: Team[]) {
       state.Newer = data
+    },
+    destroySession(state) {
+      state.AllResults = null
+      state.User = null
+      state.Newer = null
+      state.Queue = null
+      state.Team = null
+      state.authToken = null
+      state.me = null
     }
   },
   actions: {
@@ -141,3 +150,4 @@ const { store, rootActionContext } = createDirectStore({
 export default store
 
 export type Store = typeof store
+export const useStore = (): Store => store
