@@ -439,8 +439,6 @@ components:
           type: string
     Questions:
       type: object
-      required:
-        - question
       properties:
         question:
           type: string
