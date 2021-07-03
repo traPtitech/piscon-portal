@@ -1,6 +1,6 @@
 // const path = require('path')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
-
+const webpack = require('webpack')
 module.exports = {
   lintOnSave: true,
   // transpileDependencies: [
@@ -29,8 +29,13 @@ module.exports = {
         // vue$: 'vue/dist/vue.esm.js',
         'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
         // '@': path.resolve('src'),
-      },
+      }
     },
+    plugins: [
+      new webpack.DefinePlugin({
+        __INTLIFY_PROD_DEVTOOLS__: false
+      })
+    ]
     // plugins: [
     //   ...(
     //     (!lintOnSave && process.env.NODE_ENV === 'development') ? [] : [new StylelintPlugin({
@@ -43,14 +48,14 @@ module.exports = {
     loaderOptions: {
       sass: {
         // Preload vuestic-ui variables and mixins for every component
-      },
-    },
+      }
+    }
   },
   pwa: {
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
       swSrc: './src/service-worker.js',
-      importWorkboxFrom: 'local',
-    },
-  },
+      importWorkboxFrom: 'local'
+    }
+  }
 }

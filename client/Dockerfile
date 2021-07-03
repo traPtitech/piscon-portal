@@ -1,13 +1,8 @@
-FROM node:8
-
+FROM node:14.17 as build
 WORKDIR /app
-
 COPY . /app
-
-EXPOSE 8080
-
-RUN npm install http-server -g
-
 RUN npm install && npm run build
 
-CMD http-server ./dist
+FROM nginx
+EXPOSE 80
+COPY --from=build /app/dist /usr/share/nginx/html
