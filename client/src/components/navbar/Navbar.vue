@@ -31,22 +31,21 @@ import { useColors } from 'vuestic-ui'
 import { computed } from 'vue'
 import PisconLogo from '@/components/piscon-logo'
 import VaIconMenuCollapsed from '@/components/icons/VaIconMenuCollapsed'
-import store, { useStore } from '@/store'
+import store from '@/store'
 
 export default {
   components: { PisconLogo, VaIconMenuCollapsed },
   setup() {
     const { getColors } = useColors()
     const colors = computed(() => getColors())
-    const tstore = useStore() //TODO
     const me = store.state.me
 
     const isSidebarMinimized = computed({
-      get: () => tstore.state.isSidebarMinimized,
-      set: value => tstore.commit('updateSidebarCollapsedState', value)
+      get: () => store.state.isSidebarMinimized,
+      set: value => store.commit.updateSidebarCollapsedState(value)
     })
 
-    const userName = computed(() => tstore.state.userName)
+    const userName = computed(() => store.state.userName)
     console.log(me)
     return {
       colors,

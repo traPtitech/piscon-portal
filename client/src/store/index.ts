@@ -12,7 +12,8 @@ const { store, rootActionContext } = createDirectStore({
     AllResults: null as Team[] | null,
     Queue: null as Task[] | null,
     Newer: null as Team[] | null,
-    authToken: null as OAuth2Token | null
+    authToken: null as OAuth2Token | null,
+    isSidebarMinimized: false
   },
   getters: {
     rankingData(state) {
@@ -103,6 +104,9 @@ const { store, rootActionContext } = createDirectStore({
       state.Team = null
       state.authToken = null
       state.me = null
+    },
+    updateSidebarCollapsedState(state, isSidebarMinimized) {
+      state.isSidebarMinimized = isSidebarMinimized
     }
   },
   actions: {

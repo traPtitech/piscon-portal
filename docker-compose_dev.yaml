@@ -1,7 +1,4 @@
 version: "3"
-volumes:
-  node_modules: {}
-  db:
 services:
   backend:
     build:
@@ -41,3 +38,6 @@ services:
       - db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+volumes:
+  node_modules: {}
+  db:
