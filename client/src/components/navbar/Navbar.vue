@@ -46,7 +46,6 @@ export default {
     })
 
     const userName = computed(() => store.state.userName)
-    console.log(me)
     return {
       colors,
       isSidebarMinimized,
