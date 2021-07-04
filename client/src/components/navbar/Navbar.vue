@@ -1,6 +1,6 @@
 <template>
   <div class="app-layout__navbar">
-    <va-navbar>
+    <va-navbar color="white">
       <template v-slot:left>
         <div class="left">
           <va-icon-menu-collapsed

@@ -1,11 +1,11 @@
-import { ref, computed } from "vue"
+import { ref, computed } from 'vue'
 import { mergeGlobalConfig } from 'vuestic-ui'
 
 export const THEME_NAMES = {
   LIGHT: 'LIGHT',
   ORIGINAL: 'ORIGINAL',
   DARK: 'DARK',
-  SEMI_DARK: 'SEMI_DARK',
+  SEMI_DARK: 'SEMI_DARK'
 }
 
 export const COLOR_THEMES = [
@@ -21,25 +21,25 @@ export const COLOR_THEMES = [
       warning: '#ffd43a',
       white: '#ffffff',
       dark: '#262824',
-      gray: '#767c88',
+      gray: '#767c88'
     },
     components: {
       VaNavbar: {
         color: 'white',
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaSidebar: {
         color: 'white',
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaCard: {
-        color: 'white',
+        color: 'white'
       },
       VaCardContent: {
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaCardTitle: {
-        textColor: 'dark',
+        textColor: 'dark'
       }
     }
   },
@@ -55,25 +55,25 @@ export const COLOR_THEMES = [
       warning: '#ffd43a',
       white: '#262824',
       dark: '#ffffff',
-      gray: '#f6f7f6',
+      gray: '#f6f7f6'
     },
     components: {
       VaNavbar: {
         color: 'white',
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaSidebar: {
         color: 'white',
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaCard: {
-        color: 'white',
+        color: 'white'
       },
       VaCardContent: {
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaCardTitle: {
-        textColor: 'dark',
+        textColor: 'dark'
       }
     }
   },
@@ -89,25 +89,25 @@ export const COLOR_THEMES = [
       background: '#f6f7f6',
       white: '#ffffff',
       dark: '#262824',
-      gray: '#767c88',
+      gray: '#767c88'
     },
     components: {
       VaNavbar: {
         color: 'dark',
-        textColor: 'white',
+        textColor: 'white'
       },
       VaSidebar: {
         color: 'dark',
-        textColor: 'white',
+        textColor: 'white'
       },
       VaCard: {
-        color: 'white',
+        color: 'white'
       },
       VaCardContent: {
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaCardTitle: {
-        textColor: 'dark',
+        textColor: 'dark'
       }
     }
   },
@@ -123,28 +123,28 @@ export const COLOR_THEMES = [
       warning: '#ffc200',
       gray: '#767c88',
       white: '#ffffff',
-      dark: '#262824',
+      dark: '#262824'
     },
     components: {
       VaNavbar: {
         color: '#1E4CBD',
-        textColor: 'primary',
+        textColor: 'primary'
       },
       VaSidebar: {
         color: '#0A2E80',
-        textColor: 'primary',
+        textColor: 'primary'
       },
       VaCard: {
-        color: 'widget',
+        color: 'widget'
       },
       VaCardContent: {
-        textColor: 'dark',
+        textColor: 'dark'
       },
       VaCardTitle: {
-        textColor: 'dark',
+        textColor: 'dark'
       }
     }
-  },
+  }
 ]
 
 export const useTheme = () => {
@@ -152,14 +152,21 @@ export const useTheme = () => {
 
   const setTheme = (themeName: keyof typeof THEME_NAMES) => {
     themeNameRef.value = themeName
-    const theme = COLOR_THEMES.find((theme) => theme.name === themeName)
+    const theme = COLOR_THEMES.find(theme => theme.name === themeName)
 
-    if (!theme) { throw new Error('Theme not found') }
+    if (!theme) {
+      throw new Error('Theme not found')
+    }
 
-    mergeGlobalConfig({ colors: theme.colors as any, components: theme.components })
+    mergeGlobalConfig({
+      colors: theme.colors as any,
+      components: theme.components
+    })
   }
 
-  const theme = computed(() =>  COLOR_THEMES.find((theme) => theme.name === themeNameRef.value))
-  
+  const theme = computed(() =>
+    COLOR_THEMES.find(theme => theme.name === themeNameRef.value)
+  )
+
   return { setTheme, themeName: themeNameRef, theme }
 }

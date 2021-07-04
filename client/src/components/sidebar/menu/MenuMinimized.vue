@@ -9,22 +9,36 @@
     v-model="dropdownsValue[idx]"
   >
     <template #anchor>
-      <va-sidebar-item :active="isItemChildsActive(route)" :to="route.children ? undefined : { name: route.name }">
+      <va-sidebar-item
+        :active="isItemChildsActive(route)"
+        :to="route.children ? undefined : { name: route.name }"
+      >
         <va-sidebar-item-content>
           <va-sidebar-item-title>
-            <va-icon :name="route.meta.icon" class="va-sidebar-item__icon"/>
+            <va-icon
+              :name="route.meta.icon"
+              size="small"
+              class="va-sidebar-item__icon"
+            />
           </va-sidebar-item-title>
-          <va-icon v-if="route.children" class="more_icon" :name="dropdownsValue[idx] ? 'chevron_left' : 'chevron_right'"/>          
+          <va-icon
+            v-if="route.children"
+            class="more_icon"
+            :name="dropdownsValue[idx] ? 'chevron_left' : 'chevron_right'"
+          />
         </va-sidebar-item-content>
       </va-sidebar-item>
     </template>
     <div class="sidebar-item__children">
       <template v-for="(child, index) in route.children" :key="index">
-        <va-sidebar-item :active="isRouteActive(child)" :to="{ name: child.name }">
+        <va-sidebar-item
+          :active="isRouteActive(child)"
+          :to="{ name: child.name }"
+        >
           <va-sidebar-item-content>
             <va-sidebar-item-title>
               {{ $t(child.displayName) }}
-            </va-sidebar-item-title>            
+            </va-sidebar-item-title>
           </va-sidebar-item-content>
         </va-sidebar-item>
       </template>
@@ -33,14 +47,14 @@
 </template>
 
 <script>
-import { useGlobalConfig } from 'vuestic-ui';
+import { useGlobalConfig } from 'vuestic-ui'
 
 export default {
-  name: "AppMenuMinimized",
+  name: 'AppMenuMinimized',
   props: {
     items: { type: Array, default: () => [] }
   },
-  data () {
+  data() {
     return {
       dropdownsValue: []
     }
@@ -48,29 +62,31 @@ export default {
   computed: {
     theme() {
       return useGlobalConfig().getGlobalConfig().colors
-    },
+    }
   },
   methods: {
     isGroup(item) {
-      return !!item.children;
+      return !!item.children
     },
     isRouteActive(item) {
-      return item.name === this.$route.name;
+      return item.name === this.$route.name
     },
     isItemChildsActive(item) {
       if (!item.children) {
-        return false;
+        return false
       }
 
-      const isCurrentItemActive = this.isRouteActive(item);
+      const isCurrentItemActive = this.isRouteActive(item)
       const isChildActive = !!item.children.find(child =>
-        child.children ? this.isItemChildsActive(child) : this.isRouteActive(child)
-      );
+        child.children
+          ? this.isItemChildsActive(child)
+          : this.isRouteActive(child)
+      )
 
-      return isCurrentItemActive || isChildActive;
-    },
+      return isCurrentItemActive || isChildActive
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -105,6 +121,4 @@ export default {
     }
   }
 }
-
-
 </style>
