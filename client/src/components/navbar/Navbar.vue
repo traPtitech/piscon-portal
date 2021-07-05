@@ -18,7 +18,7 @@
         <div v-if="me">
           {{ me.name }}
         </div>
-        <div c-else>
+        <div v-else>
           <router-link to="/auth/login"> Signin with traQ </router-link>
         </div>
       </template>
