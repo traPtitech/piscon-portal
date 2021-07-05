@@ -11,7 +11,7 @@
       >
     </Modal>
     <div class="row">
-      <div class="flex md12" v-if="me && team.name">
+      <div class="flex md12" v-if="me && team &&team.name">
         <va-card class="flex md12" v-if="team.name">
           <div>
             <img
