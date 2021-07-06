@@ -11,9 +11,6 @@ WORKDIR /app
 
 EXPOSE 4000
 
-RUN apk add --no-cache --update ca-certificates imagemagick && \
-  update-ca-certificates
-
 COPY --from=build /piscon_portal /go/src/github.com/traPtitech/piscon-portal/.env  ./
 
 ENTRYPOINT ./piscon_portal
