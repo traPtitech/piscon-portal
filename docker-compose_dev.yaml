@@ -5,32 +5,32 @@ services:
       context: .
     tty: true
     ports:
-      - 4000:4000
-    entrypoint: dockerize -timeout 60s -wait tcp://db:3306
+      - "4000:4000"
+    restart: always
     command: ./piscon_portal
     environment:
       MARIADB_HOST: db
       MARIADB_USERNAME: isucon
       MARIADB_PASSWORD: isucon
       MARIADB_DATABASE: isucon
+      MARIADB_PORT: 3306
+      ENV: dev
     depends_on:
       - db
   frontend:
     build:
       context: ./client
-      dockerfile: Dockerfile_dev
     tty: true
     ports:
-      - 8080:8080
-    volumes:
-      - ./client:/app
-      - node_modules:/app/node_modules
+      - "8080:80"
     depends_on:
       - backend
   db:
-    image: mariadb
+    image: mariadb:latest
     ports:
-      - 3306:3306
+      - "3306:3306"
+    expose:
+      - "3306"
     volumes:
       # 初期データを投入するSQLが格納されているdir
       - ./db/init:/docker-entrypoint-initdb.d
@@ -39,5 +39,4 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
 volumes:
-  node_modules: {}
   db:

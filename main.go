@@ -271,6 +271,10 @@ func establishConnection() (*gorm.DB, error) {
 	if user == "" {
 		user = "isucon"
 	}
+	port := os.Getenv("MARIADB_PORT")
+	if port == "" {
+		port = "3306"
+	}
 
 	pass := os.Getenv("MARIADB_PASSWORD")
 	if pass == "" {
@@ -294,7 +298,7 @@ func establishConnection() (*gorm.DB, error) {
 	if dbname == "" {
 		dbname = "isucon"
 	}
-	dsn := fmt.Sprintf("%s:%s@(%s)/%s", user, pass, host, dbname) + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?charset=utf8mb4&parseTime=True&loc=Local"
 	log.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	// _db.BlockGlobalUpdate(true) <= GOrm v2でデフォルト有効になったらしい(要調査)
