@@ -64,7 +64,7 @@ export default {
       }
     const score21BData = () => {
         const data = {
-          datasets: [] as  LineChartDataSets[]
+          datasets: [] as LineChartDataSets[]
         }
         data.datasets = !store.state.AllResults ? [] : store.state.AllResults
         .filter(a => a.group === '21B')

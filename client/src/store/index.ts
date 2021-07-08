@@ -141,7 +141,7 @@ const { store, rootActionContext } = createDirectStore({
         .catch(() => {
           return null
         })
-      if (!user || !user.team_id) {
+      if (!user) {
         //TODO:仕様をちゃんと整える
         return
       } else {
