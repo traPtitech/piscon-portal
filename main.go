@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -62,7 +61,6 @@ func main() {
 
 	go instanceInfo(*cfg)
 
-	// _db, err := gorm.Open("mysql", "isucon@/isucon?charset=utf8&parseTime=True&loc=Local")
 	_db, err := establishConnection()
 	if err != nil {
 		panic(err)
@@ -93,22 +91,17 @@ func main() {
 		e.Pre(middleware.HTTPSNonWWWRedirect())
 	}
 
-	e.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
-	sessdb, err := db.DB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	sess, err := sess.NewSession(sessdb)
+	s, err := sess.NewSession(_cl)
 
 	h := router.NewHandlers(client, db, checkInstance, sendWorker)
 	h.SetUp(e)
 	e.Use(middleware.CORS())
-	e.Use(session.Middleware(sess.Store()))
+	e.Use(session.Middleware(s.Store()))
 	e.Start(":4000")
-	fmt.Println("end")
 }
 
 func benchmarkWorker() {

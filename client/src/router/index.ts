@@ -81,19 +81,19 @@ const routes: Array<RouteRecordRaw> = [
     path: '/auth/callback',
     name: 'callback',
     component: () => import('@/pages/auth/Callback.vue'),
-    beforeEnter: async (to, from, next) => {
+    beforeEnter: async (to, _, next) => {
       const code = String(to.query.code)
       await apis.authCallbackGet(code)
       const destination = sessionStorage.getItem('destination')
       if (destination) next(destination)
       else next('/')
 
-      try {
-        store.dispatch.getData()
-        next('/team-info')
-      } catch (e) {
-        console.error(e)
-      }
+      // try {
+      //   store.dispatch.getData()
+      //   next('/team-info')
+      // } catch (e) {
+      //   console.error(e)
+      // }
     }
   },
   // {

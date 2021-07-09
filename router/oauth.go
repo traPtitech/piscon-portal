@@ -21,18 +21,21 @@ func (h *Handlers) CallbackHandler(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("Failed In Getting Session:%w", err).Error()) //TODO:エラーを返さないように
 	}
+	fmt.Println(sess.ID + "BBB")
 	codeVerifier := sess.Values["codeVerifier"].(string)
 	res, err := h.authConf.GetToken(code, codeVerifier)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get access token: %w", err).Error())
 	}
+	sess.Values["accsessToken"] = res.AccessToken
+	sess.Values["refreshToken"] = res.RefreshToken
 	sess.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   res.Expiry.Second(),
 		HttpOnly: true,
 	}
-	sess.Values["accsessToken"] = res.AccessToken
-	sess.Values["refreshToken"] = res.RefreshToken
+
+	sess.Save(c.Request(), c.Response())
 	return c.NoContent(http.StatusOK)
 }
 
@@ -45,11 +48,14 @@ func (h *Handlers) PostGenerateCodeHandler(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get access token:%w", err).Error())
 	}
+	sess.Values["codeVerifier"] = pkce.CodeVerifier
 	sess.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   60 * 60 * 24 * 1000,
 		HttpOnly: true,
 	}
+	fmt.Println(sess.ID + "AAA")
 	sess.Save(c.Request(), c.Response())
+
 	return c.JSON(http.StatusOK, pkce)
 }
