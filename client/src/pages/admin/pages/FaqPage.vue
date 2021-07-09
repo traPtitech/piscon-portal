@@ -71,8 +71,8 @@
 </template>
 
 <script lang="ts">
-import apis, { Questions } from '@/lib/apis'
-import store from '@/store'
+import apis, { Questions } from '../../..//lib/apis'
+import store from '../../../store'
 import { ref } from 'vue'
 export default {
   name: 'qa',
@@ -86,17 +86,17 @@ export default {
     getQuestions().then(data => (questions.value = data))
     const newA = ref([] as string[])
 
-    const me = store.state.me
+    const user = store.state.User
     const checkAdmin = () => {
-      if (!me) {
+      if (!user) {
         return false
       }
       return (
-        me.name === 'nagatech' ||
-        me.name === 'to-hutohu' ||
-        me.name === 'xecua' ||
-        me.name === 'hosshii' ||
-        me.name === 'hijiki51'
+        user.name === 'nagatech' ||
+        user.name === 'to-hutohu' ||
+        user.name === 'xecua' ||
+        user.name === 'hosshii' ||
+        user.name === 'hijiki51'
       ) //TODO
     }
     const newQuestion = async () => {
