@@ -11,12 +11,14 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	shellwords "github.com/mattn/go-shellwords"
 	plugin "github.com/traPtitech/piscon-portal/aws"
 	"github.com/traPtitech/piscon-portal/model"
 	"github.com/traPtitech/piscon-portal/router"
+	sess "github.com/traPtitech/piscon-portal/session"
 	"golang.org/x/crypto/acme/autocert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -94,9 +96,17 @@ func main() {
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})
+	sessdb, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sess, err := sess.NewSession(sessdb)
+
 	h := router.NewHandlers(client, db, checkInstance, sendWorker)
 	h.SetUp(e)
 	e.Use(middleware.CORS())
+	e.Use(session.Middleware(sess.Store()))
 	e.Start(":4000")
 	fmt.Println("end")
 }

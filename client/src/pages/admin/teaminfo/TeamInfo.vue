@@ -289,15 +289,15 @@
 
 <script lang="ts">
 import { AxiosError } from 'axios'
-import traqApis from '@/lib/apis/traq'
 import Modal from './Modal.vue'
 import apis, {
+  Apis,
   PostBenchmarkRequest,
   PostTeamRequest,
   Response,
   Result
-} from '@/lib/apis'
-import store from '@/store'
+} from '../../../lib/apis'
+import store from '../../../store'
 import { computed, ref } from 'vue'
 export default {
   components: {
@@ -313,7 +313,6 @@ export default {
     const waiting = ref(false)
     const largeModal = ref(false)
     const team = computed(() => store.state.Team)
-    const me = computed(() => store.state.me)
     const user = computed(() => store.state.User)
     const lastResult = computed(() => store.getters.lastResult)
     const maxScore = computed(() => store.getters.maxScore)
@@ -422,12 +421,12 @@ export default {
         return
       }
       makeInstanceButton.value = true
-      const group = await traqApis.getMe().then(res => res.data.groups[0])
-      if (!store.state.me) {
+      const group = await apis.meGroupGet().then(res => res.data)
+      if (!store.state.User) {
         return
       } //TODO
       const req: PostTeamRequest = {
-        name: store.state.me.name,
+        name: store.state.User.name,
         group: group
       }
       apis
@@ -515,7 +514,6 @@ export default {
       error,
       tweetURL,
       team,
-      me,
       user,
       lastResult,
       maxScore

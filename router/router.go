@@ -8,6 +8,8 @@ import (
 
 func (h *Handlers) SetUp(e *echo.Echo) {
 	api := e.Group("/api")
+	api.POST("/auth/code", h.PostGenerateCodeHandler)
+	api.GET("/auth/callback", h.CallbackHandler)
 	api.GET("/results", h.GetAllResults)
 	api.GET("/benchmark/queue", h.GetBenchmarkQueue)
 	api.GET("/newer", h.GetNewer)
@@ -15,6 +17,8 @@ func (h *Handlers) SetUp(e *echo.Echo) {
 	// api.POST("/instancelog", postInstanceLog)
 
 	apiWithAuth := e.Group("/api", middlewareAuthUser)
+	apiWithAuth.GET("/me", h.GetMeFromTraq)
+	apiWithAuth.GET("/me/group", h.GetMeGroup)
 	apiWithAuth.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})

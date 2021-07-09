@@ -4,11 +4,8 @@ import Page404Layout from '@/layout/page-404-layout.vue'
 
 import UIRoute from '@/pages/admin/ui/route'
 import store from '@/store'
-import {
-  fetchAuthToken,
-  redirectAuthorizationEndpoint,
-  revokeAuthToken
-} from '@/lib/apis/api'
+import { redirectAuthorizationEndpoint } from '@/lib/apis/api'
+import apis from '@/lib/apis'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -71,7 +68,7 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: async (to, from, next) => {
       try {
         await store.dispatch.getData()
-        if (!store.state.me) {
+        if (!store.state.User) {
           await redirectAuthorizationEndpoint()
         }
         next()
@@ -85,19 +82,13 @@ const routes: Array<RouteRecordRaw> = [
     name: 'callback',
     component: () => import('@/pages/auth/Callback.vue'),
     beforeEnter: async (to, from, next) => {
-      const code = to.query.code?.toString()
-      const state = to.query.state
-      const codeVerifier = sessionStorage.getItem(
-        `login-code-verifier-${state}`
-      )
-      if (!code || !codeVerifier) {
-        next('/')
-        return
-      }
+      const code = String(to.query.code)
+      await apis.authCallbackGet(code)
+      const destination = sessionStorage.getItem('destination')
+      if (destination) next(destination)
+      else next('/')
 
       try {
-        const res = await fetchAuthToken(code, codeVerifier)
-        store.commit.setToken(res.data)
         store.dispatch.getData()
         next('/team-info')
       } catch (e) {
@@ -105,24 +96,24 @@ const routes: Array<RouteRecordRaw> = [
       }
     }
   },
-  {
-    path: '/auth/logout',
-    name: 'logout',
-    component: () => import('@/pages/auth/Callback.vue'),
-    beforeEnter: async (to, from, next) => {
-      if (!store.state.authToken) {
-        return
-      }
-      try {
-        await revokeAuthToken(store.state.authToken)
-        await store.commit.destroySession()
-        await store.dispatch.getData()
-        next('/dashboard')
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  },
+  // {
+  //   path: '/auth/logout',
+  //   name: 'logout',
+  //   component: () => import('@/pages/auth/Callback.vue')
+  //   // beforeEnter: async (to, from, next) => {
+  //   //   if (!store.state.authToken) {
+  //   //     return
+  //   //   }
+  //   //   try {
+  //   //     await revokeAuthToken(store.state.authToken)
+  //   //     await store.commit.destroySession()
+  //   //     await store.dispatch.getData()
+  //   //     next('/dashboard')
+  //   //   } catch (e) {
+  //   //     console.error(e)
+  //   //   }
+  //   // }
+  // },
   {
     path: '/404',
     component: Page404Layout,
@@ -155,6 +146,24 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   //  mode: process.env.VUE_APP_ROUTER_MODE_HISTORY === 'true' ? 'history' : 'hash',
   routes
+})
+
+router.beforeEach(async (to, from, next) => {
+  if (to.path !== '/auth/callback') {
+    // ログイン済みかどうか調べる
+    if (!store.state.User) {
+      try {
+        await store.dispatch.fetchMe()
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    if (!store.state.User) {
+      sessionStorage.setItem('destination', to.fullPath)
+      redirectAuthorizationEndpoint()
+    }
+  }
+  next()
 })
 
 export default router

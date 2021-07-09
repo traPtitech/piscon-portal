@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
-// import { OAuth2ResponseType, OAuth2Scope, OAuth2Token } from '@traptitech/traq'
 import { OAuth2Token } from '@traptitech/traq'
 import axios from 'axios'
-import { randomString, pkce } from '../../utils'
+import apis from '.'
 import traqApis from './traq'
 
 const traQBaseURL = 'https://q.trap.jp/api/v3'
@@ -22,51 +21,14 @@ export function setAuthToken(token: OAuth2Token) {
 }
 
 export async function redirectAuthorizationEndpoint() {
-  const state = randomString(10)
-  const codeVerifier = randomString(43)
-  const codeChallenge = await pkce(codeVerifier)
-
-  sessionStorage.setItem(`login-code-verifier-${state}`, codeVerifier)
-  // traqApis.getOAuth2Authorize(
-  //   traQClientID,
-  //   OAuth2ResponseType.Code,
-  //   REDIRECT_URL,
-  //   OAuth2Scope.Read,
-  //   state,
-  //   codeChallenge,
-  //   'S256'
-  // )
+  const pkceParams = (await apis.authCodePost()).data
   const authorizationEndpointUrl = new URL(`${traQBaseURL}/oauth2/authorize`)
   authorizationEndpointUrl.search = new URLSearchParams({
-    client_id: traQClientID,
-    response_type: 'code',
-    code_challenge: codeChallenge,
-    code_challenge_method: 'S256',
-    state
+    client_id: pkceParams.client_id,
+    response_type: pkceParams.response_type,
+    code_challenge: pkceParams.code_challenge,
+    code_challenge_method: pkceParams.code_challenge_method
   }).toString()
   window.location.assign(authorizationEndpointUrl.toString())
   return
-}
-
-export async function fetchAuthToken(code: string, verifier: string) {
-  return axios.post(
-    `${traQBaseURL}/oauth2/token`,
-    new URLSearchParams({
-      client_id: traQClientID,
-      grant_type: 'authorization_code',
-      code_verifier: verifier,
-      code
-    })
-  )
-  // return traqApis.postOAuth2Token(
-  //   'authorization_code',
-  //   code,
-  //   REDIRECT_URL,
-  //   traQClientID,
-  //   verifier
-  // )
-}
-
-export function revokeAuthToken(token: OAuth2Token) {
-  return traqApis.revokeMyToken(token.access_token)
 }

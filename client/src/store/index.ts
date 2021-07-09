@@ -1,18 +1,13 @@
 import { createDirectStore } from 'direct-vuex'
-import { OAuth2Token, MyUserDetail } from '@traptitech/traq'
-import TraqApis from '@/lib/apis/traq'
-import { setAuthToken } from '@/lib/apis/api'
 import apis, { Result, Task, Team, User } from '@/lib/apis'
 
 const { store, rootActionContext } = createDirectStore({
   state: {
-    me: null as MyUserDetail | null,
     User: null as User | null,
     Team: null as Team | null,
     AllResults: null as Team[] | null,
     Queue: null as Task[] | null,
     Newer: null as Team[] | null,
-    authToken: null as OAuth2Token | null,
     isSidebarMinimized: false
   },
   getters: {
@@ -74,15 +69,8 @@ const { store, rootActionContext } = createDirectStore({
     }
   },
   mutations: {
-    setMe(state, me: MyUserDetail) {
-      state.me = me
-    },
     setUser(state, data: User) {
       state.User = data
-    },
-    setToken(state, data: OAuth2Token) {
-      state.authToken = data
-      setAuthToken(data)
     },
     setTeam(state, data: Team) {
       state.Team = data
@@ -102,8 +90,6 @@ const { store, rootActionContext } = createDirectStore({
       state.Newer = null
       state.Queue = null
       state.Team = null
-      state.authToken = null
-      state.me = null
     },
     updateSidebarCollapsedState(state, isSidebarMinimized) {
       state.isSidebarMinimized = isSidebarMinimized
@@ -112,28 +98,16 @@ const { store, rootActionContext } = createDirectStore({
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      const { data } = await TraqApis.getMe()
-      commit.setMe(data)
+      const { data } = await apis.meGet()
+      commit.setUser(data)
     },
     async getData(context) {
       const { commit } = rootActionContext(context)
       apis.resultsGet().then(data => commit.setAllResults(data.data))
       apis.newerGet().then(data => commit.setNewer(data.data))
       apis.benchmarkQueueGet().then(data => commit.setQueue(data.data))
-      const me = await TraqApis.getMe()
-        .then(data => {
-          commit.setMe(data.data)
-          return data.data
-        })
-        .catch(() => {
-          return null
-        })
-
-      if (!me) {
-        return
-      }
       const user = await apis
-        .userNameGet(me.name)
+        .meGet()
         .then(data => {
           commit.setUser(data.data)
           return data.data
@@ -142,7 +116,6 @@ const { store, rootActionContext } = createDirectStore({
           return null
         })
       if (!user) {
-        //TODO:仕様をちゃんと整える
         return
       } else {
         apis.teamIdGet(user.team_id).then(data => commit.setTeam(data.data))

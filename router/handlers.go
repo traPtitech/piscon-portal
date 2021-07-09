@@ -11,6 +11,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
+	"github.com/traPtitech/piscon-portal/oauth"
 	"gorm.io/gorm"
 )
 
@@ -23,6 +24,7 @@ type Handlers struct {
 	db            *gorm.DB
 	checkInstance chan *model.Instance
 	sendWorker    chan *model.Task
+	authConf      *oauth.OauthClient
 }
 
 func NewHandlers(c model.ServerClient, db *gorm.DB, ci chan *model.Instance, sw chan *model.Task) *Handlers {
@@ -31,6 +33,7 @@ func NewHandlers(c model.ServerClient, db *gorm.DB, ci chan *model.Instance, sw 
 		db:            db,
 		checkInstance: ci,
 		sendWorker:    sw,
+		authConf:      oauth.New(),
 	}
 }
 
@@ -51,25 +54,6 @@ func formatCommand(ip string) string {
 		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url \"http://%s\"", ip, ip)
-}
-
-// traPかどうかの認証
-// TODO: Fix ユーザーネーム認証
-func middlewareAuthUser(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		token := c.Request().Header.Get("Authorization")
-		if token == "" {
-			return c.NoContent(http.StatusForbidden)
-		}
-		req, _ := http.NewRequest("GET", "https://q.trap.jp/api/v3/users/me", nil)
-		req.Header.Set("Authorization", token)
-		client := new(http.Client)
-		res, _ := client.Do(req)
-		if res.StatusCode != 200 {
-			return c.NoContent(http.StatusForbidden)
-		}
-		return next(c)
-	}
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
