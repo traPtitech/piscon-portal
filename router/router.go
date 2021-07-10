@@ -1,8 +1,6 @@
 package router
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,9 +17,6 @@ func (h *Handlers) SetUp(e *echo.Echo) {
 	apiWithAuth := e.Group("/api", middlewareAuthUser)
 	apiWithAuth.GET("/me", h.GetMeFromTraq)
 	apiWithAuth.GET("/me/group", h.GetMeGroup)
-	apiWithAuth.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
 	apiWithAuth.POST("/team", h.CreateTeam)
 	apiWithAuth.POST("/user", h.CreateUser)
 	apiWithAuth.POST("/instance/:team_id/:instance_number", h.CreateInstance)

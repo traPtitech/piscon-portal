@@ -148,22 +148,4 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (to.path !== '/auth/callback') {
-    // ログイン済みかどうか調べる
-    if (!store.state.User) {
-      try {
-        await store.dispatch.fetchMe()
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (!store.state.User) {
-      sessionStorage.setItem('destination', to.fullPath)
-      redirectAuthorizationEndpoint()
-    }
-  }
-  next()
-})
-
 export default router

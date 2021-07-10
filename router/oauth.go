@@ -21,8 +21,10 @@ func (h *Handlers) CallbackHandler(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("Failed In Getting Session:%w", err).Error()) //TODO:エラーを返さないように
 	}
-	fmt.Println(sess.ID + "BBB")
-	codeVerifier := sess.Values["codeVerifier"].(string)
+	codeVerifier, ok := sess.Values["codeVerifier"].(string)
+	if !ok {
+		return c.String(http.StatusInternalServerError, fmt.Errorf("Failed In Getting Session:%w", err).Error())
+	}
 	res, err := h.authConf.GetToken(code, codeVerifier)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get access token: %w", err).Error())
@@ -54,8 +56,10 @@ func (h *Handlers) PostGenerateCodeHandler(c echo.Context) error {
 		MaxAge:   60 * 60 * 24 * 1000,
 		HttpOnly: true,
 	}
-	fmt.Println(sess.ID + "AAA")
-	sess.Save(c.Request(), c.Response())
+	err = sess.Save(c.Request(), c.Response())
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to set access token:%w", err).Error())
+	}
 
 	return c.JSON(http.StatusOK, pkce)
 }

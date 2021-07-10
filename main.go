@@ -101,6 +101,8 @@ func main() {
 	h.SetUp(e)
 	e.Use(middleware.CORS())
 	e.Use(session.Middleware(s.Store()))
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 	e.Start(":4000")
 }
 
@@ -301,7 +303,7 @@ func establishConnection() (*gorm.DB, error) {
 	if dbname == "" {
 		dbname = "isucon"
 	}
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?parseTime=True&charset=utf8mb4&loc=Local"
 	log.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	// _db.BlockGlobalUpdate(true) <= GOrm v2でデフォルト有効になったらしい(要調査)

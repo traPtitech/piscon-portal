@@ -2,7 +2,6 @@
 import { OAuth2Token } from '@traptitech/traq'
 import axios from 'axios'
 import apis from '.'
-import traqApis from './traq'
 
 const traQBaseURL = 'https://q.trap.jp/api/v3'
 // const BASE_PATH = 'https://q.trap.jp/api/v3'

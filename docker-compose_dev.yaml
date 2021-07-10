@@ -34,9 +34,5 @@ services:
     volumes:
       # 初期データを投入するSQLが格納されているdir
       - ./db/init:/docker-entrypoint-initdb.d
-      # 永続化
-      - db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-volumes:
-  db:
