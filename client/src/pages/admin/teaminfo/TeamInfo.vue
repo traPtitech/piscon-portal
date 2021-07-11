@@ -262,10 +262,12 @@
               TODO:スタイルあてる -->
                   <va-input
                     class="mb-4"
-                    v-model="value"
+                    v-model="teamName"
                     placeholder="Team Name"
                   />
-                  <va-button :rounded="false" class="ml-2">登録</va-button>
+                  <va-button :rounded="false" class="ml-2" @click="registerTeam"
+                  >登録</va-button
+                  >
                 </div>
               </div>
             </va-card-content>
@@ -288,13 +290,16 @@
 </template>
 
 <script lang="ts">
+//TODO: ファイル分割する
+/* eslint-disable @typescript-eslint/camelcase */
 import { AxiosError } from 'axios'
 import Modal from './Modal.vue'
 import apis, {
   PostBenchmarkRequest,
   PostTeamRequest,
   Response,
-  Result
+  Result,
+  User
 } from '../../../lib/apis'
 import store from '../../../store'
 import { computed, ref } from 'vue'
@@ -303,6 +308,7 @@ export default {
     Modal
   },
   setup() {
+    const teamName = ref('')
     const makeInstanceButton = ref(false)
     const modalText = ref('')
     const betterize = ref('')
@@ -420,17 +426,30 @@ export default {
         return
       }
       makeInstanceButton.value = true
-      const group = await apis.meGroupGet().then(res => res.data)
+    }
+    const registerTeam = async () => {
       if (!store.state.User) {
         return
       } //TODO
+      const group = await apis.meGroupGet().then(res => res.data)
       const req: PostTeamRequest = {
-        name: store.state.User.name,
+        name: teamName.value,
         group: group
       }
-      apis
+      await apis
         .teamPost(req)
-        .then(() => {
+        .then(async (data) => {
+          if (!store.state.User) {
+            return
+          }
+          const req: User = {
+            name: store.state.User.name,
+            screen_name: store.state.User.screen_name,
+            team_id: data.data.ID,
+          }
+          console.log(req)
+          const user = await apis.userPost(req).then(res => res.data)
+          store.commit.setUser(user)
           store.dispatch.getData()
         })
         .catch(err => {
@@ -473,7 +492,7 @@ export default {
       switch (sortedInstance.value[id - 1].status) {
         case 'ACTIVE':
           apis
-            .instanceTeamIdInstanceNumberDelete(store.state.Team?.id, id)
+            .instanceTeamIdInstanceNumberDelete(store.state.Team?.ID, id)
             .then(() => {
               store.dispatch.getData()
               waiting.value = false
@@ -487,7 +506,7 @@ export default {
           break
         case 'NOT_EXIST':
           apis
-            .instanceTeamIdInstanceNumberPost(store.state.Team.id, id)
+            .instanceTeamIdInstanceNumberPost(store.state.Team.ID, id)
             .then(() => {
               store.dispatch.getData()
               waiting.value = false
@@ -510,12 +529,14 @@ export default {
       instanceButtonMessage,
       instanceButtonClass,
       instanceStatusClass,
+      registerTeam,
       error,
       tweetURL,
       team,
       user,
       lastResult,
-      maxScore
+      maxScore,
+      teamName
     }
   }
 }

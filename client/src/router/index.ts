@@ -51,7 +51,12 @@ const routes: Array<RouteRecordRaw> = [
     ],
     beforeEnter: async (to, from, next) => {
       try {
-        await store.dispatch.getData()
+        if (store.state.User) {
+          await store.dispatch.getData()
+        } else {
+          await store.dispatch.fetchMe()
+        }
+
         if (to.path === '/') {
           next('/dashboard')
         }
@@ -85,8 +90,11 @@ const routes: Array<RouteRecordRaw> = [
       const code = String(to.query.code)
       await apis.authCallbackGet(code)
       const destination = sessionStorage.getItem('destination')
-      if (destination) next(destination)
-      else next('/')
+      if (destination) {
+        next(destination)
+      } else {
+        next('/')
+      }
 
       // try {
       //   store.dispatch.getData()

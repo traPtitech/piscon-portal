@@ -23,6 +23,7 @@ func (h *Handlers) SetUp(e *echo.Echo) {
 	apiWithAuth.DELETE("/instance/:team_id/:instance_number", h.DeleteInstance)
 	// TODO: ユーザー名で認証してないので修正する必要がある
 	apiWithAuth.GET("/team/:id", h.GetTeam)
+	//TODO queryにする
 	apiWithAuth.GET("/user/:name", h.GetUser)
 	apiWithAuth.POST("/benchmark/:name/:instance_number", h.QueBenchmark)
 	apiWithAuth.GET("/admin/team", h.GetAllTeam)

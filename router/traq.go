@@ -69,8 +69,8 @@ func (h *Handlers) GetMeGroup(c echo.Context) error {
 }
 
 type myUserDetail struct {
-	Id     string   `json:"id"`
-	Name   string   `json:"name"`
+	Id     string   `json:"name"`
+	Name   string   `json:"displayName"`
 	Icon   string   `json:"iconFileId"`
 	Groups []string `json:"groups"`
 }

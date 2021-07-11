@@ -568,9 +568,9 @@ components:
         - max_instance_number
         - group
         - results
-        - id
+        - ID
       properties:
-        id:
+        ID:
           type: integer
           format: uint 
         name: 

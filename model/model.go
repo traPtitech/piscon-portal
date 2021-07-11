@@ -55,8 +55,8 @@ type Team struct {
 
 type User struct {
 	gorm.Model
-	Name       string `gorm:"unique size:50" json:"id"`
-	ScreenName string `json:"name"`
+	Name       string `gorm:"unique size:50" json:"name"`
+	ScreenName string `json:"screen_name"`
 	IconFileId string `json:"iconFileId"`
 	TeamID     uint   `json:"team_id"`
 }

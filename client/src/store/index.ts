@@ -106,8 +106,11 @@ const { store, rootActionContext } = createDirectStore({
       apis.resultsGet().then(data => commit.setAllResults(data.data))
       apis.newerGet().then(data => commit.setNewer(data.data))
       apis.benchmarkQueueGet().then(data => commit.setQueue(data.data))
+      if (!store.state.User) {
+        return
+      }
       const user = await apis
-        .meGet()
+        .userNameGet(store.state.User.name)
         .then(data => {
           commit.setUser(data.data)
           return data.data
