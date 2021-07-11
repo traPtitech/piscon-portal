@@ -436,7 +436,7 @@ export default {
         name: teamName.value,
         group: group
       }
-      await apis
+      apis
         .teamPost(req)
         .then(async (data) => {
           if (!store.state.User) {
