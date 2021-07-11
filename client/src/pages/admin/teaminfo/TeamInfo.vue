@@ -436,25 +436,28 @@ export default {
         name: teamName.value,
         group: group
       }
-      apis
+      const userReq = await apis
         .teamPost(req)
-        .then(async (data) => {
+        .then(data => {
           if (!store.state.User) {
             return
           }
           const req: User = {
             name: store.state.User.name,
             screen_name: store.state.User.screen_name,
-            team_id: data.data.ID,
+            team_id: data.data.ID
           }
-          console.log(req)
-          const user = await apis.userPost(req).then(res => res.data)
-          store.commit.setUser(user)
-          store.dispatch.getData()
+          return req
         })
         .catch(err => {
           error.value = err
         })
+      if (!userReq) {
+        return
+      }
+      const user = await apis.userPost(userReq).then(res => res.data)
+      store.commit.setUser(user)
+      store.dispatch.getData()
     }
     const benchmark = (id: number) => {
       if (benchmarkButton(id).value || !store.state.Team) {
