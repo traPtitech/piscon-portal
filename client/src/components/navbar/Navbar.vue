@@ -38,7 +38,7 @@ export default {
   setup() {
     const { getColors } = useColors()
     const colors = computed(() => getColors())
-    const user = store.state.User
+    const user = computed(() => store.state.User)
 
     const isSidebarMinimized = computed({
       get: () => store.state.isSidebarMinimized,
