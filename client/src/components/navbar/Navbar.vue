@@ -15,8 +15,8 @@
         </div>
       </template>
       <template #right>
-        <div v-if="me">
-          {{ me.name }}
+        <div v-if="user">
+          {{ user.name }}
         </div>
         <div v-else>
           <router-link to="/auth/login"> Signin with traQ </router-link>
@@ -38,7 +38,7 @@ export default {
   setup() {
     const { getColors } = useColors()
     const colors = computed(() => getColors())
-    const me = store.state.me
+    const user = store.state.User
 
     const isSidebarMinimized = computed({
       get: () => store.state.isSidebarMinimized,
@@ -50,7 +50,7 @@ export default {
       colors,
       isSidebarMinimized,
       userName,
-      me
+      user
     }
   }
 }

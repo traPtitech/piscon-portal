@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <div v-if="me" class="flex md12">
+      <div v-if="user" class="flex md12">
         <va-card>
           <va-card-title> レギュレーション </va-card-title>
           <va-card-content>
@@ -35,7 +35,7 @@
               <h3>スコア計算</h3>
               <p>
                 スコアは<strong
-                  >取引が完了した商品（椅子）の価格の合計（ｲｽｺｲﾝ）</strong
+                >取引が完了した商品（椅子）の価格の合計（ｲｽｺｲﾝ）</strong
                 >
                 をベースに以下の計算式で計算されます。
               </p>
@@ -201,10 +201,10 @@ $ sudo systemctl restart nginx.service</pre
 import store from '../../..//store'
 export default {
   setup() {
-    const me = store.state.User
-    console.log(me ? 'true' : 'false0')
+    const user = store.state.User
+    console.log(user ? 'true' : 'false0')
     return {
-      me
+      user
     }
   }
 }

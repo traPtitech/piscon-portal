@@ -7,11 +7,11 @@
     >
       <slot class="header">確認</slot>
       <slot class="body"
-        >この操作は取り消せません。間違えて行わないように注意してください</slot
+      >この操作は取り消せません。間違えて行わないように注意してください</slot
       >
     </Modal>
     <div class="row">
-      <div class="flex md12" v-if="me">
+      <div class="flex md12" v-if="user">
         <div v-if="team">
           <va-card class="flex md12" v-if="team.name">
             <div>
@@ -25,11 +25,11 @@
           <va-card class="flex md12">
             <div>
               <img
-                :src="`https://q.trap.jp/api/v3/public/icon/${me.name}`"
+                :src="`https://q.trap.jp/api/v3/public/icon/${user.name}`"
                 class="profile-image"
               />
               <h3 style="padding: 1rem 0 0 5rem">
-                {{ me.displayname }}(@{{ me.name }})
+                {{ user.screen_name }}(@{{ user.name }})
               </h3>
             </div>
           </va-card>
@@ -170,7 +170,7 @@
                       v-model="betterize"
                     ></textarea>
                     <label class="control-label" for="simple-textarea"
-                      >改善点を入力してください(記入しないとベンチマークを行えません)</label
+                    >改善点を入力してください(記入しないとベンチマークを行えません)</label
                     ><i class="bar"></i>
                   </div>
                 </div>
@@ -291,7 +291,6 @@
 import { AxiosError } from 'axios'
 import Modal from './Modal.vue'
 import apis, {
-  Apis,
   PostBenchmarkRequest,
   PostTeamRequest,
   Response,

@@ -45,7 +45,7 @@
       </va-card-content>
     </va-card>
 
-    <va-card headerText="質問する" v-if="me">
+    <va-card headerText="質問する" v-if="user">
       <div>
         <p>バシバシ質問しましょう！</p>
         <p>バグ報告はこっそり@hijiki51までお願いします</p>
