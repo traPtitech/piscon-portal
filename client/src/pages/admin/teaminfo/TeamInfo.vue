@@ -451,6 +451,7 @@ export default {
         })
         .catch(err => {
           error.value = err
+          return
         })
       if (!userReq) {
         return

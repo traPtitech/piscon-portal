@@ -51,11 +51,10 @@ const routes: Array<RouteRecordRaw> = [
     ],
     beforeEnter: async (to, from, next) => {
       try {
-        if (store.state.User) {
-          await store.dispatch.getData()
-        } else {
+        if (!store.state.User) {
           await store.dispatch.fetchMe()
         }
+        await store.dispatch.getData()
 
         if (to.path === '/') {
           next('/dashboard')

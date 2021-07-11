@@ -98,8 +98,7 @@ const { store, rootActionContext } = createDirectStore({
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      const { data } = await apis.meGet()
-      commit.setUser(data)
+      apis.meGet().then(data => commit.setUser(data.data))
     },
     async getData(context) {
       const { commit } = rootActionContext(context)
