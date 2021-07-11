@@ -1,0 +1,18 @@
+
+{
+    admin off
+}
+
+:80
+
+handle /api/* { 
+  reverse_proxy backend:4000 {
+    header_up Host {http.reverse_proxy.upstream.hostport}
+  }
+}
+
+handle {
+  reverse_proxy frontend:80 {
+    header_up Host {http.reverse_proxy.upstream.hostport}
+  }
+}

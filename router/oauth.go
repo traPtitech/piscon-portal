@@ -29,11 +29,11 @@ func (h *Handlers) CallbackHandler(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get access token: %w", err).Error())
 	}
-	sess.Values["accsessToken"] = res.AccessToken
+	sess.Values["accessToken"] = res.AccessToken
 	sess.Values["refreshToken"] = res.RefreshToken
 	sess.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   res.Expiry.Second(),
+		MaxAge:   60 * 60 * 24 * 1000,
 		HttpOnly: true,
 	}
 

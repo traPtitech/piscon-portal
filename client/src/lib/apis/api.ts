@@ -4,7 +4,6 @@ import axios from 'axios'
 import apis from '.'
 
 const traQBaseURL = 'https://q.trap.jp/api/v3'
-// const BASE_PATH = 'https://q.trap.jp/api/v3'
 // const REDIRECT_URL = 'https://piscon.trap.jp'
 
 export const traQClientID = 'nmVeJT08KHXIdB8xlrCIwa6YJTkISrP5zWzm'
