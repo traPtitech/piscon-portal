@@ -7,199 +7,205 @@
     >
       <slot class="header">確認</slot>
       <slot class="body"
-      >この操作は取り消せません。間違えて行わないように注意してください</slot
+        >この操作は取り消せません。間違えて行わないように注意してください</slot
       >
     </Modal>
     <div class="row">
       <div class="flex md12" v-if="user">
         <div v-if="team">
           <va-card class="flex md12" v-if="team.name">
-            <div>
-              <img
-                :src="`https://q.trap.jp/api/v3/files/8fc25ba6-a0c9-493d-81d2-11f0870d711f`"
-                class="profile-image"
-              />
-              <h3 style="padding: 1rem 0 0 5rem">{{ team.name }}</h3>
-            </div>
+            <va-content>
+              <div>
+                <img
+                  :src="`https://q.trap.jp/api/v3/public/icon/BOT_DevOps`"
+                  class="profile-image"
+                />
+                <h3 style="padding: 1rem 0 0 5rem">{{ team.name }}</h3>
+              </div>
+            </va-content>
           </va-card>
           <va-card class="flex md12">
-            <div>
-              <img
-                :src="`https://q.trap.jp/api/v3/public/icon/${user.name}`"
-                class="profile-image"
-              />
-              <h3 style="padding: 1rem 0 0 5rem">
-                {{ user.screen_name }}(@{{ user.name }})
-              </h3>
-            </div>
+            <va-content>
+              <div>
+                <img
+                  :src="`https://q.trap.jp/api/v3/public/icon/${user.name}`"
+                  class="profile-image"
+                />
+                <h3 style="padding: 1rem 0 0 5rem">
+                  {{ user.screen_name }}(@{{ user.name }})
+                </h3>
+              </div>
+            </va-content>
           </va-card>
-          <div v-if="user && team.instance">
-            <va-card class="flex md12">
-              <div class="widget-header">サーバー情報</div>
-              <div class="widget-body">
-                <h6>チーム名 : {{ team.name }}</h6>
-                <br />
-                <table
-                  v-for="n in team.max_instance_number"
-                  :key="'global' + n"
-                >
-                  <tr>
-                    <td>
-                      <h6>
-                        <span class="md6">サーバ{{ n }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6><span class="md6">状態</span></h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span :class="`md6 ${instanceStatusClass(n)}`">{{
-                          sortedInstance.value[n - 1].status
-                        }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>
-                        <span class="md6">グローバル IP アドレス :</span>
-                      </h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span class="md6">{{
-                          sortedInstance.value[n - 1].global_ip_address
-                        }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>
-                        <span class="md6">プライベート IP アドレス :</span>
-                      </h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span class="md6">{{
-                          sortedInstance.value[n - 1].private_ip_address
-                        }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6><span class="md6">ユーザー名 :</span></h6>
-                    </td>
-                    <td>
-                      <h6><span class="md6">isucon</span></h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6><span class="md6">初期パスワード :</span></h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span class="md6">{{
-                          sortedInstance.value[n - 1].password
-                        }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6><span class="md6">サーバー作成時間 :</span></h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span class="md6">{{
-                          sortedInstance.value[n - 1].CreatedAt
-                        }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <br />
-                </table>
+          <va-card class="flex md12">
+            <va-card-title>サーバー情報</va-card-title>
+            <va-card-content>
+              <h6>チーム名 : {{ team.name }}</h6>
+              <div class="flex markup-tables">
+                <div class="va-table-responsive">
+                  <table
+                    class="va-table va-table--hoverable"
+                    v-for="n in sortedInstance.length"
+                    :key="'global' + n"
+                  >
+                    <tr>
+                      <td>
+                        <h6>
+                          <span class="md6">サーバ{{ n }}</span>
+                        </h6>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6><span class="md6">状態</span></h6>
+                      </td>
+                      <td>
+                        <h6>
+                          <span :class="`md6 ${instanceStatusClass(n)}`">{{
+                            sortedInstance[n - 1].status
+                          }}</span>
+                        </h6>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6>
+                          <span class="md6">グローバル IP アドレス :</span>
+                        </h6>
+                      </td>
+                      <td>
+                        <h6>
+                          <span class="md6">{{
+                            sortedInstance[n - 1].global_ip_address
+                          }}</span>
+                        </h6>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6>
+                          <span class="md6">プライベート IP アドレス :</span>
+                        </h6>
+                      </td>
+                      <td>
+                        <h6>
+                          <span class="md6">{{
+                            sortedInstance[n - 1].private_ip_address
+                          }}</span>
+                        </h6>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6><span class="md6">ユーザー名 :</span></h6>
+                      </td>
+                      <td>
+                        <h6><span class="md6">isucon</span></h6>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6><span class="md6">初期パスワード :</span></h6>
+                      </td>
+                      <td>
+                        <h6>
+                          <span class="md6">{{
+                            sortedInstance[n - 1].password
+                          }}</span>
+                        </h6>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6><span class="md6">サーバー作成時間 :</span></h6>
+                      </td>
+                      <td>
+                        <h6>
+                          <span class="md6">{{
+                            sortedInstance[n - 1].CreatedAt
+                          }}</span>
+                        </h6>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
 
-                <tr>
+              <tr>
+                <td>
+                  <h6><span class="md6">ベンチマーク回数 :</span></h6>
+                </td>
+                <td>
+                  <h6>
+                    <span class="md6">{{ teamResults.length }}</span>
+                  </h6>
+                </td>
+              </tr>
+              <table class="va-table va-table--hoverable">
+                <tr v-if="teamResults.length > 0">
                   <td>
-                    <h6><span class="md6">ベンチマーク回数 :</span></h6>
+                    <h6><span class="md6">現在のスコア :</span></h6>
                   </td>
                   <td>
                     <h6>
-                      <span class="md6">{{ team.results.length }}</span>
+                      <span class="md6">{{
+                        team.results.slice(-1)[0].score
+                      }}</span>
                     </h6>
                   </td>
                 </tr>
-                <table>
-                  <tr v-if="team.results.length > 0">
-                    <td>
-                      <h6><span class="md6">現在のスコア :</span></h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span class="md6">{{
-                          team.results.slice(-1)[0].score
-                        }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6><span class="md6">最高スコア :</span></h6>
-                    </td>
-                    <td>
-                      <h6>
-                        <span class="md6">{{ maxScore.score }}</span>
-                      </h6>
-                    </td>
-                  </tr>
-                </table>
+                <tr>
+                  <td>
+                    <h6><span class="md6">最高スコア :</span></h6>
+                  </td>
+                  <td>
+                    <h6>
+                      <span class="md6">{{ maxScore.score }}</span>
+                    </h6>
+                  </td>
+                </tr>
+              </table>
 
-                <div class="flex md12"></div>
-                <div class="form-group">
-                  <div class="input-group">
-                    <textarea
-                      type="text"
-                      id="simple-textarea"
-                      required
-                      v-model="betterize"
-                    ></textarea>
-                    <label class="control-label" for="simple-textarea"
+              <div class="flex md12"></div>
+              <div class="form-group">
+                <div class="input-group">
+                  <textarea
+                    type="text"
+                    id="simple-textarea"
+                    required
+                    v-model="betterize"
+                  ></textarea>
+                  <label class="control-label" for="simple-textarea"
                     >改善点を入力してください(記入しないとベンチマークを行えません)</label
-                    ><i class="bar"></i>
-                  </div>
-                </div>
-                <div
-                  class="flex md12 my-2"
-                  v-for="i in team.max_instance_number"
-                  :key="i"
-                >
-                  <button
-                    class="btn btn-micro btn-info"
-                    @click="benchmark(i)"
-                    :disabled="benchmarkButton(i) || betterize === ''"
-                  >
-                    サーバ{{ i }}にベンチマークを行う
-                  </button>
-                  <button
-                    :class="instanceButtonClass(i)"
-                    @click="setOperationModal(i)"
-                    :disabled="instanceButton(i) || waiting"
-                  >
-                    {{ instanceButtonMessage(i) }}
-                  </button>
-                </div>
-                <div v-if="error" class="type-articles">
-                  {{ error }}
+                  ><i class="bar"></i>
                 </div>
               </div>
-            </va-card>
-            <!-- <va-card v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="flex md12">
+              <div
+                class="flex md12 my-2"
+                v-for="i in team.max_instance_number"
+                :key="i"
+              >
+                <button
+                  class="btn btn-micro btn-info"
+                  @click="benchmark(i)"
+                  :disabled="benchmarkButton(i) || betterize === ''"
+                >
+                  サーバ{{ i }}にベンチマークを行う
+                </button>
+                <button
+                  :class="instanceButtonClass(i)"
+                  @click="setOperationModal(i)"
+                  :disabled="instanceButton(i) || waiting"
+                >
+                  {{ instanceButtonMessage(i) }}
+                </button>
+              </div>
+              <div v-if="error" class="type-articles">
+                {{ error }}
+              </div>
+            </va-card-content>
+          </va-card>
+          <!-- <va-card v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="flex md12">
             <div class="widget-header">広告</div>
             <div class="widget-body">
               <p>
@@ -207,46 +213,42 @@
                 部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけるとSysAd班が泣いて喜びます。
               </p>
             </div>
-          </va-card> -->
-            <va-card class="flex md12" headerText="最新の結果">
-              <pre>{{ lastResult }}</pre>
-            </va-card>
-            <va-card class="md12" headerText="これまでの結果">
-              <div class="table-responsible">
-                <table class="table table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <td>ID</td>
-                      <td>PASS</td>
-                      <td>SCORE</td>
-                      <td>TIME</td>
-                      <td>INFO</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      :class="{ 'table-danger': !result.pass }"
-                      v-for="result in team.results"
-                      :key="result.id"
-                    >
-                      <td>{{ result.id }}</td>
-                      <td>{{ result.pass }}</td>
-                      <td>{{ result.score }}</td>
-                      <td>{{ result.created_at.slice(5, 19) }}</td>
-                      <td>
-                        <button
-                          class="btn btn-nano btn-info"
-                          @click="showModal(result)"
-                        >
-                          詳細
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            </va-card> -->
+          <va-card class="flex md12">
+            <va-card-title>最新の結果</va-card-title>
+            <h2>{{ lastResult }}</h2>
+          </va-card>
+          <va-card class="md12">
+            <va-card-title>これまでの結果</va-card-title>
+            <va-card-content>
+              <div class="flex markup-tables">
+                <div class="va-table-responsive">
+                  <table class="va-table va-table--hoverable">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>PASS</th>
+                        <th>SCORE</th>
+                        <th>TIME</th>
+                        <th>INFO</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="r in results" :key="r.id">
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.pass }}</td>
+                        <td>{{ r.score }}</td>
+                        <td>{{ r.created_at.slice(5, 16) }}</td>
+                        <td>
+                          <va-button color="info" size="small">Info</va-button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </va-card>
-          </div>
+            </va-card-content>
+          </va-card>
         </div>
         <div v-else>
           <va-card>
@@ -266,7 +268,7 @@
                     placeholder="Team Name"
                   />
                   <va-button :rounded="false" class="ml-2" @click="registerTeam"
-                  >登録</va-button
+                    >登録</va-button
                   >
                 </div>
               </div>
@@ -321,8 +323,16 @@ export default {
     const user = computed(() => store.state.User)
     const lastResult = computed(() => store.getters.lastResult)
     const maxScore = computed(() => store.getters.maxScore)
-    const sortedInstance = computed(() =>
-      store.state.Team?.instance
+    const teamResults = computed(() =>
+      store.state.Team && store.state.Team.results
+        ? store.state.Team.results
+        : []
+    )
+    const sortedInstance = computed(() => {
+      if (!store.state.Team) {
+        return []
+      }
+      const res = store.state.Team.instance
         .map(v => v)
         .sort((a, b) => {
           if (a.instance_number > b.instance_number) {
@@ -331,7 +341,8 @@ export default {
             return -1
           }
         })
-    )
+      return res
+    })
     const tweetURL = computed(() => {
       try {
         if (!store.getters.lastResult) {
@@ -534,13 +545,17 @@ export default {
       instanceButtonClass,
       instanceStatusClass,
       registerTeam,
+      benchmarkButton,
+      instanceButton,
       error,
       tweetURL,
       team,
       user,
       lastResult,
       maxScore,
-      teamName
+      teamName,
+      sortedInstance,
+      teamResults
     }
   }
 }

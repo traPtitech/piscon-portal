@@ -50,7 +50,7 @@ const { store, rootActionContext } = createDirectStore({
       if (!state.Team) {
         return
       }
-      const l = state.Team.results.length
+      const l = state.Team.results ? state.Team.results.length : 0
       return l > 0
         ? JSON.stringify(state.Team.results[l - 1], null, '  ')
         : 'まだベンチマークは行われていません'
@@ -59,12 +59,14 @@ const { store, rootActionContext } = createDirectStore({
       if (!state.Team) {
         return
       } else {
-        return state.Team.results.reduce(
-          (a, b) => {
-            return a.score < b.score ? b : a
-          },
-          { score: 0 }
-        )
+        return state.Team.results
+          ? state.Team.results.reduce(
+              (a, b) => {
+                return a.score < b.score ? b : a
+              },
+              { score: 0 }
+            )
+          : []
       }
     }
   },

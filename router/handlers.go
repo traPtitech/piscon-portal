@@ -318,6 +318,9 @@ func (h *Handlers) GetAllResults(c echo.Context) error {
 	h.db.Find(&teams)
 	for _, team := range teams {
 		h.db.Where("team_id = ?", &team.ID).Preload("Messages").Find(&team.Results)
+		if team.Results == nil {
+			team.Results = []*model.Result{}
+		}
 	}
 	return c.JSON(http.StatusOK, teams)
 }
