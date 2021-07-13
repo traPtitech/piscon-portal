@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <va-content class="typography content">
     <div class="row">
       <div v-if="user" class="flex md12">
         <va-card>
-          <va-card-title> レギュレーション </va-card-title>
+          <va-card-title> <h3>レギュレーション</h3> </va-card-title>
           <va-card-content>
-            <div class="box">
+            <div class="mb-4">
               <p>
                 指定された競技用サーバー上のアプリケーションのチューニングを行い、それに対するベンチマーク走行のスコアで競技を行います。
                 与えられた競技用サーバーのみでアプリケーションの動作が可能であれば、どのような変更を加えても構いません。
                 ベンチマーカーとブラウザの挙動に差異がある場合、ベンチマーカーの挙動を正とします。
                 また、初期実装は言語毎に若干の挙動の違いはありますが、ベンチマーカーに影響のない挙動に関しては仕様とします。
               </p>
-              <h3>ベンチマーク走行</h3>
+              <h5>ベンチマーク走行</h5>
               <p>ベンチマーク走行は以下のように実施されます。</p>
               <ul>
                 <li>初期化処理の実行 POST /initialize (20秒以内)</li>
@@ -31,11 +31,11 @@
                 その際にnginxのアクセスログにステータスコード499が記録されることがありますが、これらのリクエストについては減点の対象外です。
               </p>
             </div>
-            <div class="box">
-              <h3>スコア計算</h3>
+            <div class="mb-4">
+              <h5>スコア計算</h5>
               <p>
                 スコアは<strong
-                >取引が完了した商品（椅子）の価格の合計（ｲｽｺｲﾝ）</strong
+                  >取引が完了した商品（椅子）の価格の合計（ｲｽｺｲﾝ）</strong
                 >
                 をベースに以下の計算式で計算されます。
               </p>
@@ -77,8 +77,8 @@
               </p>
               <p>また減点により0ｲｽｺｲﾝ以下になった場合は失格となります。</p>
             </div>
-            <div class="box">
-              <h3>制約事項</h3>
+            <div class="mb-4">
+              <h5>制約事項</h5>
               <p>
                 以下の事項に抵触すると失格(fail)となり、点数が0点になります。
               </p>
@@ -89,8 +89,7 @@
                 <li>その他、ベンチマーカーのチェッカが失敗を検出したケース</li>
               </ul>
               <p>
-                最初に呼ばれる初期化処理
-                <code>POST /initialize</code>
+                最初に呼ばれる初期化処理<code>POST /initialize</code>
                 は用意された環境内で、チェッカツールが要求する範囲の整合性を担保します。
                 サーバーサイドで処理の変更・データ構造の変更などを行う場合、この処理が行っている内容を漏れなく提供してください。
               </p>
@@ -115,16 +114,16 @@
                 <li>パスワードを平文で保存する</li>
               </ul>
             </div>
-            <div class="box">
-              <h3>禁止事項</h3>
+            <div class="mb-4">
+              <h5>禁止事項</h5>
               <p>以下の事項は特別に禁止します。</p>
               <ul>
                 <li>他のチームへの妨害と主催者がみなす全ての行為</li>
               </ul>
             </div>
-            <div class="box">
-              <h3>その他</h3>
-              <h4>キャンペーン機能</h4>
+            <div class="mb-4">
+              <h5>その他</h5>
+              <h5>キャンペーン機能</h5>
               <p>
                 <code>POST /initialize</code>
                 のレスポンスにて、ｲｽｺｲﾝ還元キャンペーンの「還元率の設定」を返すことができます。この還元率によりユーザが増減します。
@@ -144,7 +143,7 @@
               <p>
                 また、languageの値として、本競技で利用した言語を出力してください(ベンチマーカーの仕様によるもので特に意味はありません。なお、参考実装では最初から入っているので気にする必要はありません)。languageが空の場合はベンチマークは失敗と見なされます。
               </p>
-              <h4>参照実装の切り替え方</h4>
+              <h5>参照実装の切り替え方</h5>
               <p>初期状態ではGoによる実装が起動している状態になります。</p>
               <p>
                 各言語実装は <code>systemd</code> で管理されています。
@@ -170,13 +169,13 @@ $ sudo systemctl restart nginx.service</pre
                 なお、参考実装としてGo, Perl, PHP, Ruby, Python,
                 Node.jsによるアプリケーションが用意されています。
               </p>
-              <h4>DBのリカバリ方法</h4>
+              <h5>DBのリカバリ方法</h5>
               <p>
                 DB(isucari)を初期状態にもどすには、次のコマンドを実行します。
               </p>
               <pre>$ /home/isucon/isucari/webapp/sql/init.sql</pre>
               <hr />
-              <p>この他に、なにかあったらhosshiiまで教えてください。</p>
+              <p>この他に、なにかあったらhijiki51まで教えてください。</p>
             </div>
           </va-card-content>
         </va-card>
@@ -194,7 +193,7 @@ $ sudo systemctl restart nginx.service</pre
         </va-card>
       </div>
     </div>
-  </div>
+  </va-content>
 </template>
 
 <script lang="ts">
@@ -211,7 +210,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.box
+.mb-4
   margin-bottom: 48px
 
 a

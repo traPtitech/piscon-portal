@@ -74,7 +74,7 @@
 </template>
 <script lang="ts">
 import { computed } from '@vue/runtime-core'
-import store from '@/store'
+import store from '../../../../store'
 export default {
   setup() {
     return {
