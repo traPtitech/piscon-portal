@@ -32,48 +32,45 @@
               <i class="bar"></i>
             </div>
           </div>
-          <button class="btn btn-primary btn-small" @click="newAnswer(q.ID, i)">
+          <va-button :rounded="false" class="mr-4" @click="newAnswer(q.ID, i)">
             回答する
-          </button>
-          <button
-            class="btn btn-danger btn-small"
+          </va-button>
+          <va-button
+            :rounded="false"
+            class="mr-4"
             @click="deleteQuestion(q.ID, i)"
           >
             削除する
-          </button>
+          </va-button>
         </div>
       </va-card-content>
     </va-card>
 
-    <va-card headerText="質問する" v-if="user">
-      <div>
-        <p>バシバシ質問しましょう！</p>
-        <p>バグ報告はこっそり@hijiki51までお願いします</p>
-      </div>
-      <div class="form-group">
-        <div class="input-group">
-          <textarea
-            type="text"
-            id="new"
-            name="new"
-            col="10"
-            v-model="newQ"
-          ></textarea>
-          <label class="control-label" for="new">質問文</label>
-          <i class="bar"></i>
+    <va-card v-if="user">
+      <va-card-title>質問する</va-card-title>
+      <va-card-content>
+        <div class="mb-4">
+          <p>バシバシ質問しましょう！</p>
+          <p>バグ報告はこっそり@hijiki51までお願いします</p>
         </div>
-      </div>
-      <button class="btn btn-primary btn-small" @click="newQuestion">
-        質問する
-      </button>
+        <va-input
+          class="mb-4"
+          v-model="newQ"
+          type="textarea"
+          placeholder="質問文"
+        />
+        <va-button :rounded="false" class="mr-4" @click="newQuestion">
+          質問する
+        </va-button>
+      </va-card-content>
     </va-card>
   </div>
 </template>
 
 <script lang="ts">
-import apis, { Questions } from '../../..//lib/apis'
+import apis, { Questions } from '../../../lib/apis'
 import store from '../../../store'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 export default {
   name: 'qa',
   setup() {
@@ -86,17 +83,17 @@ export default {
     getQuestions().then(data => (questions.value = data))
     const newA = ref([] as string[])
 
-    const user = store.state.User
+    const user = computed(() => store.state.User)
     const checkAdmin = () => {
-      if (!user) {
+      if (!user.value) {
         return false
       }
       return (
-        user.name === 'nagatech' ||
-        user.name === 'to-hutohu' ||
-        user.name === 'xecua' ||
-        user.name === 'hosshii' ||
-        user.name === 'hijiki51'
+        user.value.name === 'nagatech' ||
+        user.value.name === 'to-hutohu' ||
+        user.value.name === 'xecua' ||
+        user.value.name === 'hosshii' ||
+        user.value.name === 'hijiki51'
       ) //TODO
     }
     const newQuestion = async () => {
@@ -132,6 +129,7 @@ export default {
     }
     return {
       questions,
+      user,
       checkAdmin,
       newQuestion,
       newAnswer,
