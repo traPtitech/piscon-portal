@@ -1,37 +1,31 @@
 <template>
-  <div>
-    <va-card v-for="(q, i) in questions" :key="i">
+  <va-content>
+    <va-card class="flex md12 item mb-3" v-for="(q, i) in questions" :key="i">
       <va-card-title>
-        {{ 'Q.' + (i + 1) }}
+        <h5>{{ 'Q.' + (i + 1) }}</h5>
       </va-card-title>
       <va-card-content>
-        <div class="question">
-          <div class="question-header">質問</div>
-          <div class="question-body">
+        <h5 class="mb-4">質問</h5>
+        <div class="text-block">
+          <p>
             {{ q.question }}
-          </div>
+          </p>
         </div>
-        <div class="answer">
-          <div class="answer-header">回答</div>
-          <div v-if="q.answer" class="answer-body">
-            {{ q.answer }}
-          </div>
-          <div v-else>まだ回答されていません</div>
+        <h5 class="mb-4">回答</h5>
+        <div v-if="q.answer" class="mb-4 text-block">
+          {{ q.answer }}
+        </div>
+        <div v-else class="mb-4 text-block text--secondary">
+          まだ回答されていません
         </div>
         <div v-if="checkAdmin">
-          <div>運営用回答欄</div>
-          <div class="form-group">
-            <div class="input-group">
-              <textarea
-                type="text"
-                class="answer"
-                name="answer"
-                col="10"
-                v-model="newA[i]"
-              ></textarea>
-              <i class="bar"></i>
-            </div>
-          </div>
+          <strong>運営用回答欄</strong>
+          <va-input
+            class="mb-4"
+            v-model="newA[i]"
+            type="textarea"
+            placeholder="回答"
+          />
           <va-button :rounded="false" class="mr-4" @click="newAnswer(q.ID, i)">
             回答する
           </va-button>
@@ -47,7 +41,7 @@
     </va-card>
 
     <va-card v-if="user">
-      <va-card-title>質問する</va-card-title>
+      <va-card-title><h5>質問する</h5></va-card-title>
       <va-card-content>
         <div class="mb-4">
           <p>バシバシ質問しましょう！</p>
@@ -64,7 +58,7 @@
         </va-button>
       </va-card-content>
     </va-card>
-  </div>
+  </va-content>
 </template>
 
 <script lang="ts">
@@ -75,14 +69,13 @@ export default {
   name: 'qa',
   setup() {
     const newQ = ref('')
+    const questions = ref([] as Questions[])
+    const newA = ref([] as string[])
     const getQuestions = async () => {
       const newQuestions = await apis.questionsGet().then(data => data.data)
-      return newQuestions
+      questions.value = newQuestions
+      newA.value = newQuestions.map(v => (v.answer ? v.answer : ''))
     }
-    const questions = ref([] as Questions[])
-    getQuestions().then(data => (questions.value = data))
-    const newA = ref([] as string[])
-
     const user = computed(() => store.state.User)
     const checkAdmin = () => {
       if (!user.value) {
@@ -104,8 +97,10 @@ export default {
       const question: Questions = {
         question: questionText
       }
-      await apis.questionsPost(question).then(() => (newQ.value = ''))
-      questions.value.push(question)
+      await apis.questionsPost(question).then(res => {
+        newQ.value = ''
+      })
+      await getQuestions()
     }
     const newAnswer = async (id: number, index: number) => {
       const answerText = newA.value[index]
@@ -116,6 +111,7 @@ export default {
         newA.value[index] = ''
         questions.value[index].answer = answerText
       })
+      await getQuestions()
     }
     const deleteQuestion = async (id: number) => {
       if (!window.confirm('削除しますか？')) {
@@ -127,9 +123,13 @@ export default {
         })
       })
     }
+
+    getQuestions()
     return {
       questions,
       user,
+      newQ,
+      newA,
       checkAdmin,
       newQuestion,
       newAnswer,

@@ -128,7 +128,10 @@ func (h *Handlers) PostQuestions(c echo.Context) error {
 	req := struct {
 		Question string `json:"question"`
 	}{}
-	c.Bind(&req)
+	err := c.Bind(&req)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
 	question := &model.Question{
 		Question: req.Question,
 	}
