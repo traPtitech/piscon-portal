@@ -44,7 +44,7 @@
               <div class="flex markup-tables">
                 <div class="va-table-responsive">
                   <table
-                    class="va-table va-table--hoverable"
+                    class="va-table va-table--hoverable va-table--striped"
                     v-for="n in sortedInstance.length"
                     :key="'global' + n"
                   >
@@ -131,17 +131,17 @@
                 </div>
               </div>
 
-              <tr>
-                <td>
-                  <h6><span class="md6">ベンチマーク回数 :</span></h6>
-                </td>
-                <td>
-                  <h6>
-                    <span class="md6">{{ teamResults.length }}</span>
-                  </h6>
-                </td>
-              </tr>
               <table class="va-table va-table--hoverable">
+                <tr>
+                  <td>
+                    <h6><span class="md6">ベンチマーク回数 :</span></h6>
+                  </td>
+                  <td>
+                    <h6>
+                      <span class="md6">{{ teamResults.length }}</span>
+                    </h6>
+                  </td>
+                </tr>
                 <tr v-if="teamResults.length > 0">
                   <td>
                     <h6><span class="md6">現在のスコア :</span></h6>
@@ -169,15 +169,12 @@
               <div class="flex md12"></div>
               <div class="form-group">
                 <div class="input-group">
-                  <textarea
-                    type="text"
-                    id="simple-textarea"
-                    required
+                  <va-input
+                    class="mb-4"
                     v-model="betterize"
-                  ></textarea>
-                  <label class="control-label" for="simple-textarea"
-                    >改善点を入力してください(記入しないとベンチマークを行えません)</label
-                  ><i class="bar"></i>
+                    type="textarea"
+                    placeholder="改善点を入力してください(記入しないとベンチマークを行えません)"
+                  />
                 </div>
               </div>
               <div
@@ -185,20 +182,23 @@
                 v-for="i in team.max_instance_number"
                 :key="i"
               >
-                <button
-                  class="btn btn-micro btn-info"
+                <va-button
+                  :rounded="false"
+                  class="mr-4"
                   @click="benchmark(i)"
                   :disabled="benchmarkButton(i) || betterize === ''"
                 >
                   サーバ{{ i }}にベンチマークを行う
-                </button>
-                <button
-                  :class="instanceButtonClass(i)"
+                </va-button>
+                <va-button
+                  :rounded="false"
+                  class="mr-4"
+                  :color="instanceButtonColor(i)"
                   @click="setOperationModal(i)"
                   :disabled="instanceButton(i) || waiting"
                 >
                   {{ instanceButtonMessage(i) }}
-                </button>
+                </va-button>
               </div>
               <div v-if="error" class="type-articles">
                 {{ error }}
@@ -216,9 +216,11 @@
             </va-card> -->
           <va-card class="flex md12">
             <va-card-title>最新の結果</va-card-title>
-            <h2>{{ lastResult }}</h2>
+            <va-card-content
+              ><h2>{{ lastResult }}</h2></va-card-content
+            >
           </va-card>
-          <va-card class="md12">
+          <va-card class="flex md12">
             <va-card-title>これまでの結果</va-card-title>
             <va-card-content>
               <div class="flex markup-tables">
@@ -397,20 +399,20 @@ export default {
             ? false
             : sortedInstance.value[i - 1].status !== 'NOT_EXIST')
       )
-    const instanceButtonClass = (i: number) =>
+    const instanceButtonColor = (i: number) =>
       computed(() => {
         if (!sortedInstance.value) {
           return
         }
         switch (sortedInstance.value[i - 1].status) {
           case 'ACTIVE':
-            return `btn btn-micro btn-danger`
+            return `danger`
 
           case 'NOT_EXIST':
-            return `btn btn-micro btn-info`
+            return `info`
 
           default:
-            return `btn btn-micro btn-info`
+            return `info`
         }
       })
     const instanceStatusClass = (i: number) =>
@@ -542,7 +544,7 @@ export default {
       setOperationModal,
       operationInstance,
       instanceButtonMessage,
-      instanceButtonClass,
+      instanceButtonColor,
       instanceStatusClass,
       registerTeam,
       benchmarkButton,
