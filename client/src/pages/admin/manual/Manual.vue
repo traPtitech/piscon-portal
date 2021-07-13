@@ -3,7 +3,9 @@
     <div class="row">
       <div v-if="user" class="flex md12">
         <va-card>
-          <va-card-title> <h3>レギュレーション</h3> </va-card-title>
+          <va-card-title>
+            <h3 class="h-fix">レギュレーション</h3>
+          </va-card-title>
           <va-card-content>
             <div class="mb-4">
               <p>
@@ -237,5 +239,9 @@ code
   font-size: 110%
   text-align: left
   margin-bottom: 10px
+
+.h-fix
+  margin-bottom: auto
+  margin-top: auto
 </style>
 

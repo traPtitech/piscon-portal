@@ -2,7 +2,7 @@
   <va-content class="typography content">
     <div>
       <va-card class="col-md-12">
-        <va-card-title> <h3>はじめに</h3> </va-card-title>
+        <va-card-title> <h3 class="h-fix">はじめに</h3> </va-card-title>
         <va-card-content>
           <div class="mb-4">
             <h4>Q. Pisconとは？</h4>
@@ -50,5 +50,9 @@ export default {
 
 a
   color: #4ae287
+
+.h-fix
+  margin-bottom: auto
+  margin-top: auto
 </style>
 

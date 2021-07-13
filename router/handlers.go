@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	MAX_INSTANCE_NUMBER = 2
+	MAX_INSTANCE_NUMBER = 3
 )
 
 type Handlers struct {
