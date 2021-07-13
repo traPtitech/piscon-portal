@@ -1,73 +1,75 @@
 <template>
-  <div class="flex md12">
-    <va-card color="background" style="padding: 0.75rem" class="item">
-      <va-card-title>
-        <div class="display-4">順位表</div>
-      </va-card-title>
-      <va-card-content>
-        <div class="flex markup-tables">
-          <div class="va-table-responsive">
-            <table class="va-table va-table--hoverable">
-              <thead>
-                <tr>
-                  <th>RANK</th>
-                  <th>TEAM</th>
-                  <th>SCORE</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(r, i) in ranking" :key="r.name">
-                  <td>{{ i + 1 }}</td>
-                  <td>{{ r.name }}</td>
-                  <td>{{ r.score }}</td>
-                  <!-- <td>
+  <div class="row row-equal">
+    <div class="flex md12">
+      <va-card color="background" style="padding: 0.75rem" class="item">
+        <va-card-title>
+          <div class="display-4">順位表</div>
+        </va-card-title>
+        <va-card-content>
+          <div class="flex markup-tables">
+            <div class="va-table-responsive">
+              <table class="va-table va-table--hoverable">
+                <thead>
+                  <tr>
+                    <th>RANK</th>
+                    <th>TEAM</th>
+                    <th>SCORE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(r, i) in ranking" :key="r.name">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ r.name }}</td>
+                    <td>{{ r.score }}</td>
+                    <!-- <td>
                   <va-badge
                     :text="user.status"
                     :color="user.status"
                     TODO:failedとかのステータスを表示する
                   />
                 </td> -->
-                </tr>
-              </tbody>
-            </table>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </va-card-content>
-    </va-card>
-  </div>
-  <div class="flex md12">
-    <!-- TODO:間隔開ける%&分離 -->
-    <va-card color="background" style="padding: 0.75rem" class="item">
-      <va-card-title>
-        <div class="display-4">最近のベンチマーク</div>
-      </va-card-title>
-      <va-card-content>
-        <div class="flex markup-tables">
-          <div class="va-table-responsive">
-            <table class="va-table va-table--hoverable">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>TEAM ID</th>
-                  <th>PASS</th>
-                  <th>SCORE</th>
-                  <th>TIME</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="r in results" :key="r.id">
-                  <td>{{ r.id }}</td>
-                  <td>{{ r.team_id }}</td>
-                  <td>{{ r.pass }}</td>
-                  <td>{{ r.score }}</td>
-                  <td>{{ r.created_at.slice(5, 16) }}</td>
-                </tr>
-              </tbody>
-            </table>
+        </va-card-content>
+      </va-card>
+    </div>
+    <div class="flex md12">
+      <!-- TODO:間隔開ける%&分離 -->
+      <va-card color="background" style="padding: 0.75rem" class="item">
+        <va-card-title>
+          <div class="display-4">最近のベンチマーク</div>
+        </va-card-title>
+        <va-card-content>
+          <div class="flex markup-tables">
+            <div class="va-table-responsive">
+              <table class="va-table va-table--hoverable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>TEAM ID</th>
+                    <th>PASS</th>
+                    <th>SCORE</th>
+                    <th>TIME</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="r in results" :key="r.id">
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.team_id }}</td>
+                    <td>{{ r.pass }}</td>
+                    <td>{{ r.score }}</td>
+                    <td>{{ r.created_at.slice(5, 16) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </va-card-content>
-    </va-card>
+        </va-card-content>
+      </va-card>
+    </div>
   </div>
 </template>
 <script lang="ts">
