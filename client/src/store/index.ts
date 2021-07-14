@@ -100,7 +100,10 @@ const { store, rootActionContext } = createDirectStore({
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      apis.meGet().then(data => commit.setUser(data.data))
+      await apis
+        .meGet()
+        .then(data => commit.setUser(data.data))
+        .catch(e => console.error(e))
     },
     async getData(context) {
       const { commit } = rootActionContext(context)
@@ -108,21 +111,28 @@ const { store, rootActionContext } = createDirectStore({
       apis.newerGet().then(data => commit.setNewer(data.data))
       apis.benchmarkQueueGet().then(data => commit.setQueue(data.data))
       if (!store.state.User) {
+        console.log('user is null')
         return
       }
-      const user = await apis
+      await apis
         .userNameGet(store.state.User.name)
         .then(data => {
+          console.log('get user')
           commit.setUser(data.data)
           return data.data
         })
         .catch(() => {
           return null
         })
-      if (!user) {
-        return
+      if (store.state.User) {
+        await apis.teamIdGet(store.state.User.team_id).then(data => {
+          console.log('get team')
+          commit.setTeam(data.data)
+          console.log(store.state.Team)
+        })
+        console.log(store.state.Team)
       } else {
-        apis.teamIdGet(user.team_id).then(data => commit.setTeam(data.data))
+        console.log('user is empty')
       }
     }
   }

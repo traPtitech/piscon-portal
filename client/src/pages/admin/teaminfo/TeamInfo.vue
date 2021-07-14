@@ -172,7 +172,7 @@
               >
                 <va-button
                   :rounded="false"
-                  class="mr-4"
+                  class="mr-4 item"
                   @click="benchmark(i)"
                   :disabled="benchmarkButton(i) || betterize === ''"
                 >
@@ -180,7 +180,7 @@
                 </va-button>
                 <va-button
                   :rounded="false"
-                  class="mr-4"
+                  class="mr-4 item"
                   :color="instanceButtonColor(i)"
                   @click="setOperationModal(i)"
                   :disabled="instanceButton(i) || waiting"
@@ -366,7 +366,7 @@ export default {
           default:
             return sortedInstance.value[i - 1].status
         }
-      })
+      }).value
     const benchmarkButton = (i: number) =>
       computed(
         () =>
@@ -376,7 +376,7 @@ export default {
           (!sortedInstance.value
             ? false
             : sortedInstance.value[i - 1].status !== 'ACTIVE')
-      )
+      ).value
     const instanceButton = (i: number) =>
       computed(
         () =>
@@ -386,7 +386,7 @@ export default {
           (!sortedInstance.value
             ? false
             : sortedInstance.value[i - 1].status !== 'NOT_EXIST')
-      )
+      ).value
     const instanceButtonColor = (i: number) =>
       computed(() => {
         if (!sortedInstance.value) {
@@ -394,15 +394,15 @@ export default {
         }
         switch (sortedInstance.value[i - 1].status) {
           case 'ACTIVE':
-            return `danger`
+            return 'danger'
 
           case 'NOT_EXIST':
-            return `info`
+            return 'info'
 
           default:
-            return `info`
+            return 'info'
         }
-      })
+      }).value
     const instanceStatusClass = (i: number) =>
       computed(() => {
         if (!sortedInstance.value) {
@@ -421,7 +421,7 @@ export default {
           default:
             return 'text-primary'
         }
-      })
+      }).value
     const makeInstance = async () => {
       if (makeInstanceButton.value) {
         return
@@ -462,7 +462,7 @@ export default {
       store.dispatch.getData()
     }
     const benchmark = (id: number) => {
-      if (benchmarkButton(id).value || !store.state.Team) {
+      if (benchmarkButton(id) || !store.state.Team) {
         return
       }
       const req: PostBenchmarkRequest = {
@@ -545,7 +545,8 @@ export default {
       maxScore,
       teamName,
       sortedInstance,
-      teamResults
+      teamResults,
+      waiting
     }
   }
 }

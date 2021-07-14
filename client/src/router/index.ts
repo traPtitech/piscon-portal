@@ -6,6 +6,7 @@ import UIRoute from '@/pages/admin/ui/route'
 import store from '@/store'
 import { redirectAuthorizationEndpoint } from '@/lib/apis/api'
 import apis from '@/lib/apis'
+import { nextTick } from 'vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -53,8 +54,10 @@ const routes: Array<RouteRecordRaw> = [
       try {
         if (!store.state.User) {
           await store.dispatch.fetchMe()
+          store.dispatch.getData()
+        } else {
+          store.dispatch.getData()
         }
-        await store.dispatch.getData()
 
         if (to.path === '/') {
           next('/dashboard')
@@ -87,7 +90,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/auth/Callback.vue'),
     beforeEnter: async (to, _, next) => {
       const code = String(to.query.code)
-      await apis.authCallbackGet(code)
+      await apis.authCallbackGet(code).catch(e => console.error(e))
       const destination = sessionStorage.getItem('destination')
       if (destination) {
         next(destination)
