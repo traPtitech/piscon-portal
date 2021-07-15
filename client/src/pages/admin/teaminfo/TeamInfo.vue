@@ -1,16 +1,4 @@
 <template>
-  <div class="modal-page">
-    <Modal
-      v-if="showOperationModal"
-      @close="showOperationModal = false"
-      @operation="operationInstance(operationInstanceNumber)"
-    >
-      <slot class="header">確認</slot>
-      <slot class="body"
-        >この操作は取り消せません。間違えて行わないように注意してください</slot
-      >
-    </Modal>
-  </div>
   <va-content>
     <div class="row row-equal">
       <div class="flex md12" v-if="user">
@@ -276,11 +264,26 @@
       </div>
     </div>
   </va-content>
-  <va-modal :okText="'閉じる'" ref="largeModal" title="結果詳細">
+  <!-- <va-modal :okText="'閉じる'" ref="largeModal" title="結果詳細">
     <pre>{{ modalText }}</pre>
+  </va-modal> -->
+  <va-modal hide-default-actions v-model="showOperationModal">
+    <template #header>
+      <h3>確認</h3>
+    </template>
+    <slot>
+      <div>
+        この操作は取り消せません。間違えて行わないように注意してください
+      </div>
+    </slot>
+    <template #footer>
+      <va-button @click="operationInstance(operationInstanceNumber)">
+        実行
+      </va-button>
+      <va-button @click="showOperationModal = false"> キャンセル </va-button>
+    </template>
   </va-modal>
 </template>
-
 <script lang="ts">
 //TODO: ファイル分割する
 /* eslint-disable @typescript-eslint/camelcase */
@@ -377,16 +380,20 @@ export default {
             ? false
             : sortedInstance.value[i - 1].status !== 'ACTIVE')
       ).value
-    const instanceButton = (i: number) =>
-      computed(
+    const instanceButton = (i: number) => {
+      console.warn(sortedInstance.value[i - 1])
+      console.warn(i)
+      console.warn(waiting.value)
+      return computed(
         () =>
-          (!sortedInstance.value
+          (!sortedInstance.value || !sortedInstance.value[i - 1]
             ? false
             : sortedInstance.value[i - 1].status !== 'ACTIVE') &&
-          (!sortedInstance.value
+          (!sortedInstance.value || !sortedInstance.value[i - 1]
             ? false
             : sortedInstance.value[i - 1].status !== 'NOT_EXIST')
       ).value
+    }
     const instanceButtonColor = (i: number) =>
       computed(() => {
         if (!sortedInstance.value) {
@@ -491,7 +498,12 @@ export default {
     const operationInstance = (id: number) => {
       showOperationModal.value = false
       waiting.value = true
-      if (instanceButton(id) || !sortedInstance.value || !store.state.Team) {
+      if (
+        instanceButton(id) ||
+        !sortedInstance.value ||
+        !sortedInstance.value[id - 1] ||
+        !store.state.Team
+      ) {
         return
       }
       switch (sortedInstance.value[id - 1].status) {
@@ -546,7 +558,9 @@ export default {
       teamName,
       sortedInstance,
       teamResults,
-      waiting
+      waiting,
+      showOperationModal,
+      operationInstanceNumber
     }
   }
 }
