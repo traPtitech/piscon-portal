@@ -155,7 +155,7 @@
               </div>
               <div
                 class="flex md12 my-2"
-                v-for="i in team.max_instance_number"
+                v-for="i in team.instance.length"
                 :key="i"
               >
                 <va-button

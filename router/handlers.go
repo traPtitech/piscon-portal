@@ -248,7 +248,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 		fmt.Println("send chan")
 		h.checkInstance <- instance
 	}()
-	h.db.Create(instance)
+	h.db.Model(instance).Where("id = ?", instanceNumber).Updates(instance)
 
 	return c.JSON(http.StatusCreated, instance)
 }
@@ -290,8 +290,9 @@ func (h *Handlers) DeleteInstance(c echo.Context) error {
 			Success: false,
 			Message: "Internal server error"})
 	}
-	i = &model.Instance{}
-	h.db.Where("name = ?", name).Delete(i)
+	ins := emptyInstance(int(i.InstanceNumber))
+
+	h.db.Where("instance_id = ?", i.InstanceId).Updates(ins)
 
 	return c.JSON(http.StatusNoContent, nil)
 }
@@ -394,10 +395,15 @@ func (h *Handlers) getTaskQueInfo() []*model.Task {
 func initializeInstances() *[]*model.Instance {
 	res := []*model.Instance{}
 	for i := 0; i < MAX_INSTANCE_NUMBER; i++ {
-		emptyInstance := &model.Instance{}
-		emptyInstance.InstanceNumber = uint(i + 1)
-		emptyInstance.Status = model.NOT_EXIST
-		res = append(res, emptyInstance)
+		ins := emptyInstance(i + 1)
+		res = append(res, ins)
 	}
 	return &res
+}
+
+func emptyInstance(n int) *model.Instance {
+	emptyInstance := &model.Instance{}
+	emptyInstance.InstanceNumber = uint(n)
+	emptyInstance.Status = model.NOT_EXIST
+	return emptyInstance
 }

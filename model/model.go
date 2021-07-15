@@ -22,7 +22,7 @@ type ServerClient interface {
 	DeleteInstance(instanceId string) error
 	StartInstance(instanceId string) error
 	StopInstance(instanceId string) error
-	GetInstanceInfo(instanceName string) (*Instance, error) //TODO IDにする
+	GetInstanceInfo(id string) (*Instance, error) //TODO IDにする
 }
 
 type Response struct {

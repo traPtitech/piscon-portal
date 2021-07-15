@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -13,8 +14,9 @@ import (
 )
 
 const (
-	ImageId      = "ami-e7527ed7"            //TODO
-	InstanceType = types.InstanceTypeT2Micro //TODO
+	imageId      = string("ami-03b1b78bb1da5122f") //TODO
+	InstanceType = types.InstanceTypeT2Micro       //TODO
+	region       = string("ap-northeast-1")
 )
 
 var (
@@ -51,7 +53,7 @@ func CreateDefaultConfig() (*Config, error) {
 					SecretAccessKey: os.Getenv("ACCESS_SECRET_KEY"),
 				},
 			},
-		), config.WithRegion("us-west-2"),
+		), config.WithRegion(region),
 	)
 	if err != nil {
 		return nil, err
@@ -62,22 +64,28 @@ func CreateDefaultConfig() (*Config, error) {
 
 func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, error) {
 	subnetId := os.Getenv("AWS_SUBNET_ID")
-	k := "Namw"
 	tspec := types.TagSpecification{
 		ResourceType: types.ResourceTypeInstance,
 		Tags: []types.Tag{{
-			Key:   &k,
+			Key:   aws.String("Name"),
 			Value: &name,
 		}},
 	}
+	nispec := types.InstanceNetworkInterfaceSpecification{
+		AssociatePublicIpAddress: aws.Bool(true),
+		DeleteOnTermination:      aws.Bool(true),
+		DeviceIndex:              aws.Int32(0),
+		SubnetId:                 &subnetId,
+		PrivateIpAddress:         &privateIp,
+	}
 	i := &ec2.RunInstancesInput{
-		ImageId:           aws.String(ImageId),
+		ImageId:           aws.String(imageId),
 		InstanceType:      InstanceType,
 		MinCount:          &defaultInstanceNum,
 		MaxCount:          &defaultInstanceNum,
-		SubnetId:          &subnetId,
-		PrivateIpAddress:  &privateIp,
 		TagSpecifications: []types.TagSpecification{tspec},
+		NetworkInterfaces: []types.InstanceNetworkInterfaceSpecification{nispec},
+		KeyName:           aws.String("aws"),
 	}
 	res, err := a.c.RunInstances(context.TODO(), i)
 	if err != nil {
@@ -137,17 +145,13 @@ func (a *AwsClient) StopInstance(instanceId string) error {
 	return nil
 }
 
-func (a *AwsClient) GetInstanceInfo(instanceName string) (*model.Instance, error) {
+func (a *AwsClient) GetInstanceInfo(id string) (*model.Instance, error) {
 	i := &ec2.DescribeInstancesInput{
-		Filters: []types.Filter{
-			{
-				Name:   &InstanceNameKey,
-				Values: []string{instanceName},
-			},
-		},
+		InstanceIds: []string{id},
 	}
 	res, err := a.c.DescribeInstances(context.TODO(), i)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 	instance := &model.Instance{
@@ -155,5 +159,7 @@ func (a *AwsClient) GetInstanceInfo(instanceName string) (*model.Instance, error
 		PrivateIPAddress: *res.Reservations[0].Instances[0].PrivateIpAddress,
 		Status:           statusmap[string(res.Reservations[0].Instances[0].State.Name)],
 	}
+	fmt.Println(res.Reservations[0].Instances[0].State.Name)
+	fmt.Println(statusmap[string(res.Reservations[0].Instances[0].State.Name)])
 	return instance, nil
 }

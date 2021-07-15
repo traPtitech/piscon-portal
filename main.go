@@ -208,7 +208,7 @@ L:
 			instance = waitStarting(instance)
 		case model.ACTIVE:
 			log.Println("write to db")
-			db.Model(&model.Instance{Name: instance.Name}).Updates(instance)
+			db.Where("instance_id = ?", instance.InstanceId).Updates(instance)
 			break L
 		}
 	}
@@ -217,7 +217,7 @@ L:
 func waitBuilding(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
-	_instance, err := client.GetInstanceInfo(instance.Name)
+	_instance, err := client.GetInstanceInfo(instance.InstanceId)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -233,7 +233,7 @@ func waitBuilding(instance *model.Instance) *model.Instance {
 func waitShutdown(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
-	_instance, err := client.GetInstanceInfo(instance.Name)
+	_instance, err := client.GetInstanceInfo(instance.InstanceId)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -246,7 +246,7 @@ func waitShutdown(instance *model.Instance) *model.Instance {
 func waitStarting(instance *model.Instance) *model.Instance {
 	time.Sleep(10 * time.Second)
 
-	_instance, err := client.GetInstanceInfo(instance.Name)
+	_instance, err := client.GetInstanceInfo(instance.InstanceId)
 	if err != nil {
 		fmt.Println(err)
 	}
