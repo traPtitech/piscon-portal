@@ -49,8 +49,8 @@ func genPassword() string {
 func formatCommand(ip string) string {
 	return fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
 		"-data-dir \"/home/isucon/isucari/initial-data\" "+
-		"-payment-url \"http://172.16.0.1:5555\" "+
-		"-shipment-url \"http://172.16.0.1:7000\" "+
+		"-payment-url \"http://10.0.0.1:5555\" "+
+		"-shipment-url \"http://10.0.0.1:7000\" "+
 		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url \"http://%s\"", ip, ip)
@@ -66,31 +66,12 @@ func (h *Handlers) GetNewer(c echo.Context) error {
 func (h *Handlers) GetTeam(c echo.Context) error {
 	id := c.Param("id")
 	team := model.Team{}
-	h.db.Where("id = ?", id).Find(&team)
+	h.db.Where("id = ?", id).Preload("Instance").Find(&team)
 
 	if team.Name == "" {
 		return c.JSON(http.StatusNotFound, model.Response{
 			Success: false,
 			Message: "登録されていません"})
-	}
-	// Resultの中にあるMessageをPreloadする
-	// belongs to で紐づいていいるやつのデータもとりだす。
-	// Related
-	h.db.Model(&team).Where("team_id = ?", &team.ID).Preload("Instance").Preload("Results.Messages").Find(&team)
-	flag := false
-	for i := 0; i < team.MaxInstanceNumber; i++ {
-		flag = false
-		for _, instance := range team.Instance {
-			if instance.InstanceNumber == uint(i+1) {
-				flag = true
-			}
-		}
-		if !flag {
-			emptyInstance := &model.Instance{}
-			emptyInstance.InstanceNumber = uint(i + 1)
-			emptyInstance.Status = model.NOT_EXIST
-			team.Instance = append(team.Instance, emptyInstance)
-		}
 	}
 
 	return c.JSON(http.StatusOK, team)
@@ -193,19 +174,18 @@ func (h *Handlers) CreateTeam(c echo.Context) error {
 	}
 
 	t := &model.Team{}
-	h.db.Where("name = ?", requestBody.Name).Find(t)
+	h.db.Preload("Instance").Where("name = ?", requestBody.Name).Find(t)
 
 	if t.Name != "" {
 		return c.JSON(http.StatusConflict, model.Response{
 			Success: false,
 			Message: "登録されています"})
 	}
-	// pass := genPassword()
-
+	ins := initializeInstances()
 	team := &model.Team{
 		Name:              requestBody.Name,
 		MaxInstanceNumber: MAX_INSTANCE_NUMBER,
-		Instance:          []*model.Instance{},
+		Instance:          *ins,
 		Group:             requestBody.Group,
 	}
 	h.db.Create(team)
@@ -244,14 +224,14 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 			Message: "既に登録されています"})
 	}
 
-	privateIP := fmt.Sprintf("172.16.0.%d", teamId*10+instanceNumber)
+	privateIP := fmt.Sprintf("10.0.0.%d", teamId*10+instanceNumber)
 
 	log.Printf("CreateInstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
 	id, err := h.client.CreateInstance(name, privateIP)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
-			Message: "Internal server error"})
+			Message: err.Error()})
 	}
 
 	instance := &model.Instance{
@@ -410,4 +390,14 @@ func (h *Handlers) getTaskQueInfo() []*model.Task {
 	tasks := []*model.Task{}
 	h.db.Table("tasks").Joins("LEFT JOIN teams ON `teams`.id = `tasks`.team_id").Not("state = 'done'").Find(&tasks)
 	return tasks
+}
+func initializeInstances() *[]*model.Instance {
+	res := []*model.Instance{}
+	for i := 0; i < MAX_INSTANCE_NUMBER; i++ {
+		emptyInstance := &model.Instance{}
+		emptyInstance.InstanceNumber = uint(i + 1)
+		emptyInstance.Status = model.NOT_EXIST
+		res = append(res, emptyInstance)
+	}
+	return &res
 }

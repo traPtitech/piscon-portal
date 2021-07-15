@@ -201,9 +201,6 @@ L:
 			instance = waitShutdown(instance)
 		case model.SHUTOFF:
 			log.Println("shutoff")
-			// networkID := os.Getenv("CONOHA_NETWORK_ID")
-			// log.Printf("AttachPrivateNetwork name:%s networkID %s privateIP:%s\n", instance.Name, os.Getenv("CONOHA_NETWORK_ID"), instance.PrivateIPAddress)
-			// client.AttachPrivateNetwork(instance.Name, networkID, instance.PrivateIPAddress)
 			client.StartInstance(instance.Name)
 			instance.Status = model.STARTING
 		case model.STARTING:
@@ -229,18 +226,6 @@ func waitBuilding(instance *model.Instance) *model.Instance {
 		instance.GlobalIPAddress = _instance.GlobalIPAddress
 		instance.Status = model.ACTIVE
 
-		// // instanceのipv4のアドレスを抜き出そうとしてるけどもっといいやり方がありそう
-		// for _, v := range _instance.Addresses {
-		// 	for _, vv := range ([]interface{})(v.([]interface{})) {
-		// 		if (vv.(map[string]interface{})["version"]).(float64) == 4 {
-		// 			IPv4 = (vv.(map[string]interface{})["addr"]).(string)
-		// 		}
-		// 	}
-		// }
-		// if IPv4 != "" {
-		// 	instance.GlobalIPAddress = IPv4
-		// 	instance.Status = model.PRE_SHUTDOWN
-		// }
 	}
 	return instance
 }

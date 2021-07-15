@@ -54,17 +54,15 @@ const routes: Array<RouteRecordRaw> = [
       try {
         if (!store.state.User) {
           await store.dispatch.fetchMe()
-          store.dispatch.getData()
-        } else {
-          store.dispatch.getData()
         }
-
+        await store.dispatch.getData()
+      } catch (e) {
+        console.error(e)
+      } finally {
         if (to.path === '/') {
           next('/dashboard')
         }
         next()
-      } catch (e) {
-        console.error(e)
       }
     }
   },

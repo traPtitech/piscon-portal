@@ -322,7 +322,8 @@ export default {
         : []
     )
     const sortedInstance = computed(() => {
-      if (!store.state.Team) {
+      if (!store.state.Team || !store.state.Team.instance) {
+        console.warn(store.state.Team)
         return []
       }
       const res = store.state.Team.instance
@@ -466,7 +467,7 @@ export default {
       }
       const user = await apis.userPost(userReq).then(res => res.data)
       store.commit.setUser(user)
-      store.dispatch.getData()
+      await store.dispatch.getData().catch(e => console.warn(e))
     }
     const benchmark = (id: number) => {
       if (benchmarkButton(id) || !store.state.Team) {

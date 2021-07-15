@@ -51,7 +51,7 @@ func CreateDefaultConfig() (*Config, error) {
 					SecretAccessKey: os.Getenv("ACCESS_SECRET_KEY"),
 				},
 			},
-		),
+		), config.WithRegion("us-west-2"),
 	)
 	if err != nil {
 		return nil, err
@@ -62,23 +62,28 @@ func CreateDefaultConfig() (*Config, error) {
 
 func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, error) {
 	subnetId := os.Getenv("AWS_SUBNET_ID")
+	k := "Namw"
+	tspec := types.TagSpecification{
+		ResourceType: types.ResourceTypeInstance,
+		Tags: []types.Tag{{
+			Key:   &k,
+			Value: &name,
+		}},
+	}
 	i := &ec2.RunInstancesInput{
-		ImageId:          aws.String(ImageId),
-		InstanceType:     InstanceType,
-		MinCount:         &defaultInstanceNum,
-		MaxCount:         &defaultInstanceNum,
-		SubnetId:         &subnetId,
-		PrivateIpAddress: &privateIp,
+		ImageId:           aws.String(ImageId),
+		InstanceType:      InstanceType,
+		MinCount:          &defaultInstanceNum,
+		MaxCount:          &defaultInstanceNum,
+		SubnetId:          &subnetId,
+		PrivateIpAddress:  &privateIp,
+		TagSpecifications: []types.TagSpecification{tspec},
 	}
 	res, err := a.c.RunInstances(context.TODO(), i)
 	if err != nil {
 		return nil, err
 	}
 
-	err = a.CreateTag(*res.Instances[0].InstanceId, "Name", name)
-	if err != nil {
-		return nil, err
-	}
 	return res.Instances[0].InstanceId, nil
 }
 
