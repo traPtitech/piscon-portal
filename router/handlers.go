@@ -320,10 +320,19 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 		Betterize string `json:"betterize"`
 	}{}
 
-	c.Bind(&req)
+	err = c.Bind(&req)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 
 	team := &model.Team{}
-	h.db.Where("name = ?", name).Find(team)
+	if err = h.db.Where("name = ?", name).Find(team).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 
 	if team.Name == "" {
 		return c.JSON(http.StatusNotFound, model.Response{
@@ -331,7 +340,11 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 			Message: "登録されていません"})
 	}
 
-	h.db.Model(team).Preload("Instance").Find(team.Instance)
+	if err = h.db.Model(team).Preload("Instance").Find(team.Instance).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 
 	ip := team.Instance[0].PrivateIPAddress
 
@@ -349,7 +362,11 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 
 	task := &model.Task{}
 
-	h.db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task)
+	if err = h.db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 	if task.CmdStr != "" {
 		return c.JSON(http.StatusConflict, model.Response{
 			Success: false,
@@ -365,7 +382,11 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 		Betterize: req.Betterize,
 	}
 	fmt.Println(cmdStr)
-	h.db.Create(t)
+	if err = h.db.Create(t).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 
 	go func() {
 		h.sendWorker <- t
