@@ -167,7 +167,7 @@
                     :rounded="false"
                     class="mr-4 item"
                     @click="benchmark(i)"
-                    :disabled="benchmarkButton(i) || betterize === ''"
+                    :disabled="benchmarkButton(i) || betterize.value === ''"
                   >
                     サーバ{{ i }}にベンチマークを行う
                   </va-button>
@@ -176,7 +176,7 @@
                     class="mr-4 item"
                     :color="instanceButtonColor(i)"
                     @click="setOperationModal(i)"
-                    :disabled="instanceButton(i) || waiting"
+                    :disabled="instanceButton(i) || waiting.value"
                   >
                     {{ instanceButtonMessage(i) }}
                   </va-button>
@@ -186,15 +186,6 @@
                 </div>
               </va-card-content>
             </va-card>
-            <!-- <va-card v-if="$store.state.Team.group !== '054409cd-97bb-452e-a5ee-a28fa55ea127'" class="flex md12">
-            <div class="widget-header">広告</div>
-            <div class="widget-body">
-              <p>
-                今回の部内ISUCONの鯖代は運営のポケットマネーから捻出されています。<br>
-                部内ISUCONの運営を支援していただけるという方は投げ銭をしていただけるとSysAd班が泣いて喜びます。
-              </p>
-            </div>
-            </va-card> -->
             <va-card class="flex md12 item mb-3">
               <va-card-title>最新の結果</va-card-title>
               <va-card-content
@@ -217,13 +208,16 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="r in teamResults" :key="r.id">
+                        <tr v-for="(r, i) in teamResults" :key="r.id">
                           <td>{{ r.id }}</td>
                           <td>{{ r.pass }}</td>
                           <td>{{ r.score }}</td>
                           <td>{{ r.created_at.slice(5, 16) }}</td>
                           <td>
-                            <va-button color="info" size="small"
+                            <va-button
+                              color="info"
+                              size="small"
+                              @click="showInfo(i)"
                               >Info</va-button
                             >
                           </td>
@@ -293,13 +287,13 @@
         <va-button @click="showOperationModal = false"> キャンセル </va-button>
       </template>
     </va-modal>
+    <va-modal v-model="showInfoModal" :message="infoModalMessage" />
   </div>
 </template>
 <script lang="ts">
 //TODO: ファイル分割する
 /* eslint-disable @typescript-eslint/camelcase */
 import { AxiosError } from 'axios'
-import Modal from './Modal.vue'
 import apis, {
   PostBenchmarkRequest,
   PostTeamRequest,
@@ -310,9 +304,6 @@ import apis, {
 import store from '../../../store'
 import { computed, ref } from 'vue'
 export default {
-  components: {
-    Modal
-  },
   setup() {
     const teamName = ref('')
     const makeInstanceButton = ref(false)
@@ -320,6 +311,8 @@ export default {
     const betterize = ref('')
     const error = ref('')
     const showOperationModal = ref(false)
+    const showInfoModal = ref(false)
+    const infoModalMessage = ref([] as string[])
     const operationInstanceNumber = ref(0)
     const waiting = ref(false)
     const largeModal = ref(false)
@@ -358,6 +351,12 @@ export default {
         return `https://twitter.com/intent/tweet?text=Pisconはじめました！%0d&url=https%3A%2F%2Fpiscon.nagatech.work&hashtags=traPiscon`
       }
     })
+    const showInfo = (i: number) => {
+      showInfoModal.value = true
+      infoModalMessage.value = teamResults.value[i].messages.map(a =>
+        a.text ? a.text : ''
+      )
+    }
     const instanceButtonMessage = (i: number) =>
       computed(() => {
         if (!sortedInstance.value) {
@@ -557,6 +556,7 @@ export default {
       registerTeam,
       benchmarkButton,
       instanceButton,
+      showInfo,
       error,
       tweetURL,
       team,
@@ -568,7 +568,9 @@ export default {
       teamResults,
       waiting,
       showOperationModal,
-      operationInstanceNumber
+      operationInstanceNumber,
+      showInfoModal,
+      infoModalMessage
     }
   }
 }
