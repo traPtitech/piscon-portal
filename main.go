@@ -113,7 +113,7 @@ func benchmarkWorker() {
 		db.Save(task)
 
 		command, _ := shellwords.Parse(task.CmdStr)
-		fmt.Println(task.CmdStr)
+		fmt.Println(command)
 		res, err := exec.Command(command[0], command[1:]...).Output()
 		if err != nil {
 			fmt.Println(err)
