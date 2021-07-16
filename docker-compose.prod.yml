@@ -1,25 +1,20 @@
 version: "3"
-volumes:
-  db:
 services:
   backend:
     build:
       context: .
     tty: true
     ports:
-      - 4000:4000
-    # ベンチマークのためにマウントする
-    volumes:
-      - ./isucon9-qualify/initial-data:/isucon9-qualify/initial-data
-      - ./isucon9-qualify/webapp/public/static:/isucon9-qualify/webapp/public/static
-      - ./isucon9-qualify/bin/benchmarker:/isucon9-qualify/bin/benchmarker
-    command: ./piscon_portal
+      - "4000"
     restart: always
+    command: ./piscon_portal
     environment:
       MARIADB_HOST: db
       MARIADB_USERNAME: isucon
       MARIADB_PASSWORD: isucon
       MARIADB_DATABASE: isucon
+      MARIADB_PORT: 3306
+      ENV: dev
     depends_on:
       - db
   frontend:
@@ -27,17 +22,25 @@ services:
       context: ./client
     tty: true
     ports:
-      - 80:80
+      - "80"
     depends_on:
       - backend
   db:
     image: mariadb:latest
-    ports:
-      - 3306:3306
+    expose:
+      - "3306"
     volumes:
       # 初期データを投入するSQLが格納されているdir
       - ./db/init:/docker-entrypoint-initdb.d
-      # 永続化
       - db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+  caddy:
+    build:
+      context: ./caddy
+    tty: true
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+      - frontend

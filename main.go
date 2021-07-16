@@ -18,7 +18,6 @@ import (
 	"github.com/traPtitech/piscon-portal/model"
 	"github.com/traPtitech/piscon-portal/router"
 	sess "github.com/traPtitech/piscon-portal/session"
-	"golang.org/x/crypto/acme/autocert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -85,11 +84,11 @@ func main() {
 	}
 
 	e := echo.New()
-	env := os.Getenv("ENV")
-	if env == "prod" {
-		e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
-		e.Pre(middleware.HTTPSNonWWWRedirect())
-	}
+	// env := os.Getenv("ENV")
+	// if env == "prod" {
+	// 	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
+	// 	e.Pre(middleware.HTTPSNonWWWRedirect())
+	// }
 
 	if err != nil {
 		log.Fatal(err)
@@ -276,7 +275,7 @@ func establishConnection() (*gorm.DB, error) {
 	switch env {
 	case "prod":
 		if host == "" {
-			host = "localhost"
+			host = "db"
 		}
 	default:
 		if host == "" {
