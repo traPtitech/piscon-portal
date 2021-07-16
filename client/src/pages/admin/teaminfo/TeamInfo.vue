@@ -167,7 +167,7 @@
                     :rounded="false"
                     class="mr-4 item"
                     @click="benchmark(i)"
-                    :disabled="benchmarkButton(i) || betterize.value === ''"
+                    :disabled="benchmarkButton(i) || betterize === ''"
                   >
                     サーバ{{ i }}にベンチマークを行う
                   </va-button>
@@ -176,7 +176,7 @@
                     class="mr-4 item"
                     :color="instanceButtonColor(i)"
                     @click="setOperationModal(i)"
-                    :disabled="instanceButton(i) || waiting.value"
+                    :disabled="instanceButton(i) || waiting"
                   >
                     {{ instanceButtonMessage(i) }}
                   </va-button>
@@ -353,9 +353,9 @@ export default {
     })
     const showInfo = (i: number) => {
       showInfoModal.value = true
-      infoModalMessage.value = teamResults.value[i].messages.map(a =>
+      infoModalMessage.value = teamResults.value[i].messages ? teamResults.value[i].messages.map(a =>
         a.text ? a.text : ''
-      )
+      ):[]
     }
     const instanceButtonMessage = (i: number) =>
       computed(() => {
