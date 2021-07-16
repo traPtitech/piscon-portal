@@ -396,6 +396,24 @@ func (h *Handlers) GetBenchmarkQueue(c echo.Context) error {
 	return c.JSON(http.StatusOK, tasks)
 }
 
+func (h *Handlers) GetTeamMember(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("team_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
+	var member []model.User
+	if err = h.db.Where("team_id = ?", id).Find(&member).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusInternalServerError, model.Response{
+				Success: false,
+				Message: err.Error()})
+		}
+	}
+	return c.JSON(http.StatusOK, member)
+}
+
 func (h *Handlers) getTaskQueInfo() []*model.Task {
 	tasks := []*model.Task{}
 	h.db.Table("tasks").Joins("LEFT JOIN teams ON `teams`.id = `tasks`.team_id").Not("state = 'done'").Find(&tasks)

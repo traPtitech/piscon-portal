@@ -18,6 +18,7 @@ func (h *Handlers) SetUp(e *echo.Echo) {
 	apiWithAuth.GET("/me", h.GetMeFromTraq)
 	apiWithAuth.GET("/me/group", h.GetMeGroup)
 	apiWithAuth.POST("/team", h.CreateTeam)
+	apiWithAuth.GET("/team/:id/member", h.GetTeamMember)
 	apiWithAuth.POST("/user", h.CreateUser)
 	apiWithAuth.POST("/instance/:team_id/:instance_number", h.CreateInstance)
 	apiWithAuth.DELETE("/instance/:team_id/:instance_number", h.DeleteInstance)
