@@ -22,14 +22,16 @@
             </va-card>
             <va-card class="flex md12 item mb-3" style="padding: 1.3rem">
               <va-content>
-                <div class="md12" style="display: flex">
-                  <img
-                    :src="`https://q.trap.jp/api/v3/public/icon/${user.name}`"
-                    class="item profile-image"
-                  />
-                  <h3 class="item ml-3 h-fix">
-                    {{ user.screen_name }}(@{{ user.name }})
-                  </h3>
+                <div v-for="m in teamMembers" :key="m.name">
+                  <div class="md12" style="display: flex">
+                    <img
+                      :src="`https://q.trap.jp/api/v3/public/icon/${m.name}`"
+                      class="item profile-image"
+                    />
+                    <h3 class="item ml-3 h-fix">
+                      {{ m.screen_name }}(@{{ m.name }})
+                    </h3>
+                  </div>
                 </div>
               </va-content>
             </va-card>
@@ -302,9 +304,10 @@ import apis, {
   User
 } from '../../../lib/apis'
 import store from '../../../store'
-import { computed, ref } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 export default {
   setup() {
+    const teamMembers = ref<User[]>([])
     const teamName = ref('')
     const makeInstanceButton = ref(false)
     const modalText = ref('')
@@ -353,9 +356,9 @@ export default {
     })
     const showInfo = (i: number) => {
       showInfoModal.value = true
-      infoModalMessage.value = teamResults.value[i].messages ? teamResults.value[i].messages.map(a =>
-        a.text ? a.text : ''
-      ):[]
+      infoModalMessage.value = teamResults.value[i].messages
+        ? teamResults.value[i].messages.map(a => (a.text ? a.text : ''))
+        : []
     }
     const instanceButtonMessage = (i: number) =>
       computed(() => {
@@ -544,6 +547,14 @@ export default {
           break
       }
     }
+
+    watchEffect(async () => {
+      if (!store.state.Team) {
+        return [] as User[]
+      }
+      teamMembers.value = (await apis.teamIdMemberGet(store.state.Team.ID)).data
+    })
+
     return {
       makeInstance,
       benchmark,
@@ -557,6 +568,7 @@ export default {
       benchmarkButton,
       instanceButton,
       showInfo,
+      teamMembers,
       error,
       tweetURL,
       team,
