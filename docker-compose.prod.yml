@@ -5,7 +5,7 @@ services:
       context: .
     tty: true
     ports:
-      - "4000"
+      - "4000:4000"
     restart: always
     command: ./piscon_portal
     environment:
@@ -22,7 +22,7 @@ services:
       context: ./client
     tty: true
     ports:
-      - "80"
+      - "8080:80"
     depends_on:
       - backend
   db:
@@ -35,14 +35,5 @@ services:
       - db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-  caddy:
-    build:
-      context: ./caddy
-    tty: true
-    ports:
-      - "8080:80"
-    depends_on:
-      - backend
-      - frontend
 volumes:
   db:
