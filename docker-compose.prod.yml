@@ -17,6 +17,8 @@ services:
       ENV: dev
     depends_on:
       - db
+    volumes:
+      - /home/isucon/isucari:/home/isucon/isucari
   frontend:
     build:
       context: ./client
