@@ -242,7 +242,11 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 		fmt.Println("send chan")
 		h.checkInstance <- instance
 	}()
-	h.db.Model(instance).Where("id = ?", instanceNumber).Where("team_id = ?", instance.TeamID).Updates(instance)
+	if err = h.db.Where("instance_number = ?", instanceNumber).Where("team_id = ?", instance.TeamID).Updates(instance).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 	return c.JSON(http.StatusCreated, instance)
 }
 
