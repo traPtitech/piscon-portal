@@ -44,7 +44,6 @@ func genPassword() string {
 	}
 	return pass
 }
-
 func formatCommand(ip string) string {
 	return fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
 		"-data-dir \"/home/isucon/isucari/initial-data\" "+

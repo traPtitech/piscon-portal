@@ -5,6 +5,8 @@ services:
       context: .
     ports:
       - "4000:4000"
+      - "5555:5555"
+      - "7000:7000"
     restart: always
     environment:
       MARIADB_HOST: db
