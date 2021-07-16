@@ -328,7 +328,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 	}
 
 	team := &model.Team{}
-	if err = h.db.Where("name = ?", name).Find(team).Error; err != nil {
+	if err = h.db.Where("name = ?", name).Preload("Instance").Find(team).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
 			Message: err.Error()})
@@ -338,12 +338,6 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, model.Response{
 			Success: false,
 			Message: "登録されていません"})
-	}
-
-	if err = h.db.Model(team).Preload("Instance").Find(team.Instance).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
-			Success: false,
-			Message: err.Error()})
 	}
 
 	ip := team.Instance[0].PrivateIPAddress
