@@ -2,7 +2,7 @@
 FROM node:lts-alpine as build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm run gen-apis
 COPY . .
 RUN npm run build
 
