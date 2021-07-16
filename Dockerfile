@@ -6,7 +6,7 @@ COPY . .
 RUN go build -o /piscon_portal main.go
 
 
-FROM alpine:3.14.0
+FROM debian:latest
 WORKDIR /app
 
 EXPOSE 4000

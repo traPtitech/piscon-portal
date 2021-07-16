@@ -3,11 +3,9 @@ services:
   backend:
     build:
       context: .
-    tty: true
     ports:
       - "4000:4000"
     restart: always
-    command: ./piscon_portal
     environment:
       MARIADB_HOST: db
       MARIADB_USERNAME: isucon
