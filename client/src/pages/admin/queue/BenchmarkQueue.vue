@@ -12,7 +12,7 @@
                 v-for="que in queue"
                 :key="que.team_id"
               >
-                {{ que.team }}
+                {{ que.team.name }}
               </va-chip>
             </div>
           </va-card>
@@ -23,7 +23,7 @@
 </template>
 <script lang="ts">
 import { computed } from '@vue/runtime-core'
-import store from '@/store'
+import store from '../../../store'
 import { Task } from '@/lib/apis'
 export default {
   setup() {
