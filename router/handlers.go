@@ -244,7 +244,6 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 		h.checkInstance <- instance
 	}()
 	h.db.Model(instance).Where("id = ?", instanceNumber).Where("team_id = ?", instance.TeamID).Updates(instance)
-
 	return c.JSON(http.StatusCreated, instance)
 }
 
@@ -394,7 +393,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 func (h *Handlers) GetBenchmarkQueue(c echo.Context) error {
 	tasks := h.getTaskQueInfo()
 	for _, task := range tasks {
-		h.db.Model(task).Preload("Team").Find(&task.Team)
+		h.db.Preload("Team").Find(&task)
 	}
 	return c.JSON(http.StatusOK, tasks)
 }
