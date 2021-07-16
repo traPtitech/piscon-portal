@@ -374,7 +374,6 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 		TeamID:    team.ID,
 		Betterize: req.Betterize,
 	}
-	fmt.Println(cmdStr)
 	if err = h.db.Create(t).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
