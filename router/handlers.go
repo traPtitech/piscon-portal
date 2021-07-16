@@ -356,10 +356,13 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 
 	task := &model.Task{}
 
-	if err = h.db.Where("team_id = ?", team.ID).Not("state = 'done'").First(task).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
-			Success: false,
-			Message: err.Error()})
+	if err = h.db.Where("team_id = ?", team.ID).Not("state = ? ", "done").First(task).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusInternalServerError, model.Response{
+				Success: false,
+				Message: err.Error()})
+		}
+
 	}
 	if task.CmdStr != "" {
 		return c.JSON(http.StatusConflict, model.Response{
