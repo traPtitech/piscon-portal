@@ -20,7 +20,7 @@
                   <tr v-for="(r, i) in ranking" :key="r.name">
                     <td>{{ i + 1 }}</td>
                     <td>{{ r.name }}</td>
-                    <td>{{ r.score }}</td>
+                    <td>{{ r.results.score }}</td>
                     <!-- <td>
                   <va-badge
                     :text="user.status"
@@ -49,19 +49,19 @@
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>TEAM ID</th>
+                    <th>TEAM NAME</th>
                     <th>PASS</th>
                     <th>SCORE</th>
                     <th>TIME</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="r in results" :key="r.id">
-                    <td>{{ r.id }}</td>
-                    <td>{{ r.team_id }}</td>
-                    <td>{{ r.pass }}</td>
-                    <td>{{ r.score }}</td>
-                    <td>{{ r.created_at.slice(5, 16) }}</td>
+                  <tr v-for="r in results" :key="r.result.id">
+                    <td>{{ r.result.id }}</td>
+                    <td>{{ r.name }}</td>
+                    <td>{{ r.result.pass }}</td>
+                    <td>{{ r.result.score }}</td>
+                    <td>{{ r.result.created_at.slice(5, 16) }}</td>
                   </tr>
                 </tbody>
               </table>

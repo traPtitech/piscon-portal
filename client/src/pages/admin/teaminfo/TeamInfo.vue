@@ -217,7 +217,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="r in results" :key="r.id">
+                        <tr v-for="r in teamResults" :key="r.id">
                           <td>{{ r.id }}</td>
                           <td>{{ r.pass }}</td>
                           <td>{{ r.score }}</td>

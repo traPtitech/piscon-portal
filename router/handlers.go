@@ -64,7 +64,7 @@ func (h *Handlers) GetNewer(c echo.Context) error {
 func (h *Handlers) GetTeam(c echo.Context) error {
 	id := c.Param("id")
 	team := model.Team{}
-	h.db.Where("id = ?", id).Preload("Instance").Find(&team)
+	h.db.Where("id = ?", id).Preload("Instance").Preload("Results").Find(&team)
 
 	if team.Name == "" {
 		return c.JSON(http.StatusNotFound, model.Response{

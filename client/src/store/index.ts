@@ -34,10 +34,17 @@ const { store, rootActionContext } = createDirectStore({
       if (!state.AllResults) {
         return
       }
-      const results = state.AllResults.reduce(
-        (a, b) => a.concat(b.results || []),
-        [] as Result[]
-      ).sort((a, b) => b.id - a.id)
+      const results = state.AllResults.map(a =>
+        a.results.map(r => {
+          const res = {
+            name: a.name,
+            result: r
+          }
+          return res
+        })
+      )
+        .reduce((a, b) => a.concat(b || []), [])
+        .sort((a, b) => b.result.id - a.result.id)
       if (results.length > 20) {
         return results.splice(0, 20)
       }
