@@ -73,9 +73,9 @@ func (a *AwsClient) CreateInstance(name string, privateIp string, pwd string) (*
 		}},
 	}
 	startUpScript := fmt.Sprintf(`#!/bin/sh
-useradd -m piscon
-echo "%s\n%s\n" | passwd piscon
-usermod -G sudo piscon
+useradd -m isucon
+echo "%s\n%s\n" | passwd isucon
+usermod -G sudo isucon
 sed -e "s/PasswordAuthentication no/PasswordAuthentication yes/g" -i /etc/ssh/sshd_config
 systemctl restart sshd	
 	`, pwd, pwd)
