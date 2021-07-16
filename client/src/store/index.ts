@@ -18,11 +18,14 @@ const { store, rootActionContext } = createDirectStore({
       return state.AllResults.map(team => {
         const res = {
           name: team.name,
-          results: (team.results || [])
+          results: (team.results || ([] as Result[]))
             .filter(result => result.pass)
-            .reduce((a, b) => {
-              return a.score < b.score ? b : a
-            })
+            .reduce(
+              (a, b) => {
+                return a.score < b.score ? b : a
+              },
+              { score: 0 } as Result
+            )
         }
         return res
       }).sort((a, b) => b.results.score - a.results.score)
