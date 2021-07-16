@@ -3,7 +3,7 @@ WORKDIR /go/src/github.com/traPtitech/piscon-portal
 COPY ./go.* ./
 RUN go mod download
 COPY . .
-RUN go build -o /piscon_portal main.go
+RUN CGO_ENABLED=0 go build -o /piscon_portal main.go
 
 
 FROM debian:latest
