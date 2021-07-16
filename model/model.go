@@ -18,7 +18,7 @@ const (
 )
 
 type ServerClient interface {
-	CreateInstance(name string, privateIp string) (*string, error) //return InstanceID (TODO)
+	CreateInstance(name string, privateIp string, pwd string) (*string, error) //return InstanceID (TODO)
 	DeleteInstance(instanceId string) error
 	StartInstance(instanceId string) error
 	StopInstance(instanceId string) error

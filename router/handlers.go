@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -215,7 +214,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 
 	name := fmt.Sprintf("%d-%d", teamId, instanceNumber)
 
-	pass := os.Getenv("ISUCON_PASSWORD") //???情報はあるけど使われてなさそう
+	pass := genPassword()
 	i := &model.Instance{}
 	h.db.Where("name = ?", name).Find(i)
 	if i.Name != "" {
@@ -225,9 +224,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	}
 
 	privateIP := fmt.Sprintf("10.0.0.%d", teamId*10+instanceNumber)
-
-	log.Printf("CreateInstance name:%s pass %s privateIP:%s\n", name, pass, privateIP)
-	id, err := h.client.CreateInstance(name, privateIP)
+	id, err := h.client.CreateInstance(name, privateIP, pass)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,

@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
 
@@ -62,7 +63,7 @@ func CreateDefaultConfig() (*Config, error) {
 	return &res, nil
 }
 
-func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, error) {
+func (a *AwsClient) CreateInstance(name string, privateIp string, pwd string) (*string, error) {
 	subnetId := os.Getenv("AWS_SUBNET_ID")
 	tspec := types.TagSpecification{
 		ResourceType: types.ResourceTypeInstance,
@@ -71,6 +72,15 @@ func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, erro
 			Value: &name,
 		}},
 	}
+	startUpScript := fmt.Sprintf(`#!/bin/sh
+useradd -m piscon
+echo "%s\n%s\n" | passwd piscon
+usermod -G sudo piscon
+sed -e "s/PasswordAuthentication no/PasswordAuthentication yes/g" -i /etc/ssh/sshd_config
+systemctl restart sshd	
+	`, pwd, pwd)
+	fmt.Printf(startUpScript)
+	enc := base64.StdEncoding.EncodeToString([]byte(startUpScript))
 	nispec := types.InstanceNetworkInterfaceSpecification{
 		AssociatePublicIpAddress: aws.Bool(true),
 		DeleteOnTermination:      aws.Bool(true),
@@ -85,13 +95,13 @@ func (a *AwsClient) CreateInstance(name string, privateIp string) (*string, erro
 		MaxCount:          &defaultInstanceNum,
 		TagSpecifications: []types.TagSpecification{tspec},
 		NetworkInterfaces: []types.InstanceNetworkInterfaceSpecification{nispec},
-		KeyName:           aws.String("aws"),
+		KeyName:           aws.String("isucon"),
+		UserData:          aws.String(enc),
 	}
 	res, err := a.c.RunInstances(context.TODO(), i)
 	if err != nil {
 		return nil, err
 	}
-
 	return res.Instances[0].InstanceId, nil
 }
 
