@@ -10,9 +10,11 @@ FROM ubuntu:20.04
 WORKDIR /app
 
 EXPOSE 4000
+
 RUN apt update &&\
   apt install -y ca-certificates && \ 
   update-ca-certificates
+
 COPY --from=build /piscon_portal /go/src/github.com/traPtitech/piscon-portal/.env  ./
 
 ENTRYPOINT ./piscon_portal
