@@ -23,7 +23,7 @@
             <va-card class="flex md12 item mb-3" style="padding: 1.3rem">
               <va-content>
                 <div v-for="m in teamMembers" :key="m.name">
-                  <div class="md12" style="display: flex">
+                  <div class="md12 pb-1 pt-1" style="display: flex">
                     <img
                       :src="`https://q.trap.jp/api/v3/public/icon/${m.name}`"
                       class="item profile-image"
