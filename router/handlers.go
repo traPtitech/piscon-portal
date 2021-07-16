@@ -175,20 +175,18 @@ func (h *Handlers) CreateTeam(c echo.Context) error {
 	t := &model.Team{}
 	h.db.Preload("Instance").Where("name = ?", requestBody.Name).Find(t)
 
-	if t.Name != "" {
-		return c.JSON(http.StatusConflict, model.Response{
-			Success: false,
-			Message: "登録されています"})
+	if t.Name == "" {
+		ins := initializeInstances()
+		team := &model.Team{
+			Name:              requestBody.Name,
+			MaxInstanceNumber: MAX_INSTANCE_NUMBER,
+			Instance:          *ins,
+			Group:             requestBody.Group,
+		}
+		h.db.Create(team)
+		return c.JSON(http.StatusCreated, team)
 	}
-	ins := initializeInstances()
-	team := &model.Team{
-		Name:              requestBody.Name,
-		MaxInstanceNumber: MAX_INSTANCE_NUMBER,
-		Instance:          *ins,
-		Group:             requestBody.Group,
-	}
-	h.db.Create(team)
-	return c.JSON(http.StatusCreated, team)
+	return c.JSON(http.StatusCreated, t)
 }
 
 func (h *Handlers) CreateInstance(c echo.Context) error {
@@ -362,7 +360,6 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 				Success: false,
 				Message: err.Error()})
 		}
-
 	}
 	if task.CmdStr != "" {
 		return c.JSON(http.StatusConflict, model.Response{
