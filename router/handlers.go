@@ -217,10 +217,10 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	pass := genPassword()
 	i := &model.Instance{}
 	h.db.Where("name = ?", name).Find(i)
-	if i.Name != "" {
+	if i.Status == model.ACTIVE {
 		return c.JSON(http.StatusConflict, model.Response{
 			Success: false,
-			Message: "既に登録されています"})
+			Message: "起動中です"})
 	}
 
 	privateIP := fmt.Sprintf("10.0.0.%d", teamId*10+instanceNumber)

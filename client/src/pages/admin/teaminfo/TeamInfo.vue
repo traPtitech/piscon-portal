@@ -323,7 +323,6 @@ export default {
     )
     const sortedInstance = computed(() => {
       if (!store.state.Team || !store.state.Team.instance) {
-        console.warn(store.state.Team)
         return []
       }
       const res = store.state.Team.instance
@@ -382,9 +381,6 @@ export default {
             : sortedInstance.value[i - 1].status !== 'ACTIVE')
       ).value
     const instanceButton = (i: number) => {
-      console.warn(sortedInstance.value[i - 1])
-      console.warn(i)
-      console.warn(waiting.value)
       return computed(
         () =>
           (!sortedInstance.value || !sortedInstance.value[i - 1]

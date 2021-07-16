@@ -203,7 +203,6 @@ import store from '../../..//store'
 export default {
   setup() {
     const user = store.state.User
-    console.log(user ? 'true' : 'false0')
     return {
       user
     }
