@@ -48,8 +48,8 @@ func genPassword() string {
 func formatCommand(ip string) string {
 	return fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
 		"-data-dir \"/home/isucon/isucari/initial-data\" "+
-		"-payment-url \"http://10.0.0.1:5555\" "+
-		"-shipment-url \"http://10.0.0.1:7000\" "+
+		"-payment-url \"http://10.0.145.247:5555\" "+
+		"-shipment-url \"http://10.0.145.247:7000\" "+
 		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url \"http://%s\"", ip, ip)
