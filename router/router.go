@@ -33,11 +33,4 @@ func (h *Handlers) SetUp(e *echo.Echo) {
 	apiWithAuth.PUT("/questions/:id", h.PutQuestions)
 	apiWithAuth.DELETE("/questions/:id", h.DeleteQuestions)
 
-	// e.AutoTLSManager.HostPolicy = autocert.HostWhitelist(os.Getenv("HOST"))
-	// e.AutoTLSManager.Cache = autocert.DirCache("/etc/letsencrypt/live/piscon-portal.trap.jp/cert.pem")
-	// e.Pre(middleware.HTTPSWWWRedirect())
-	// switch env {
-	// case "prod":
-	// e.StartAutoTLS(":443")
-	// default:
 }

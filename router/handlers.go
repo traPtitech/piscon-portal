@@ -397,7 +397,7 @@ func (h *Handlers) GetBenchmarkQueue(c echo.Context) error {
 }
 
 func (h *Handlers) GetTeamMember(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("team_id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.Response{
 			Success: false,
