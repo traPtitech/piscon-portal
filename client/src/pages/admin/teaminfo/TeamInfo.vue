@@ -6,7 +6,7 @@
           <div v-if="team">
             <va-card
               class="flex md12 item mb-3"
-              style="padding: 1.3rem"
+              style="padding: 1rem"
               v-if="team.name"
             >
               <va-content>
