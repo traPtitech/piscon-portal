@@ -18,6 +18,9 @@ func (h *Handlers) GetMeFromTraq(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Internal Server error")
 	}
 	token := sess.Values["accessToken"].(string)
+	if len(token) == 0 {
+		return c.String(http.StatusUnauthorized, "Token is empty")
+	}
 	u, err := getMe(token)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Internal Server error")
