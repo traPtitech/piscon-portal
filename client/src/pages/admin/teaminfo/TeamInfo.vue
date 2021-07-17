@@ -359,7 +359,7 @@ export default {
       console.log(teamResults.value)
       const betterize: Array<string> = [
         '改善点：' +
-          (teamResults.value[i].bettrize ? teamResults.value[i].bettrize : '')
+          (teamResults.value[i].betterize ? teamResults.value[i].betterize : '')
       ]
       infoModalMessage.value = betterize
         .concat(

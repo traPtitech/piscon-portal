@@ -298,7 +298,7 @@ paths:
         schema:
           type: integer
       requestBody:
-        description: bettersize (Sorry, but I dont understand)
+        description: betterize (Sorry, but I dont understand)
         content:
           application/json:
             schema:
@@ -547,7 +547,7 @@ components:
         capmpaign:
           type: integer
           format: int64
-        bettrize:
+        betterize:
           type: string
         messages:
           type: array
@@ -572,7 +572,7 @@ components:
           type: string
         state:
           type: string
-        bettersize:
+        betterize:
           type: string
         team_id:
           type: integer

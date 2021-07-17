@@ -261,7 +261,7 @@ export interface Result {
      * @type {string}
      * @memberof Result
      */
-    bettrize?: string;
+    betterize?: string;
     /**
      * 
      * @type {Array<Message>}
@@ -310,7 +310,7 @@ export interface Task {
      * @type {string}
      * @memberof Task
      */
-    bettersize?: string;
+    betterize?: string;
     /**
      * 
      * @type {number}
@@ -672,7 +672,7 @@ export const BenchApiAxiosParamCreator = function (configuration?: Configuration
          * @summary Queue benchmark task
          * @param {string} name 
          * @param {number} instanceNumber current instance number
-         * @param {PostBenchmarkRequest} [postBenchmarkRequest] bettersize (Sorry, but I dont understand)
+         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -754,7 +754,7 @@ export const BenchApiFp = function(configuration?: Configuration) {
          * @summary Queue benchmark task
          * @param {string} name 
          * @param {number} instanceNumber current instance number
-         * @param {PostBenchmarkRequest} [postBenchmarkRequest] bettersize (Sorry, but I dont understand)
+         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -787,7 +787,7 @@ export const BenchApiFactory = function (configuration?: Configuration, basePath
          * @summary Queue benchmark task
          * @param {string} name 
          * @param {number} instanceNumber current instance number
-         * @param {PostBenchmarkRequest} [postBenchmarkRequest] bettersize (Sorry, but I dont understand)
+         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -818,7 +818,7 @@ export class BenchApi extends BaseAPI {
      * @summary Queue benchmark task
      * @param {string} name 
      * @param {number} instanceNumber current instance number
-     * @param {PostBenchmarkRequest} [postBenchmarkRequest] bettersize (Sorry, but I dont understand)
+     * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchApi
@@ -2239,7 +2239,7 @@ export class Apis extends BaseAPI {
      * @summary Queue benchmark task
      * @param {string} name
      * @param {number} instanceNumber current instance number
-     * @param {PostBenchmarkRequest} [postBenchmarkRequest] bettersize (Sorry, but I dont understand)
+     * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchApi
