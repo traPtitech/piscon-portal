@@ -289,7 +289,12 @@
         <va-button @click="showOperationModal = false"> キャンセル </va-button>
       </template>
     </va-modal>
-    <va-modal v-model="showInfoModal" :message="infoModalMessage" />
+    <va-modal v-model="showInfoModal">
+      <va-content>
+        <p>{{ infoModalMessage.better }}</p>
+        <p>{{ infoModalMessage.message }}</p>
+      </va-content>
+    </va-modal>
   </div>
 </template>
 <script lang="ts">
@@ -315,7 +320,10 @@ export default {
     const error = ref('')
     const showOperationModal = ref(false)
     const showInfoModal = ref(false)
-    const infoModalMessage = ref('')
+    const infoModalMessage = ref<{ better: string; message: string }>({
+      better: '',
+      message: ''
+    })
     const operationInstanceNumber = ref(0)
     const waiting = ref(false)
     const largeModal = ref(false)
@@ -356,18 +364,17 @@ export default {
     })
     const showInfo = (i: number) => {
       showInfoModal.value = true
-      console.log(teamResults.value)
-      const betterize: Array<string> = [
+      const betterize =
         '改善点：' +
-          (teamResults.value[i].betterize ? teamResults.value[i].betterize : '')
-      ]
-      infoModalMessage.value = betterize
-        .concat(
-          teamResults.value[i].messages
-            ? teamResults.value[i].messages.map(a => (a.text ? a.text : ''))
-            : []
-        )
-        .join('\n')
+        (teamResults.value[i].betterize ? teamResults.value[i].betterize : '')
+
+      infoModalMessage.value = {
+        better: betterize,
+        message: (teamResults.value[i].messages
+          ? teamResults.value[i].messages.map(a => (a.text ? a.text : ''))
+          : []
+        ).join('\n')
+      }
     }
     const instanceButtonMessage = (i: number) =>
       computed(() => {
