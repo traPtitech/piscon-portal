@@ -6,6 +6,6 @@
 import ScoreGraph from './ScoreGraph.vue'
 export default {
   components: { ScoreGraph },
-  name: 'Statistics',
+  name: 'Statistics'
 }
 </script>

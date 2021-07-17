@@ -1333,7 +1333,7 @@
     "@types/connect" "*"
     "@types/node" "*"
 
-"@types/chart.js@^2.7.55":
+"@types/chart.js@^2.7.55", "@types/chart.js@^2.9.29":
   "integrity" "sha512-d45JiRQwEOlZiKwukjqmqpbqbYzUX2yrXdH9qVn6kXpPDsTYCo6YbfFOlnUaJ8S/DhJwbBJiLsMjKpW5oP8B2A=="
   "resolved" "https://registry.npmjs.org/@types/chart.js/-/chart.js-2.9.32.tgz"
   "version" "2.9.32"
@@ -3507,7 +3507,7 @@
   "resolved" "https://registry.npmjs.org/chardet/-/chardet-0.7.0.tgz"
   "version" "0.7.0"
 
-"chart.js@^2.9.4", "chart.js@>= 2.5":
+"chart.js@^2.9.4", "chart.js@^3.1.0", "chart.js@>= 2.5":
   "integrity" "sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A=="
   "resolved" "https://registry.npmjs.org/chart.js/-/chart.js-2.9.4.tgz"
   "version" "2.9.4"
@@ -4375,7 +4375,7 @@
   dependencies:
     "cssom" "~0.3.6"
 
-"csstype@^2.6.8":
+"csstype@^2.6.8", "csstype@latest":
   "integrity" "sha512-u1wmTI1jJGzCJzWndZo8mk4wnPTZd1eOIYTYvuEyOQGfmDl3TrabCCfKnOC86FZwW/9djqTl933UF/cS425i9A=="
   "resolved" "https://registry.npmjs.org/csstype/-/csstype-2.6.17.tgz"
   "version" "2.6.17"
@@ -8004,7 +8004,7 @@
   "resolved" "https://registry.npmjs.org/lodash.uniq/-/lodash.uniq-4.5.0.tgz"
   "version" "4.5.0"
 
-"lodash@^4.0.0", "lodash@^4.17.11", "lodash@^4.17.14", "lodash@^4.17.15", "lodash@^4.17.19", "lodash@^4.17.20", "lodash@^4.17.21", "lodash@^4.17.3", "lodash@^4.17.4", "lodash@~4.17.10", "lodash@4.17.21":
+"lodash@^4.0.0", "lodash@^4.17.11", "lodash@^4.17.14", "lodash@^4.17.15", "lodash@^4.17.19", "lodash@^4.17.20", "lodash@^4.17.21", "lodash@^4.17.3", "lodash@^4.17.4", "lodash@~4.17.10", "lodash@4.17.21", "lodash@latest":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
@@ -9841,6 +9841,11 @@
   "integrity" "sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew=="
   "resolved" "https://registry.npmjs.org/prettier/-/prettier-1.19.1.tgz"
   "version" "1.19.1"
+
+"prettier@^2.2.1":
+  "integrity" "sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ=="
+  "resolved" "https://registry.npmjs.org/prettier/-/prettier-2.3.2.tgz"
+  "version" "2.3.2"
 
 "pretty-bytes@^5.1.0":
   "integrity" "sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg=="
@@ -12221,12 +12226,26 @@
   "resolved" "https://registry.npmjs.org/vm-browserify/-/vm-browserify-1.1.2.tgz"
   "version" "1.1.2"
 
+"vue-chart-3@^0.4.1":
+  "integrity" "sha512-/Ku0PaMLVEf/LzXbMzZ4p1SKI0jNpGeFAImxIhY+TH4oeIDh1K8PRhh7lVEBfgiU/YDW4NgKzStlTOsQJ6fJ8g=="
+  "resolved" "https://registry.npmjs.org/vue-chart-3/-/vue-chart-3-0.4.1.tgz"
+  "version" "0.4.1"
+  dependencies:
+    "csstype" "latest"
+    "lodash" "latest"
+    "vue-demi" "^0.10.1"
+
 "vue-chartjs@^3.5.1":
   "integrity" "sha512-foocQbJ7FtveICxb4EV5QuVpo6d8CmZFmAopBppDIGKY+esJV8IJgwmEW0RexQhxqXaL/E1xNURsgFFYyKzS/g=="
   "resolved" "https://registry.npmjs.org/vue-chartjs/-/vue-chartjs-3.5.1.tgz"
   "version" "3.5.1"
   dependencies:
     "@types/chart.js" "^2.7.55"
+
+"vue-demi@^0.10.1":
+  "integrity" "sha512-L6Oi+BvmMv6YXvqv5rJNCFHEKSVu7llpWWJczqmAQYOdmPPw5PNYoz1KKS//Fxhi+4QP64dsPjtmvnYGo1jemA=="
+  "resolved" "https://registry.npmjs.org/vue-demi/-/vue-demi-0.10.1.tgz"
+  "version" "0.10.1"
 
 "vue-eslint-parser@^7.0.0", "vue-eslint-parser@^7.6.0":
   "integrity" "sha512-QXxqH8ZevBrtiZMZK0LpwaMfevQi9UL7lY6Kcp+ogWHC88AuwUPwwCIzkOUc1LR4XsYAt/F9yHXAB/QoD17QXA=="
@@ -12345,7 +12364,7 @@
   "resolved" "https://registry.npmjs.org/vue-yandex-maps/-/vue-yandex-maps-0.10.11.tgz"
   "version" "0.10.11"
 
-"vue@^2 || ^3.0.0-0", "vue@^2.5.2", "vue@^2.x", "vue@^3.0.0", "vue@^3.0.0-0", "vue@^3.0.1", "vue@^3.0.2", "vue@^3.0.4", "vue@3", "vue@3.1.2":
+"vue@^2 || ^3.0.0-0", "vue@^2.0.0 || >=3.0.0-rc.0", "vue@^2.5.2", "vue@^2.6.0 || >=3.0.0", "vue@^2.x", "vue@^3.0.0", "vue@^3.0.0-0", "vue@^3.0.1", "vue@^3.0.2", "vue@^3.0.4", "vue@3", "vue@3.1.2":
   "integrity" "sha512-q/rbKpb7aofax4ugqu2k/uj7BYuNPcd6Z5/qJtfkJQsE0NkwVoCyeSh7IZGH61hChwYn3CEkh4bHolvUPxlQ+w=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.1.2.tgz"
   "version" "3.1.2"
@@ -12353,6 +12372,17 @@
     "@vue/compiler-dom" "3.1.2"
     "@vue/runtime-dom" "3.1.2"
     "@vue/shared" "3.1.2"
+
+"vue3-chart-v2@^0.8.2":
+  "integrity" "sha512-J+v3Q0ayYyWstPY1zOmdx6l/wkHT63Kzrp5X5PNNXrSUoJT8p608danWIJtncpWhuJB8qQ3t2/jWsg4WF8qJjg=="
+  "resolved" "https://registry.npmjs.org/vue3-chart-v2/-/vue3-chart-v2-0.8.2.tgz"
+  "version" "0.8.2"
+  dependencies:
+    "@types/chart.js" "^2.9.29"
+    "chart.js" "^2.9.4"
+    "core-js" "^3.6.5"
+    "prettier" "^2.2.1"
+    "vue" "^3.0.0"
 
 "vuestic-ui@^1.1.0":
   "integrity" "sha512-NpkSXaAzRBWineaf+yKDqvTA3+tHxlJfwdLHoYv5wArXIXZBXqkUVc4Lyq+Zp3i8dMcTYm9cgQHlt/+IAGKV1A=="

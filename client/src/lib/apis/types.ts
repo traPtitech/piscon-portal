@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/member-delimiter-style*/
 
 export interface LineChartDataSets {
-  label: string
+  labels: string[] //横軸のラベル
+  datasets: Datasets[]
+}
+
+export interface Datasets {
+  label: string //線につくラベル
   fill: boolean
-  lineTension: number
-  pointBackgroundColor: string
   borderColor: string
-  pointBorderColor: string
+  pointBackgroundColor: string
   pointMoverBackgroundColor: string
-  data: {
-    x: number
-    y: number
-    time: string
-  }[]
+  pointBorderColor: string
+  tension: number
+  spanGaps: boolean
+  data: {}[]
 }
