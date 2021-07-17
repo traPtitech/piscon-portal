@@ -35,10 +35,14 @@
 <script lang="ts">
 import store from '../../../store'
 import chroma from 'chroma-js'
+import { ref, watchEffect } from 'vue'
 import { LineChartDataSets } from '../../../lib/apis/types'
 export default {
   setup() {
-    const scoreAllData = () => {
+    const scoreAllData = ref<LineChartDataSets[]>([])
+    const score21BData = ref<LineChartDataSets[]>([])
+
+    const fetchAllData = () => {
       const data = {
         datasets: [] as LineChartDataSets[]
       }
@@ -79,7 +83,7 @@ export default {
 
       return data
     }
-    const score21BData = () => {
+    const fetch21BData = () => {
       const data = {
         datasets: [] as LineChartDataSets[]
       }
@@ -119,6 +123,12 @@ export default {
 
       return data
     }
+    watchEffect(() => {
+      scoreAllData.value = fetchAllData().datasets
+    })
+    watchEffect(() => {
+      score21BData.value = fetch21BData().datasets
+    })
     return {
       scoreAllData,
       score21BData

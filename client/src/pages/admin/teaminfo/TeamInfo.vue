@@ -304,7 +304,7 @@ import apis, {
   User
 } from '../../../lib/apis'
 import store from '../../../store'
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 export default {
   setup() {
     const teamMembers = ref<User[]>([])
@@ -356,9 +356,18 @@ export default {
     })
     const showInfo = (i: number) => {
       showInfoModal.value = true
-      infoModalMessage.value = teamResults.value[i].messages
-        ? teamResults.value[i].messages.map(a => (a.text ? a.text : ''))
-        : []
+      const betterize: Array<string> = [
+        '改善点：' +
+          (teamResults.value[i].bettrize ? teamResults.value[i].bettrize : '') +
+          '\n'
+      ]
+      infoModalMessage.value = betterize.concat(
+        teamResults.value[i].messages
+          ? teamResults.value[i].messages.map(a =>
+              a.text ? a.text + '\n' : ''
+            )
+          : []
+      )
     }
     const instanceButtonMessage = (i: number) =>
       computed(() => {
