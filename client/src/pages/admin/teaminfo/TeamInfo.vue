@@ -315,7 +315,7 @@ export default {
     const error = ref('')
     const showOperationModal = ref(false)
     const showInfoModal = ref(false)
-    const infoModalMessage = ref([] as string[])
+    const infoModalMessage = ref('')
     const operationInstanceNumber = ref(0)
     const waiting = ref(false)
     const largeModal = ref(false)
@@ -356,18 +356,18 @@ export default {
     })
     const showInfo = (i: number) => {
       showInfoModal.value = true
+      console.log(teamResults.value)
       const betterize: Array<string> = [
         '改善点：' +
-          (teamResults.value[i].bettrize ? teamResults.value[i].bettrize : '') +
-          '\n'
+          (teamResults.value[i].bettrize ? teamResults.value[i].bettrize : '')
       ]
-      infoModalMessage.value = betterize.concat(
-        teamResults.value[i].messages
-          ? teamResults.value[i].messages.map(a =>
-              a.text ? a.text + '\n' : ''
-            )
-          : []
-      )
+      infoModalMessage.value = betterize
+        .concat(
+          teamResults.value[i].messages
+            ? teamResults.value[i].messages.map(a => (a.text ? a.text : ''))
+            : []
+        )
+        .join('\n')
     }
     const instanceButtonMessage = (i: number) =>
       computed(() => {
