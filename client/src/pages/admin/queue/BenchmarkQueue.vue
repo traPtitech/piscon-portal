@@ -32,7 +32,8 @@ export default {
         !store.state.Queue
           ? []
           : store.state.Queue.filter(
-              (a: Task): boolean => a.state === 'benchmark'
+              (a: Task): boolean =>
+                a.state === 'benchmark' || a.state === 'waiting'
             )
       )
     }
