@@ -333,7 +333,11 @@ export default {
     const maxScore = computed(() => store.getters.maxScore)
     const teamResults = computed(() =>
       store.state.Team && store.state.Team.results
-        ? store.state.Team.results
+        ? store.state.Team.results.sort((a, b) => {
+            const datea = new Date(a.created_at)
+            const dateb = new Date(b.created_at)
+            return datea > dateb ? 1 : -1
+          })
         : []
     )
     const sortedInstance = computed(() => {
