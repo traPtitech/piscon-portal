@@ -287,9 +287,8 @@ func establishConnection() (*gorm.DB, error) {
 	if dbname == "" {
 		dbname = "isucon"
 	}
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?parseTime=True&charset=utf8mb4&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?parseTime=True&charset=utf8mb4&loc=Asia%2FTokyo"
 	log.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	// _db.BlockGlobalUpdate(true) <= GOrm v2でデフォルト有効になったらしい(要調査)
 	return db, err
 }
