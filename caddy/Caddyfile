@@ -1,17 +1,14 @@
-{
-    admin off
-}
+piscon.trap.jp {
 
-:80
-
-handle /api/* { 
-  reverse_proxy localhost:4000 {
-    header_up Host {http.reverse_proxy.upstream.hostport}
+  handle /api/* {
+    reverse_proxy localhost:4000 {
+      header_up Host {http.reverse_proxy.upstream.hostport}
+    }
   }
-}
 
-handle {
-  reverse_proxy localhost:8080 {
-    header_up Host {http.reverse_proxy.upstream.hostport}
+  handle {
+    reverse_proxy localhost:8080 {
+      header_up Host {http.reverse_proxy.upstream.hostport}
+    }
   }
 }
