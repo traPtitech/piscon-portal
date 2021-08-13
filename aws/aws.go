@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	imageId      = string("ami-03b1b78bb1da5122f") //TODO
-	InstanceType = types.InstanceTypeT2Medium      //TODO
+	imageId      = string("ami-03bbe60df80bdccc0") //TODO
+	InstanceType = types.InstanceTypeT2Small       //TODO
 	region       = string("ap-northeast-1")
 )
 
