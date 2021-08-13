@@ -48,7 +48,7 @@ func (h *Handlers) GetMeGroup(c echo.Context) error {
 	path := *baseURL
 	gid := u.Groups[0]
 	path.Path = baseURL.Path + "/groups/" + gid
-	req, err := http.NewRequest("GET", path.String(), nil)
+	req, _ := http.NewRequest("GET", path.String(), nil)
 
 	req.Header.Set("Authorization", "Bearer "+token)
 	httpClient := http.DefaultClient
@@ -78,15 +78,10 @@ type myUserDetail struct {
 	Groups []string `json:"groups"`
 }
 
-type group struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-}
-
 func getMe(token string) (*myUserDetail, error) {
 	path := *baseURL
 	path.Path += "/users/me"
-	req, err := http.NewRequest("GET", path.String(), nil)
+	req, _ := http.NewRequest("GET", path.String(), nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	httpClient := http.DefaultClient
 	res, err := httpClient.Do(req)

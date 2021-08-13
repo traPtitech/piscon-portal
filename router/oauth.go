@@ -37,7 +37,10 @@ func (h *Handlers) CallbackHandler(c echo.Context) error {
 		HttpOnly: true,
 	}
 
-	sess.Save(c.Request(), c.Response())
+	err = sess.Save(c.Request(), c.Response())
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Errorf("Failed In Saving Session:%w", err).Error())
+	}
 	return c.NoContent(http.StatusOK)
 }
 

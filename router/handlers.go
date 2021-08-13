@@ -120,7 +120,10 @@ func (h *Handlers) PutQuestions(c echo.Context) error {
 	req := struct {
 		Answer string `json:"answer"`
 	}{}
-	c.Bind(&req)
+	err := c.Bind(&req)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
 	question := &model.Question{
 		Answer: req.Answer,
 	}
@@ -139,8 +142,10 @@ func (h *Handlers) DeleteQuestions(c echo.Context) error {
 
 func (h *Handlers) CreateUser(c echo.Context) error {
 	user := &model.User{}
-	c.Bind(user)
-
+	err := c.Bind(user)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
 	u := &model.User{}
 	h.db.Where("name = ?", user.Name).Find(u)
 
@@ -160,7 +165,10 @@ func (h *Handlers) CreateTeam(c echo.Context) error {
 		Group string `json:"group"`
 	}{}
 
-	c.Bind(requestBody)
+	err := c.Bind(requestBody)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
 
 	if requestBody.Name == "" {
 		return c.JSON(http.StatusBadRequest, model.Response{
