@@ -45,13 +45,10 @@ func genPassword() string {
 	return pass
 }
 func formatCommand(ip string) string {
-	return fmt.Sprintf("/home/isucon/isucari/bin/benchmarker "+
-		"-data-dir \"/home/isucon/isucari/initial-data\" "+
-		"-payment-url \"http://10.0.145.247:5555\" "+
-		"-shipment-url \"http://10.0.145.247:7000\" "+
-		"-static-dir \"/home/isucon/isucari/webapp/public/static\" "+
-		"-target-host \"%s\" "+
-		"-target-url \"http://%s\"", ip, ip)
+	return fmt.Sprintf("/home/isucon/isuumo/bench/bench "+
+		"--data-dir \"/home/isucon/isuumo/initial-data\" "+
+		"--fixture-dir \"/home/isucon/isuumo/webapp/fixture\" "+
+		"--target-url \"http://%s\"", ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
