@@ -44,6 +44,8 @@
               <benchmark
                 :teamResults="teamResults"
                 :sortedInstance="sortedInstance"
+                :InfomodalMessage="infoModalMessage"
+                :showInfoModal="showInfoModal"
               />
             </va-card>
             <va-card class="flex md12 item mb-3">
