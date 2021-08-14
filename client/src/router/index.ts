@@ -38,16 +38,16 @@ const routes: Array<RouteRecordRaw> = [
         path: 'readme',
         component: () => import('@/pages/admin/readme/Readme.vue')
       },
-      {
-        name: 'manual',
-        path: 'manual',
-        component: () => import('@/pages/admin/manual/Manual.vue')
-      },
-      {
-        name: 'faq',
-        path: 'faq',
-        component: () => import('@/pages/admin/pages/FaqPage.vue')
-      },
+      // {
+      //   name: 'manual',
+      //   path: 'manual',
+      //   component: () => import('@/pages/admin/manual/Manual.vue')
+      // },
+      // {
+      //   name: 'faq',
+      //   path: 'faq',
+      //   component: () => import('@/pages/admin/pages/FaqPage.vue')
+      // },
       UIRoute
     ],
     beforeEnter: async (to, from, next) => {
