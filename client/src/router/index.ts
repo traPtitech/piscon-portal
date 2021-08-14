@@ -6,7 +6,6 @@ import UIRoute from '@/pages/admin/ui/route'
 import store from '@/store'
 import { redirectAuthorizationEndpoint } from '@/lib/apis/api'
 import apis from '@/lib/apis'
-import { nextTick } from 'vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -38,16 +37,6 @@ const routes: Array<RouteRecordRaw> = [
         path: 'readme',
         component: () => import('@/pages/admin/readme/Readme.vue')
       },
-      // {
-      //   name: 'manual',
-      //   path: 'manual',
-      //   component: () => import('@/pages/admin/manual/Manual.vue')
-      // },
-      // {
-      //   name: 'faq',
-      //   path: 'faq',
-      //   component: () => import('@/pages/admin/pages/FaqPage.vue')
-      // },
       UIRoute
     ],
     beforeEnter: async (to, from, next) => {
@@ -95,33 +84,8 @@ const routes: Array<RouteRecordRaw> = [
       } else {
         next('/')
       }
-
-      // try {
-      //   store.dispatch.getData()
-      //   next('/team-info')
-      // } catch (e) {
-      //   console.error(e)
-      // }
     }
   },
-  // {
-  //   path: '/auth/logout',
-  //   name: 'logout',
-  //   component: () => import('@/pages/auth/Callback.vue')
-  //   // beforeEnter: async (to, from, next) => {
-  //   //   if (!store.state.authToken) {
-  //   //     return
-  //   //   }
-  //   //   try {
-  //   //     await revokeAuthToken(store.state.authToken)
-  //   //     await store.commit.destroySession()
-  //   //     await store.dispatch.getData()
-  //   //     next('/dashboard')
-  //   //   } catch (e) {
-  //   //     console.error(e)
-  //   //   }
-  //   // }
-  // },
   {
     path: '/404',
     component: Page404Layout,
@@ -152,7 +116,6 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  //  mode: process.env.VUE_APP_ROUTER_MODE_HISTORY === 'true' ? 'history' : 'hash',
   routes
 })
 
