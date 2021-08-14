@@ -393,7 +393,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 	}()
 
 	return c.JSON(http.StatusCreated, model.Response{
-		Success: false,
+		Success: true,
 		Message: "キューに追加しました"})
 }
 
