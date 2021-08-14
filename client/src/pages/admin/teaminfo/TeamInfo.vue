@@ -39,6 +39,7 @@
               <instance-info
                 :teamResults="teamResults"
                 :sortedInstance="sortedInstance"
+                :team="team"
               />
               <benchmark
                 :teamResults="teamResults"
