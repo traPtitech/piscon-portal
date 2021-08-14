@@ -31,11 +31,16 @@ type Response struct {
 }
 
 type Output struct {
-	Pass     bool     `json:"pass"`
-	Score    int64    `json:"score"`
-	Campaign int64    `json:"campaign"`
-	Language string   `json:"language"`
-	Messages []string `json:"messages"`
+	Pass     bool            `json:"pass"`
+	Score    int64           `json:"score"`
+	Reason   string          `json:"reason"`
+	Language string          `json:"language"`
+	Messages []OutputMessage `json:"messages"`
+}
+
+type OutputMessage struct {
+	Text  string `json:"text"`
+	Count int64  `json:"count"`
 }
 
 type Message struct {
