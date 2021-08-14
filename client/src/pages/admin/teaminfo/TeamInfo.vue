@@ -44,8 +44,6 @@
               <benchmark
                 :teamResults="teamResults"
                 :sortedInstance="sortedInstance"
-                :InfomodalMessage="infoModalMessage"
-                :showInfoModal="showInfoModal"
               />
             </va-card>
             <va-card class="flex md12 item mb-3">
@@ -130,6 +128,12 @@
         </div>
       </div>
     </va-content>
+    <va-modal v-model="showInfoModal">
+      <va-content>
+        <p>{{ infoModalMessage.better }}</p>
+        <p>{{ infoModalMessage.message }}</p>
+      </va-content>
+    </va-modal>
   </div>
 </template>
 <script lang="ts">

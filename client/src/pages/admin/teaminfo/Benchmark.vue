@@ -47,12 +47,6 @@
         <va-button @click="showOperationModal = false"> キャンセル </va-button>
       </template>
     </va-modal>
-    <va-modal v-model="props.showInfoModal">
-      <va-content>
-        <p>{{ infoModalMessage.better }}</p>
-        <p>{{ infoModalMessage.message }}</p>
-      </va-content>
-    </va-modal>
   </div>
 </template>
 <script lang="ts">
@@ -72,9 +66,7 @@ export default defineComponent({
       type: Array as PropType<Array<Instance>>,
       required: true
     },
-    teamResults: { type: Array as PropType<Array<Result>>, required: true },
-    showInfoModal: { type: Boolean, required: true },
-    InfomodalMessage: { type: Object, required: true }
+    teamResults: { type: Array as PropType<Array<Result>>, required: true }
   },
   setup(props) {
     const betterize = ref<string>('')
