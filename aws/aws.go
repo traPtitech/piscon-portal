@@ -79,7 +79,6 @@ usermod -G sudo isucon
 sed -e "s/PasswordAuthentication no/PasswordAuthentication yes/g" -i /etc/ssh/sshd_config
 systemctl restart sshd	
 	`, pwd, pwd)
-	fmt.Printf(startUpScript)
 	enc := base64.StdEncoding.EncodeToString([]byte(startUpScript))
 	nispec := types.InstanceNetworkInterfaceSpecification{
 		AssociatePublicIpAddress: aws.Bool(true),

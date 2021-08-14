@@ -142,7 +142,7 @@ func benchmarkWorker() {
 		}
 		messages := make([]*model.Message, len(data.Messages))
 		for i, text := range data.Messages {
-			messages[i] = &model.Message{Text: text}
+			messages[i] = &model.Message{Text: text.Text}
 		}
 
 		result := &model.Result{
@@ -150,7 +150,6 @@ func benchmarkWorker() {
 			TaskID:    task.ID,
 			Pass:      data.Pass,
 			Score:     data.Score,
-			Campaign:  data.Campaign,
 			Betterize: task.Betterize,
 			Messages:  messages,
 		}
