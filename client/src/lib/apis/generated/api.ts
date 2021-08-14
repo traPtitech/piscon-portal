@@ -1802,6 +1802,40 @@ export const TeamApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 
+         * @summary チームのインスタンス情報を更新する
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        teamIdInstancesPut: async (id: number, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('teamIdInstancesPut', 'id', id)
+            const localVarPath = `/team/{id}/instances`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary get team member
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -1901,6 +1935,17 @@ export const TeamApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary チームのインスタンス情報を更新する
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async teamIdInstancesPut(id: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Instance>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.teamIdInstancesPut(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary get team member
          * @param {number} id 
          * @param {*} [options] Override http request option.
@@ -1949,6 +1994,16 @@ export const TeamApiFactory = function (configuration?: Configuration, basePath?
          */
         teamIdGet(id: number, options?: any): AxiosPromise<Team> {
             return localVarFp.teamIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary チームのインスタンス情報を更新する
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        teamIdInstancesPut(id: number, options?: any): AxiosPromise<Array<Instance>> {
+            return localVarFp.teamIdInstancesPut(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2001,6 +2056,18 @@ export class TeamApi extends BaseAPI {
      */
     public teamIdGet(id: number, options?: any) {
         return TeamApiFp(this.configuration).teamIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary チームのインスタンス情報を更新する
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TeamApi
+     */
+    public teamIdInstancesPut(id: number, options?: any) {
+        return TeamApiFp(this.configuration).teamIdInstancesPut(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2387,6 +2454,18 @@ export class Apis extends BaseAPI {
      */
     public teamIdGet(id: number, options?: any) {
         return TeamApiFp(this.configuration).teamIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary チームのインスタンス情報を更新する
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TeamApi
+     */
+    public teamIdInstancesPut(id: number, options?: any) {
+        return TeamApiFp(this.configuration).teamIdInstancesPut(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

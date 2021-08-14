@@ -460,6 +460,27 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+  /team/{id}/instances:
+    put:
+      tags:
+      - team
+      summary: 
+        チームのインスタンス情報を更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON Array of Instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instance'
 components:
   schemas:
     Instance:

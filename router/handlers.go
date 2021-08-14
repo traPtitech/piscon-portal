@@ -423,6 +423,34 @@ func (h *Handlers) GetTeamMember(c echo.Context) error {
 	return c.JSON(http.StatusOK, member)
 }
 
+func (h *Handlers) GetInstanceInfo(c echo.Context) error {
+	teamId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
+	instances := []*model.Instance{}
+	h.db.Where("team_id = ?", teamId).Find(&instances)
+	res := []*model.Instance{}
+	for _, i := range instances {
+		info, err := h.client.GetInstanceInfo(i.InstanceId)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, model.Response{
+				Success: false,
+				Message: err.Error()})
+		}
+		res = append(res, info)
+	}
+	err = h.db.Updates(res).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, res)
+}
+
 func (h *Handlers) getTaskQueInfo() []*model.Task {
 	tasks := []*model.Task{}
 	h.db.Table("tasks").Joins("LEFT JOIN teams ON `teams`.id = `tasks`.team_id").Not("state = 'done'").Find(&tasks)
