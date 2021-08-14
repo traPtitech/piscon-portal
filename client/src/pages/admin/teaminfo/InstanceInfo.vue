@@ -108,7 +108,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed, PropType } from 'vue'
-import apis, { Instance, Result, Team } from '../../../lib/apis'
+import { Instance, Result, Team } from '../../../lib/apis'
 import store from '../../../store'
 export default defineComponent({
   props: {

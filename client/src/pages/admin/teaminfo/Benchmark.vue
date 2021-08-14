@@ -34,9 +34,7 @@
       {{ error }}
     </div>
     <va-modal hide-default-actions v-model="showOperationModal">
-      <template #header>
-        <h3>確認</h3>
-      </template>
+      <h3>確認</h3>
       <slot>
         <div>
           この操作は取り消せません。間違えて行わないように注意してください
@@ -49,7 +47,7 @@
         <va-button @click="showOperationModal = false"> キャンセル </va-button>
       </template>
     </va-modal>
-    <va-modal v-model="showInfoModal">
+    <va-modal v-model="props.showInfoModal">
       <va-content>
         <p>{{ infoModalMessage.better }}</p>
         <p>{{ infoModalMessage.message }}</p>

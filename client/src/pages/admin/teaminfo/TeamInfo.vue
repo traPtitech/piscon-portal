@@ -230,14 +230,16 @@ export default {
       showInfoModal.value = true
       const betterize =
         '改善点：' +
-        (teamResults && teamResults[i].betterize
-          ? teamResults[i].betterize
+        (teamResults.value && teamResults.value[i].betterize
+          ? teamResults.value[i].betterize
           : '')
 
       infoModalMessage.value = {
         better: betterize,
-        message: (teamResults && teamResults[i].messages
-          ? teamResults[i].messages.map((a: Message) => (a.text ? a.text : ''))
+        message: (teamResults.value && teamResults.value[i].messages
+          ? teamResults.value[i].messages.map((a: Message) =>
+              a.text ? a.text : ''
+            )
           : []
         ).join('\n')
       }
