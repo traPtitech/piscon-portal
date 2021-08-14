@@ -1,5 +1,10 @@
 <template>
-  <va-card-title><h4 class="h-fix">サーバー情報</h4></va-card-title>
+  <va-card-title
+    ><h4 class="h-fix">サーバー情報</h4>
+    <va-button :rounded="false" class="ml-2 mt-3" @click="fetchInstanceInfo"
+      >更新</va-button
+    ></va-card-title
+  >
   <va-card-content>
     <div class="flex markup-tables">
       <div
@@ -101,7 +106,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed, PropType } from 'vue'
-import { Instance, Result } from '../../../lib/apis'
+import apis, { Instance, Result } from '../../../lib/apis'
 import store from '../../../store'
 export default defineComponent({
   props: {
@@ -132,8 +137,10 @@ export default defineComponent({
             return 'text-primary'
         }
       }).value
+    const fetchInstanceInfo = () => store.dispatch.fetchInstances()
     return {
       instanceStatusClass,
+      fetchInstanceInfo,
       maxScore
     }
   }

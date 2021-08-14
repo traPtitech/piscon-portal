@@ -165,8 +165,8 @@ func (a *AwsClient) GetInstanceInfo(id string) (*model.Instance, error) {
 		return nil, err
 	}
 	instance := &model.Instance{
-		GlobalIPAddress:  *res.Reservations[0].Instances[0].PublicIpAddress,
-		PrivateIPAddress: *res.Reservations[0].Instances[0].PrivateIpAddress,
+		GlobalIPAddress:  aws.ToString(res.Reservations[0].Instances[0].PublicIpAddress),
+		PrivateIPAddress: aws.ToString(res.Reservations[0].Instances[0].PrivateIpAddress),
 		Status:           statusmap[string(res.Reservations[0].Instances[0].State.Name)],
 	}
 	fmt.Println(res.Reservations[0].Instances[0].State.Name)

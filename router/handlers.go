@@ -430,25 +430,49 @@ func (h *Handlers) GetInstanceInfo(c echo.Context) error {
 			Success: false,
 			Message: err.Error()})
 	}
-	instances := []*model.Instance{}
-	h.db.Where("team_id = ?", teamId).Find(&instances)
-	res := []*model.Instance{}
-	for _, i := range instances {
-		info, err := h.client.GetInstanceInfo(i.InstanceId)
-		if err != nil {
+	var instances []*model.Instance
+	err = h.db.Where("team_id = ?", teamId).Find(&instances).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, model.Response{
 				Success: false,
 				Message: err.Error()})
 		}
-		res = append(res, info)
-	}
-	err = h.db.Updates(res).Error
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, model.Response{
+		return c.JSON(http.StatusNotFound, model.Response{
 			Success: false,
 			Message: err.Error()})
 	}
-	return c.JSON(http.StatusOK, res)
+
+	for _, i := range instances {
+		if i.InstanceId != "" {
+			info, err := h.client.GetInstanceInfo(i.InstanceId)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, info)
+			}
+			if info.Status == model.NOT_EXIST {
+				err = h.db.Model(&model.Instance{}).Where("instance_id = ?", i.InstanceId).Updates(map[string]interface{}{"global_ip_address": "", "private_ip_address": "", "password": "", "status": model.NOT_EXIST}).Error
+			} else {
+				err = h.db.Model(&model.Instance{}).Where("instance_id = ?", i.InstanceId).Updates(info).Error
+			}
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, model.Response{
+					Success: false,
+					Message: err.Error()})
+			}
+		}
+	}
+	err = h.db.Where("team_id = ?", teamId).Find(&instances).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusInternalServerError, model.Response{
+				Success: false,
+				Message: err.Error()})
+		}
+		return c.JSON(http.StatusNotFound, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, instances)
 }
 
 func (h *Handlers) getTaskQueInfo() []*model.Task {

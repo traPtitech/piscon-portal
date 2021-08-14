@@ -1,5 +1,5 @@
 import { createDirectStore } from 'direct-vuex'
-import apis, { Result, Task, Team, User } from '@/lib/apis'
+import apis, { Instance, Result, Task, Team, User } from '@/lib/apis'
 
 const { store, rootActionContext } = createDirectStore({
   state: {
@@ -84,6 +84,12 @@ const { store, rootActionContext } = createDirectStore({
     setUser(state, data: User) {
       state.User = data
     },
+    setInstances(state, data: Instance[]) {
+      if (!state.Team) {
+        return
+      }
+      state.Team.instance = data
+    },
     setTeam(state, data: Team) {
       state.Team = data
     },
@@ -114,6 +120,18 @@ const { store, rootActionContext } = createDirectStore({
         .meGet()
         .then(data => commit.setUser(data.data))
         .catch(e => console.error(e))
+    },
+    async fetchInstances(context) {
+      const { commit } = rootActionContext(context)
+      if (!store.state.Team) {
+        return
+      }
+      apis.teamIdInstancesPut(store.state.Team?.ID).then(data => {
+        if (!store.state.Team) {
+          return
+        }
+        commit.setInstances(data.data)
+      })
     },
     async getData(context) {
       const { commit } = rootActionContext(context)
