@@ -133,7 +133,7 @@
 <script lang="ts">
 //TODO: ファイル分割する
 /* eslint-disable @typescript-eslint/camelcase */
-import apis, { PostTeamRequest, Result, User } from '../../../lib/apis'
+import apis, { PostTeamRequest, Result, User, Message } from '../../../lib/apis'
 import store from '../../../store'
 import { computed, ref, watchEffect } from 'vue'
 import InstanceInfo from './InstanceInfo.vue'
@@ -152,6 +152,11 @@ export default {
     const largeModal = ref(false)
     const team = computed(() => store.state.Team)
     const user = computed(() => store.state.User)
+    const showInfoModal = ref(false)
+    const infoModalMessage = ref<{ better: string; message: string }>({
+      better: '',
+      message: ''
+    })
     const lastResult = computed(() => store.getters.lastResult)
     const teamResults = computed(() =>
       store.state.Team && store.state.Team.results
@@ -221,6 +226,22 @@ export default {
       modalText.value = JSON.stringify(data, null, '  ')
       largeModal.value = true
     }
+    const showInfo = (i: number) => {
+      showInfoModal.value = true
+      const betterize =
+        '改善点：' +
+        (teamResults && teamResults[i].betterize
+          ? teamResults[i].betterize
+          : '')
+
+      infoModalMessage.value = {
+        better: betterize,
+        message: (teamResults && teamResults[i].messages
+          ? teamResults[i].messages.map((a: Message) => (a.text ? a.text : ''))
+          : []
+        ).join('\n')
+      }
+    }
 
     watchEffect(async () => {
       if (!store.state.Team) {
@@ -233,6 +254,7 @@ export default {
       makeInstance,
       showModal,
       registerTeam,
+      showInfo,
       teamMembers,
       error,
       team,
@@ -240,7 +262,9 @@ export default {
       lastResult,
       teamName,
       sortedInstance,
-      teamResults
+      teamResults,
+      showInfoModal,
+      infoModalMessage
     }
   }
 }

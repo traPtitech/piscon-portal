@@ -1,59 +1,61 @@
 <template>
-  <div class="flex md12"></div>
-  <div class="form-group">
-    <div class="input-group">
-      <va-input
-        class="mb-4"
-        v-model="betterize"
-        type="textarea"
-        placeholder="改善点を入力してください(記入しないとベンチマークを行えません)"
-      />
-    </div>
-  </div>
-  <div class="flex md12 my-2" v-for="i in team.instance.length" :key="i">
-    <va-button
-      :rounded="false"
-      class="mr-4 item"
-      @click="benchmark(i)"
-      :disabled="benchmarkButton(i) || betterize === ''"
-    >
-      サーバ{{ i }}にベンチマークを行う
-    </va-button>
-    <va-button
-      :rounded="false"
-      class="mr-4 item"
-      :color="instanceButtonColor(i)"
-      @click="setOperationModal(i)"
-      :disabled="instanceButton(i) || waiting"
-    >
-      {{ instanceButtonMessage(i) }}
-    </va-button>
-  </div>
-  <div v-if="error" class="type-articles">
-    {{ error }}
-  </div>
-  <va-modal hide-default-actions v-model="showOperationModal">
-    <template #header>
-      <h3>確認</h3>
-    </template>
-    <slot>
-      <div>
-        この操作は取り消せません。間違えて行わないように注意してください
+  <div>
+    <div class="flex md12"></div>
+    <div class="form-group">
+      <div class="input-group">
+        <va-input
+          class="mb-4"
+          v-model="betterize"
+          type="textarea"
+          placeholder="改善点を入力してください(記入しないとベンチマークを行えません)"
+        />
       </div>
-    </slot>
-    <template #footer>
-      <va-button @click="operationInstance(operationInstanceNumber)">
-        実行
+    </div>
+    <div class="flex md12 my-2" v-for="i in team.instance.length" :key="i">
+      <va-button
+        :rounded="false"
+        class="mr-4 item"
+        @click="benchmark(i)"
+        :disabled="benchmarkButton(i) || betterize === ''"
+      >
+        サーバ{{ i }}にベンチマークを行う
       </va-button>
-      <va-button @click="showOperationModal = false"> キャンセル </va-button>
-    </template>
-  </va-modal>
-  <va-modal v-model="showInfoModal">
-    <va-content>
-      <p>{{ infoModalMessage.better }}</p>
-      <p>{{ infoModalMessage.message }}</p>
-    </va-content>
-  </va-modal>
+      <va-button
+        :rounded="false"
+        class="mr-4 item"
+        :color="instanceButtonColor(i)"
+        @click="setOperationModal(i)"
+        :disabled="instanceButton(i) || waiting"
+      >
+        {{ instanceButtonMessage(i) }}
+      </va-button>
+    </div>
+    <div v-if="error" class="type-articles">
+      {{ error }}
+    </div>
+    <va-modal hide-default-actions v-model="showOperationModal">
+      <template #header>
+        <h3>確認</h3>
+      </template>
+      <slot>
+        <div>
+          この操作は取り消せません。間違えて行わないように注意してください
+        </div>
+      </slot>
+      <template #footer>
+        <va-button @click="operationInstance(operationInstanceNumber)">
+          実行
+        </va-button>
+        <va-button @click="showOperationModal = false"> キャンセル </va-button>
+      </template>
+    </va-modal>
+    <va-modal v-model="showInfoModal">
+      <va-content>
+        <p>{{ infoModalMessage.better }}</p>
+        <p>{{ infoModalMessage.message }}</p>
+      </va-content>
+    </va-modal>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from 'vue'
@@ -62,8 +64,7 @@ import apis, {
   Instance,
   PostBenchmarkRequest,
   Response,
-  Result,
-  Message
+  Result
 } from '../../../lib/apis'
 import store from '../../../store'
 export default defineComponent({
@@ -73,18 +74,15 @@ export default defineComponent({
       type: Array as PropType<Array<Instance>>,
       required: true
     },
-    teamResults: { type: Array as PropType<Array<Result>>, required: true }
+    teamResults: { type: Array as PropType<Array<Result>>, required: true },
+    showInfoModal: { type: Boolean, required: true },
+    InfomodalMessage: { type: Object, required: true }
   },
   setup(props) {
     const betterize = ref<string>('')
     const error = ref<string>('')
     const showOperationModal = ref(false)
     const operationInstanceNumber = ref(0)
-    const showInfoModal = ref(false)
-    const infoModalMessage = ref<{ better: string; message: string }>({
-      better: '',
-      message: ''
-    })
     const waiting = ref(false)
     const team = computed(() => store.state.Team)
     const benchmarkButton = (i: number) =>
@@ -212,30 +210,11 @@ export default defineComponent({
           break
       }
     }
-    const showInfo = (i: number) => {
-      showInfoModal.value = true
-      const betterize =
-        '改善点：' +
-        (props.teamResults && props.teamResults[i].betterize
-          ? props.teamResults[i].betterize
-          : '')
 
-      infoModalMessage.value = {
-        better: betterize,
-        message: (props.teamResults && props.teamResults[i].messages
-          ? props.teamResults[i].messages.map((a: Message) =>
-              a.text ? a.text : ''
-            )
-          : []
-        ).join('\n')
-      }
-    }
     return {
       betterize,
       operationInstanceNumber,
       showOperationModal,
-      showInfoModal,
-      infoModalMessage,
       team,
       benchmarkButton,
       benchmark,
@@ -243,8 +222,7 @@ export default defineComponent({
       instanceButtonColor,
       instanceButtonMessage,
       setOperationModal,
-      operationInstance,
-      showInfo
+      operationInstance
     }
   }
 })
