@@ -147,7 +147,12 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 	u := &model.User{}
-	h.db.Where("name = ?", user.Name).Find(u)
+	err = h.db.Where("name = ?", user.Name).Find(u).Error
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 
 	if u.Name != "" {
 		return c.JSON(http.StatusConflict, model.Response{
@@ -155,7 +160,12 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 			Message: "登録されています"})
 	}
 
-	h.db.Create(user)
+	err = h.db.Create(user).Error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Message: err.Error()})
+	}
 	return c.JSON(http.StatusCreated, user)
 }
 
