@@ -91,7 +91,7 @@
             <strong><span class="md6">現在のスコア :</span></strong>
           </td>
           <td>
-            <span class="md6">{{ team.results.slice(-1)[0].score }}</span>
+            <span class="md6">{{ team.results.slice(1)[0].score }}</span>
           </td>
         </tr>
         <tr>
