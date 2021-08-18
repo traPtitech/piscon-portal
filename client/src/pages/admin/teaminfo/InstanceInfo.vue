@@ -91,7 +91,9 @@
             <strong><span class="md6">現在のスコア :</span></strong>
           </td>
           <td>
-            <span class="md6">{{ team.results[0] ? team.results[0] : 0 }}</span>
+            <span class="md6">{{
+              team.results[0] ? team.results[0].score : 0
+            }}</span>
           </td>
         </tr>
         <tr>
