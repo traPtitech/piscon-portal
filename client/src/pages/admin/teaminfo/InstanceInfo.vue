@@ -92,7 +92,7 @@
           </td>
           <td>
             <span class="md6">{{
-              team.results[0] ? team.results[0].score : 0
+              team.results.length > 0 ? team.results[0].score : 0
             }}</span>
           </td>
         </tr>
