@@ -16,7 +16,7 @@ import (
 
 const (
 	imageId      = string("ami-03bbe60df80bdccc0") // iscon競技用サーバーのAMI
-	InstanceType = types.InstanceTypeT2Small       // isuconサーバーの種類
+	InstanceType = types.InstanceTypeT2Small       // isuconサーバーの種類(競技ごとにスペックが違う)
 	region       = string("ap-northeast-1")        // isuconサーバーのリージョン
 )
 
