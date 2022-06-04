@@ -84,11 +84,6 @@ func main() {
 	}
 
 	e := echo.New()
-	// env := os.Getenv("ENV")
-	// if env == "prod" {
-	// 	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
-	// 	e.Pre(middleware.HTTPSNonWWWRedirect())
-	// }
 
 	if err != nil {
 		log.Fatal(err)

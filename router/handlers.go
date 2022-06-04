@@ -44,6 +44,8 @@ func genPassword() string {
 	}
 	return pass
 }
+
+// ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string) string {
 	return fmt.Sprintf("/home/isucon/isuumo/bench/bench "+
 		"--data-dir \"/home/isucon/isuumo/initial-data\" "+

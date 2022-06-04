@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	imageId      = string("ami-03bbe60df80bdccc0") //TODO
-	InstanceType = types.InstanceTypeT2Small       //TODO
-	region       = string("ap-northeast-1")
+	imageId      = string("ami-03bbe60df80bdccc0") // iscon競技用サーバーのAMI
+	InstanceType = types.InstanceTypeT2Small       // isuconサーバーの種類
+	region       = string("ap-northeast-1")        // isuconサーバーのリージョン
 )
 
 var (
@@ -50,8 +50,8 @@ func CreateDefaultConfig() (*Config, error) {
 		config.WithCredentialsProvider(
 			credentials.StaticCredentialsProvider{
 				Value: aws.Credentials{
-					AccessKeyID:     os.Getenv("ACCESS_ID"),
-					SecretAccessKey: os.Getenv("ACCESS_SECRET_KEY"),
+					AccessKeyID:     os.Getenv("AWS_ACCESS_KEY"),
+					SecretAccessKey: os.Getenv("AWS_ACCESS_SECRET"),
 				},
 			},
 		), config.WithRegion(region),
