@@ -4,12 +4,9 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"os"
 
 	"golang.org/x/oauth2"
-)
-
-const (
-	clientID = "nmVeJT08KHXIdB8xlrCIwa6YJTkISrP5zWzm"
 )
 
 var (
@@ -24,7 +21,7 @@ type OauthClient struct {
 
 func New() *OauthClient {
 	conf := oauth2.Config{
-		ClientID: clientID,
+		ClientID: os.Getenv("OAUTH_CLIENT_ID"),
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  authURL.String(),
 			TokenURL: tokenURL.String(),
