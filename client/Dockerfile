@@ -1,8 +1,14 @@
 # ビルド環境
-FROM node:lts-alpine as build
+FROM node:14-alpine as build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install 
+# https://github.com/docker/getting-started/issues/124
+RUN apk --no-cache --virtual build-dependencies add \
+        python3 \
+        make \
+        g++ \
+&& npm install \
+&& apk del build-dependencies
 COPY . .
 RUN npm run build
 
