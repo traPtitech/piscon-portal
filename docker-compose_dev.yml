@@ -32,6 +32,7 @@ services:
     volumes:
       # 初期データを投入するSQLが格納されているdir
       - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Tokyo
