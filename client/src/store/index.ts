@@ -133,30 +133,20 @@ const { store, rootActionContext } = createDirectStore({
         commit.setInstances(data.data)
       })
     },
+    async fetchTeam(context) {
+      if (!store.state.User) {
+        throw new Error('no user information')
+      }
+
+      const { commit } = rootActionContext(context)
+      const res = await apis.teamIdGet(store.state.User.team_id)
+      commit.setTeam(res.data)
+    },
     async getData(context) {
       const { commit } = rootActionContext(context)
       apis.resultsGet().then(data => commit.setAllResults(data.data))
       apis.newerGet().then(data => commit.setNewer(data.data))
       apis.benchmarkQueueGet().then(data => commit.setQueue(data.data))
-      if (!store.state.User) {
-        return
-      }
-      await apis
-        .userNameGet(store.state.User.name)
-        .then(data => {
-          commit.setUser(data.data)
-          return data.data
-        })
-        .catch(() => {
-          return null
-        })
-      if (store.state.User) {
-        await apis.teamIdGet(store.state.User.team_id).then(data => {
-          commit.setTeam(data.data)
-        })
-      } else {
-        console.log('user is empty')
-      }
     }
   }
 })
