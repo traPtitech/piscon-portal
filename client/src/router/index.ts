@@ -41,10 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     ],
     beforeEnter: async (to, from, next) => {
       try {
-        if (!store.state.User) {
-          await store.dispatch.fetchMe()
-        }
         await store.dispatch.getData()
+        // TODO: ログインしていないときも実行され, 401が返る
+        await store.dispatch.fetchMe()
+        // TODO: チームに所属していないときも実行され, 404が返る
+        await store.dispatch.getTeam()
       } catch (e) {
         console.error(e)
       } finally {
