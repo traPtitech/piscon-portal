@@ -41,7 +41,8 @@ const routes: Array<RouteRecordRaw> = [
     ],
     beforeEnter: async (to, from, next) => {
       try {
-        await store.dispatch.getData()
+        await store.dispatch.fetchData()
+
         // TODO: ログインしていないときも実行され, 401が返る
         if (!store.state.User) {
           await store.dispatch.fetchMe()
@@ -66,7 +67,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/auth/Callback.vue'),
     beforeEnter: async (to, from, next) => {
       try {
-        await store.dispatch.getData()
+        await store.dispatch.fetchData()
         if (!store.state.User) {
           await redirectAuthorizationEndpoint()
         }

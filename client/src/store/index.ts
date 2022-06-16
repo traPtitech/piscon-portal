@@ -149,7 +149,7 @@ const { store, rootActionContext } = createDirectStore({
       const res = await apis.teamIdGet(store.state.User.team_id)
       commit.setTeam(res.data)
     },
-    async getData(context) {
+    async fetchData(context) {
       const { commit } = rootActionContext(context)
       apis.resultsGet().then(data => commit.setAllResults(data.data))
       apis.newerGet().then(data => commit.setNewer(data.data))
