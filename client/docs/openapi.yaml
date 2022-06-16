@@ -258,7 +258,7 @@ paths:
     get:
       tags:
         - user
-      summary: Get team description
+      summary: Get user description
       parameters:
         - name: name
           in: path
