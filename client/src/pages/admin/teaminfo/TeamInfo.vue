@@ -204,29 +204,16 @@ export default {
         name: teamName.value,
         group: group
       }
-      const userReq = await apis
-        .teamPost(req)
-        .then(data => {
-          if (!store.state.User) {
-            return
-          }
-          const req: User = {
-            name: store.state.User.name,
-            screen_name: store.state.User.screen_name,
-            team_id: data.data.ID
-          }
-          return req
-        })
-        .catch(err => {
-          error.value = err
-          return
-        })
-      if (!userReq) {
-        return
+      const team = await apis.teamPost(req).then(res => res.data)
+      const userReq: User = {
+        name: store.state.User.name,
+        screen_name: store.state.User.screen_name,
+        team_id: team.ID
       }
+
       const user = await apis.userPost(userReq).then(res => res.data)
       store.commit.setUser(user)
-      await store.dispatch.getData().catch(e => console.warn(e))
+      await store.dispatch.fetchData().catch(e => console.warn(e))
     }
     const showModal = (data: Result) => {
       modalText.value = JSON.stringify(data, null, '  ')
