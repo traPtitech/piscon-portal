@@ -56,6 +56,14 @@ module.exports = {
     workboxOptions: {
       swSrc: './src/service-worker.js',
       importWorkboxFrom: 'local'
+    },
+    iconPaths: {
+      faviconSVG: null,
+      favicon32: null,
+      favicon16: null,
+      appleTouchIcon: null,
+      maskIcon: null,
+      msTileImage: null
     }
   }
 }
