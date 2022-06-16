@@ -212,9 +212,8 @@ export default {
       }
 
       const user = await apis.userPost(userReq).then(res => res.data)
-      store.commit.setUser(user)
-      store.commit.setTeam(team)
-      await store.dispatch.fetchData().catch(e => console.warn(e))
+      await store.commit.setUser(user)
+      await store.commit.setTeam(team)
     }
     const showModal = (data: Result) => {
       modalText.value = JSON.stringify(data, null, '  ')
