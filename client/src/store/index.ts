@@ -131,6 +131,15 @@ const { store, rootActionContext } = createDirectStore({
         commit.setInstances(data.data)
       })
     },
+    async fetchUser(context) {
+      if (!store.state.User) {
+        throw new Error('no user information')
+      }
+
+      const { commit } = rootActionContext(context)
+      const res = await apis.userNameGet(store.state.User.name)
+      commit.setUser(res.data)
+    },
     async fetchTeam(context) {
       if (!store.state.User) {
         throw new Error('no user information')

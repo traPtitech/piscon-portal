@@ -44,8 +44,12 @@ const routes: Array<RouteRecordRaw> = [
         await store.dispatch.fetchData()
 
         // TODO: ログインしていないときも実行され, 401が返る
-        await store.dispatch.fetchMe()
+        if (!store.state.User) {
+          await store.dispatch.fetchMe()
+        }
         // TODO: チームに所属していないときも実行され, 404が返る
+        // チームに所属するまで, DBにuser, teamの情報が存在しない
+        await store.dispatch.fetchUser()
         await store.dispatch.fetchTeam()
       } catch (e) {
         console.error(e)
