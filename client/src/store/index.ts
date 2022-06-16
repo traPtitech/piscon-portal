@@ -71,11 +71,11 @@ const { store, rootActionContext } = createDirectStore({
       } else {
         return state.Team.results
           ? state.Team.results.reduce(
-              (a, b) => {
-                return a.score < b.score ? b : a
-              },
-              { score: 0 }
-            )
+            (a, b) => {
+              return a.score < b.score ? b : a
+            },
+            { score: 0 }
+          )
           : []
       }
     }
@@ -116,10 +116,8 @@ const { store, rootActionContext } = createDirectStore({
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      await apis
-        .meGet()
-        .then(data => commit.setUser(data.data))
-        .catch(e => console.error(e))
+      const res = await apis.meGet()
+      commit.setUser(res.data)
     },
     async fetchInstances(context) {
       const { commit } = rootActionContext(context)
