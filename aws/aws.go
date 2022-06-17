@@ -86,6 +86,7 @@ systemctl restart sshd
 		DeviceIndex:              aws.Int32(0),
 		SubnetId:                 &subnetId,
 		PrivateIpAddress:         &privateIp,
+		Groups:                   []string{os.Getenv("AWS_SECURITY_GROUP_ID")},
 	}
 	i := &ec2.RunInstancesInput{
 		ImageId:           aws.String(imageId),

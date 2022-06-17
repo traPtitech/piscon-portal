@@ -24,11 +24,12 @@ piscon用のポータルサイト
 | `MARIADB_DATABASE`  | DBのデータベース名           |
 
 ### AWS
-| key                 | value                 |
-| ------------------- | --------------------- |
-| `AWS_SUBNET_ID`     | VPCのサブネットIP     |
-| `AWS_ACCESS_KEY`    | AWSのアクセスID       |
-| `AWS_ACCESS_SECRET` | AWSのシークレットキー |
+| key                     | value        |
+|-------------------------|--------------|
+| `AWS_SUBNET_ID`         | VPCのサブネットID  |
+| `AWS_SECURITY_GROUP_ID` | セキュリティグループID |
+| `AWS_ACCESS_KEY`        | AWSのアクセスID   |
+| `AWS_ACCESS_SECRET`     | AWSのシークレットキー |
 
 
 ### conoha
