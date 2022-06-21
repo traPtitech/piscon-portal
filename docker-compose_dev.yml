@@ -26,7 +26,7 @@ services:
     depends_on:
       - backend
   db:
-    image: mariadb:latest
+    image: mariadb:10.8-jammy
     expose:
       - "3306"
     volumes:

@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /home/isucon/isuumo:/home/isucon/isuumo
+      - /home/isucon:/home/isucon
   frontend:
     build:
       context: ./client
@@ -28,7 +28,7 @@ services:
     depends_on:
       - backend
   db:
-    image: mariadb:latest
+    image: mariadb:10.8-jammy
     expose:
       - "3306"
     command: mysqld --default-time-zone=Asia/Tokyo
@@ -36,6 +36,7 @@ services:
       # 初期データを投入するSQLが格納されているdir
       - ./db/init:/docker-entrypoint-initdb.d
       - db:/var/lib/mysql
+      - ./db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Tokyo
