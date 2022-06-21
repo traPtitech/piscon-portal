@@ -237,7 +237,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 			Message: "起動中です"})
 	}
 
-	privateIP := fmt.Sprintf("10.0.0.%d", teamId*10+instanceNumber)
+	privateIP := fmt.Sprintf("192.168.0.%d", teamId*10+instanceNumber)
 	id, err := h.client.CreateInstance(name, privateIP, pass)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
