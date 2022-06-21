@@ -86,7 +86,6 @@ systemctl restart sshd
 		DeviceIndex:              aws.Int32(0),
 		SubnetId:                 &subnetId,
 		PrivateIpAddress:         &privateIp,
-		Groups:                   []string{os.Getenv("AWS_SECURITY_GROUP_ID")},
 	}
 	i := &ec2.RunInstancesInput{
 		ImageId:           aws.String(imageId),
@@ -95,6 +94,7 @@ systemctl restart sshd
 		MaxCount:          &defaultInstanceNum,
 		TagSpecifications: []types.TagSpecification{tspec},
 		NetworkInterfaces: []types.InstanceNetworkInterfaceSpecification{nispec},
+		SecurityGroupIds:  []string{os.Getenv("AWS_SECURITY_GROUP_ID")},
 		KeyName:           aws.String("piscon"),
 		UserData:          aws.String(enc),
 	}
