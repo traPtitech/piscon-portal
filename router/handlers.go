@@ -6,7 +6,9 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
@@ -46,11 +48,12 @@ func genPassword() string {
 }
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
-func formatCommand(ip string) string {
-	return fmt.Sprintf("/home/isucon/isuumo/bench/bench "+
-		"--data-dir \"/home/isucon/isuumo/initial-data\" "+
-		"--fixture-dir \"/home/isucon/isuumo/webapp/fixture\" "+
-		"--target-url \"http://%s\"", ip)
+func formatCommand(ip string, allAddresses []string) string {
+	return fmt.Sprintf("/home/isucon/bench/bench "+
+		"-tls "+
+		"-target=%s "+
+		"-all-addresses=%s "+
+		"-jia-service-url=http://%s:5000", strings.Join(allAddresses, ","), ip, os.Getenv("BENCH_PRIVATE_IP"))
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
@@ -357,9 +360,11 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 			Message: "登録されていません"})
 	}
 
-	ip := team.Instance[0].PrivateIPAddress
+	ip := ""
+	var allIP []string
 
 	for _, instance := range team.Instance {
+		allIP = append(allIP, instance.PrivateIPAddress)
 		if uint(instanceNumber) == instance.InstanceNumber {
 			ip = instance.PrivateIPAddress
 		}
@@ -386,7 +391,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 			Message: "既に登録されています"})
 	}
 
-	cmdStr := formatCommand(ip)
+	cmdStr := formatCommand(ip, allIP)
 	t := &model.Task{
 		CmdStr:    cmdStr,
 		IP:        ip,
