@@ -5,16 +5,7 @@ services:
       context: .
     ports:
       - "4000:4000"
-      - "5555:5555"
-      - "7000:7000"
     restart: always
-    environment:
-      MARIADB_HOST: db
-      MARIADB_USERNAME: isucon
-      MARIADB_PASSWORD: isucon
-      MARIADB_DATABASE: isucon
-      MARIADB_PORT: 3306
-      ENV: dev
     depends_on:
       - db
     volumes:
@@ -22,7 +13,6 @@ services:
   frontend:
     build:
       context: ./client
-    tty: true
     ports:
       - "8080:80"
     depends_on:
