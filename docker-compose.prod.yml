@@ -5,6 +5,7 @@ services:
       context: .
     ports:
       - "4000:4000"
+      - "5000:5000" # ISUCON11で使用するJIA APIのポート
     restart: always
     depends_on:
       - db
