@@ -5,7 +5,7 @@ info:
   version: 2.0.0
 
 servers:
-  - url: http://localhost:8080/api
+  - url: https://piscon.trap.jp/api
     description: production(予定)
 paths:
   /results:
@@ -21,7 +21,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
+                items: 
                   $ref: '#/components/schemas/Team'
   /newer:
     get:
@@ -36,7 +36,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
+                items: 
                   $ref: '#/components/schemas/Team'
   /questions:
     get:
@@ -52,7 +52,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
+                items: 
                   $ref: '#/components/schemas/Questions'
     post:
       tags:
@@ -80,7 +80,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
+                items: 
                   $ref: '#/components/schemas/Task'
   /team:
     post:
@@ -156,7 +156,7 @@ paths:
           in: path
           description: team id
           required: true
-          schema:
+          schema: 
             type: integer
         - name: instance_number
           in: path
@@ -190,13 +190,13 @@ paths:
       tags:
         - instance
       summary: Delete instance
-      description: Delete instance
+      description: Delete instance 
       parameters:
         - name: team_id
           in: path
           description: team id
           required: true
-          schema:
+          schema: 
             type: integer
         - name: instance_number
           in: path
@@ -464,7 +464,7 @@ paths:
     put:
       tags:
       - team
-      summary:
+      summary: 
         チームのインスタンス情報を更新する
       parameters:
         - name: id
@@ -493,7 +493,7 @@ components:
       properties:
         id:
           type: integer
-          format: uint
+          format: uint 
         team_id:
           type: integer
           format: uint
@@ -501,7 +501,7 @@ components:
           type: string
         private_ip_address:
           type: string
-        password:
+        password: 
           type: string
         instance_number:
           type: integer
@@ -519,11 +519,11 @@ components:
       properties:
         id:
           type: integer
-          format: uint
+          format: uint 
         result_id:
           type: integer
           format: uint
-        text:
+        text: 
           type: string
     Questions:
       type: object
@@ -552,17 +552,17 @@ components:
         - score
         - created_at
       properties:
-        id:
+        id: 
           type: integer
         team_id:
           type: integer
           format: uint
-        task_id:
+        task_id: 
           type: integer
           format: uint
         pass:
           type: boolean
-        score:
+        score: 
           type: integer
           format: int64
         capmpaign:
@@ -586,7 +586,7 @@ components:
       properties:
         id:
           type: integer
-          format: uint
+          format: uint 
         cmd_str:
           type: string
         ip:
@@ -613,17 +613,17 @@ components:
       properties:
         ID:
           type: integer
-          format: uint
-        name:
+          format: uint 
+        name: 
           type: string
           description: team name
         instance:
           type: array
-          items:
+          items: 
             $ref: '#/components/schemas/Instance'
         results:
           type: array
-          items:
+          items: 
             $ref: '#/components/schemas/Result'
         max_instance_number:
           type: integer
@@ -638,8 +638,8 @@ components:
       properties:
         id:
           type: integer
-          format: uint
-        name:
+          format: uint 
+        name: 
           type: string
         screen_name:
           type: string
@@ -651,7 +651,7 @@ components:
       required:
         - name
       properties:
-        name:
+        name: 
           type: string
         group:
           type: string
@@ -660,7 +660,7 @@ components:
       required:
         - name
       properties:
-        betterize:
+        betterize: 
           type: string
     PkceParams:
       type: object
