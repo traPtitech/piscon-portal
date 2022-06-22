@@ -12,7 +12,7 @@ services:
     build:
       context: ./client
     ports:
-      - "80"
+      - "8080:80"
     depends_on:
       - backend
   db:
@@ -26,11 +26,3 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Tokyo
-  caddy:
-    build:
-      context: ./dev
-    ports:
-      - "8080:80"
-    depends_on:
-      - backend
-      - frontend
