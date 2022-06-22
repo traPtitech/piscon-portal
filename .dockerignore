@@ -1,0 +1,16 @@
+db/
+client/
+conoha/
+.git/
+
+.dockerignore
+.gitignore
+log.json
+topology.drawio
+README.md
+docker-compose*.yml
+Dockerfile
+Makefile
+loop.sh
+piscon-portal.service
+refresh.yml

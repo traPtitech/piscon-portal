@@ -1,7 +1,11 @@
 node_modules/
 dist/
+.idea/
+tests/
+scripts/
+docs/
+
 .dockerignore
-.gitattributes
 .gitignore
-Dockerfile
-README.md
+Dockerfile*
+openapitools.json
