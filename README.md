@@ -11,17 +11,16 @@ piscon用のポータルサイト
 直下に`.env`を置いてそこに配置
 
 
-| key                 | value                |
-|---------------------|----------------------|
-| `ENV`               | `prod`or `""`        |
-| `OAUTH_CLIENT_ID`   | traPのOAuth2クライアントのID |
-| `ACCESS_ID`         | AWSのアクセスID           |
-| `ACCESS_SECRET_KEY` | AWSのシークレットキー         |
-| `MARIADB_USERNAME`  | DBのユーザーネーム           |
-| `MARIADB_PASSWORD`  | DBのパスワード             |
-| `MARIADB_PORT`      | DBのポート番号             |
-| `MARIADB_HOSTNAME`  | DBのホスト名              |
-| `MARIADB_DATABASE`  | DBのデータベース名           |
+| key                | value                |
+|--------------------|----------------------|
+| `ENV`              | `prod`or `""`        |
+| `OAUTH_CLIENT_ID`  | traPのOAuth2クライアントのID |
+| `BENCH_PRIVATE_IP` | ベンチマーカーのPrivate IP   |
+| `MARIADB_USERNAME` | DBのユーザーネーム           |
+| `MARIADB_PASSWORD` | DBのパスワード             |
+| `MARIADB_PORT`     | DBのポート番号             |
+| `MARIADB_HOSTNAME` | DBのホスト名              |
+| `MARIADB_DATABASE` | DBのデータベース名           |
 
 ### AWS
 | key                     | value        |
