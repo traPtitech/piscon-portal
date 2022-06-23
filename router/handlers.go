@@ -3,17 +3,16 @@ package router
 import (
 	"errors"
 	"fmt"
+	"github.com/labstack/echo/v4"
+	"github.com/traPtitech/piscon-portal/model"
+	"github.com/traPtitech/piscon-portal/oauth"
+	"gorm.io/gorm"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/labstack/echo/v4"
-	"github.com/traPtitech/piscon-portal/model"
-	"github.com/traPtitech/piscon-portal/oauth"
-	"gorm.io/gorm"
 )
 
 const (
@@ -53,7 +52,7 @@ func formatCommand(ip string, allAddresses []string) string {
 		"-tls "+
 		"-target=%s "+
 		"-all-addresses=%s "+
-		"-jia-service-url=http://%s:5000", strings.Join(allAddresses, ","), ip, os.Getenv("BENCH_PRIVATE_IP"))
+		"-jia-service-url=http://%s:5000", ip, strings.Join(allAddresses, ","), os.Getenv("BENCH_PRIVATE_IP"))
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
@@ -364,7 +363,9 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 	var allIP []string
 
 	for _, instance := range team.Instance {
-		allIP = append(allIP, instance.PrivateIPAddress)
+		if instance.PrivateIPAddress != "" {
+			allIP = append(allIP, instance.PrivateIPAddress)
+		}
 		if uint(instanceNumber) == instance.InstanceNumber {
 			ip = instance.PrivateIPAddress
 		}
