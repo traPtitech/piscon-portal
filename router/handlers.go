@@ -49,7 +49,7 @@ func genPassword() string {
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
-	return fmt.Sprintf("/home/isucon/bench/bench "+
+	return fmt.Sprintf("/bench/bench "+
 		"-tls "+
 		"-target=%s "+
 		"-all-addresses=%s "+
