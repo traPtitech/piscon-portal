@@ -14,5 +14,4 @@ RUN npm run build
 # 本番環境
 FROM caddy:2.5.1-alpine
 EXPOSE 80
-COPY caddy/Caddyfile-dev /etc/caddy/Caddyfile
 COPY --from=build /app/dist /usr/share/caddy

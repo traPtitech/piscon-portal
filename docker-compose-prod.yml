@@ -10,17 +10,19 @@ services:
     depends_on:
       - db
     volumes:
-      - ./bench:/bench
+      - ./bench:/bench  # ベンチマーカーのバイナリを置くディレクトリ
   frontend:
     build:
       context: ./client
-      dockerfile: Dockerfile-prod
     ports:
       - "443:443"
+      - "80:80"
     depends_on:
       - backend
     volumes:
       - /var/log/caddy:/var/log/caddy
+      - ./client/caddy/Caddyfile-prod:/etc/caddy/Caddyfile
+      - caddy:/data
   db:
     image: mariadb:10.8-jammy
     expose:
@@ -36,3 +38,5 @@ services:
       TZ: Asia/Tokyo
 volumes:
   db:
+  caddy:
+    external: true
