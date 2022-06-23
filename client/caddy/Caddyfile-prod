@@ -11,6 +11,10 @@
 piscon.trap.jp {
   import default
 
+  log {
+    output file /var/log/caddy/access.log
+  }
+
   handle /api/* {
     reverse_proxy localhost:4000 {
       header_up Host {http.reverse_proxy.upstream.hostport}
