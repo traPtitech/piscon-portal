@@ -1,7 +1,7 @@
 # ビルド環境
 FROM node:14-alpine as build
 WORKDIR /app
-COPY package*.json ./
+COPY . .
 # https://github.com/docker/getting-started/issues/124
 RUN apk --no-cache --virtual build-dependencies add \
         python3 \
@@ -9,7 +9,6 @@ RUN apk --no-cache --virtual build-dependencies add \
         g++ \
 && npm install \
 && apk del build-dependencies
-COPY . .
 RUN npm run build
 
 # 本番環境
