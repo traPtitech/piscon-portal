@@ -2,9 +2,9 @@ FROM golang:1.16-alpine AS build
 WORKDIR /go/src/github.com/traPtitech/piscon-portal
 COPY . .
 RUN go mod download
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o piscon_portal main.go
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o piscon_portal main.go
 
-FROM gcr.io/distroless/base
+FROM ubuntu:22.04
 WORKDIR /app
 EXPOSE 4000
 COPY --from=build /go/src/github.com/traPtitech/piscon-portal/piscon_portal \
