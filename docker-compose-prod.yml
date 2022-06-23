@@ -23,6 +23,7 @@ services:
       - /var/log/caddy:/var/log/caddy
       - ./client/caddy/Caddyfile-prod:/etc/caddy/Caddyfile
       - caddy-data:/data
+      - caddy-config:/config
   db:
     image: mariadb:10.8-jammy
     expose:
@@ -40,3 +41,4 @@ volumes:
   db:
   caddy-data:
     external: true
+  caddy-config:
