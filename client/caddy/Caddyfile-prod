@@ -17,7 +17,7 @@ piscon.trap.jp {
   }
 
   handle /api/* {
-    reverse_proxy localhost:4000 {
+    reverse_proxy backend:4000 {
       header_up Host {http.reverse_proxy.upstream.hostport}
     }
   }

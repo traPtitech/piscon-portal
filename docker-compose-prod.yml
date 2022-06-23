@@ -19,6 +19,8 @@ services:
       - "443:443"
     depends_on:
       - backend
+    volumes:
+      - /var/log/caddy:/var/log/caddy
   db:
     image: mariadb:10.8-jammy
     expose:
