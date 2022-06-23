@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /home/isucon:/home/isucon
+      - ./bench:/bench
   frontend:
     build:
       context: ./client
