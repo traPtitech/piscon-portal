@@ -1,20 +1,16 @@
 FROM golang:1.16-alpine AS build
 WORKDIR /go/src/github.com/traPtitech/piscon-portal
-COPY ./go.* ./
-RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build -o /piscon_portal main.go
-
-
-FROM alpine:3
-WORKDIR /app
-
-EXPOSE 4000
-
+RUN go mod download
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o piscon_portal main.go
 RUN apk update \
 && apk add ca-certificates \
 && update-ca-certificates
 
-COPY --from=build /piscon_portal /go/src/github.com/traPtitech/piscon-portal/.env  ./
-
-ENTRYPOINT ./piscon_portal
+FROM scratch
+WORKDIR /app
+EXPOSE 4000
+COPY --from=build /go/src/github.com/traPtitech/piscon-portal/piscon_portal \
+									/go/src/github.com/traPtitech/piscon-portal/.env  ./
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+ENTRYPOINT ["/app/piscon_portal"]
