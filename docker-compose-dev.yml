@@ -8,6 +8,12 @@ services:
     restart: always
     depends_on:
       - db
+    environment:
+      MARIADB_HOST: db
+      MARIADB_USERNAME: isucon
+      MARIADB_PASSWORD: isucon
+      MARIADB_DATABASE: isucon
+      MARIADB_PORT: 3306
   frontend:
     build:
       context: ./client
