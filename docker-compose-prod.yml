@@ -40,4 +40,5 @@ services:
 volumes:
   db:
   caddy-data:
+    external: true
   caddy-config:
