@@ -109,9 +109,15 @@ func benchmarkWorker() {
 
 		command, _ := shellwords.Parse(task.CmdStr)
 		fmt.Println(command)
-		res, err := exec.Command(command[0], command[1:]...).Output()
+		var res []byte
+		err := os.Chdir("/bench")
 		if err != nil {
 			fmt.Println(err)
+		} else {
+			res, err = exec.Command(command[0], command[1:]...).Output()
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 
 		fmt.Println("end benchmark")
