@@ -110,6 +110,7 @@ func benchmarkWorker() {
 		command, _ := shellwords.Parse(task.CmdStr)
 		fmt.Println(command)
 		var res []byte
+		// ISUCON11のベンチマーカーはディレクトリの移動が必要
 		err := os.Chdir("/bench")
 		if err != nil {
 			fmt.Println(err)
