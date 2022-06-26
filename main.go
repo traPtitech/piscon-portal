@@ -288,7 +288,7 @@ func establishConnection() (*gorm.DB, error) {
 	if dbname == "" {
 		dbname = "isucon"
 	}
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?parseTime=True&charset=utf8mb4"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname) + "?parseTime=True&loc=Asia%2FTokyo&charset=utf8mb4"
 	log.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	return db, err

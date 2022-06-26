@@ -12,6 +12,7 @@ services:
     volumes:
       - ./bench:/bench  # ベンチマーカーのバイナリを置くディレクトリ
       - /usr/share/zoneinfo/Asia/Tokyo:/etc/localtime  # TimezoneをJSTに設定
+      - /usr/share/zoneinfo:/usr/share/zoneinfo # Goのtime.LoadLocationが依存しているため必要
   frontend:
     build:
       context: ./client
