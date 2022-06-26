@@ -1,3 +1,4 @@
+# development
 .PHONY: up
 up:
 	docker compose -p piscon-portal-dev -f docker-compose-dev.yml up -d
@@ -16,9 +17,20 @@ down:
 .PHONY: down-v
 down-v:
 	docker compose -p piscon-portal-dev -f docker-compose-dev.yml down -v
+
+# production
 .PHONY: deploy
 deploy:
-	docker compose -f docker-compose-prod.yml up -d
-.PHONY: deploy-build
-deploy-build:
 	docker compose -f docker-compose-prod.yml up -d --build
+
+.PHONY: enter-backend
+enter-backend:
+	docker container exec -it piscon-portal-backend bash
+
+.PHONY: enter-frontend
+enter-frontend:
+	docker container exec -it piscon-portal-frontend bash
+
+.PHONY: enter-db
+enter-db:
+	docker container exec -it piscon-portal-db bash
