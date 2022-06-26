@@ -11,6 +11,7 @@ services:
       - db
     volumes:
       - ./bench:/bench  # ベンチマーカーのバイナリを置くディレクトリ
+      - /usr/share/zoneinfo/Asia/Tokyo:/etc/localtime  # TimezoneをJSTに設定
   frontend:
     build:
       context: ./client
