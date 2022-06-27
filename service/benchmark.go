@@ -34,9 +34,9 @@ func RunBenchmark(task *model.Task) *model.Result {
 
 func runBenchmarkCommand(args []string) (*model.Output, error) {
 	// ISUCON11のベンチマーカーはディレクトリの移動が必要
-	//if err := os.Chdir("/bench"); err != nil {
-	//	return nil, err
-	//}
+	if err := os.Chdir("/bench"); err != nil {
+		return nil, err
+	}
 
 	// パイプを使ってベンチマーカーのプロセスから結果を取得する
 	pipeRead, pipeWrite, err := os.Pipe()
