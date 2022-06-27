@@ -75,6 +75,7 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	wire := data[2:]
 	result := &isuxportalResources.BenchmarkResult{}
 	if err := proto.Unmarshal(wire, result); err != nil {
+		log.Println(wire)
 		return nil, err
 	}
 
