@@ -8,6 +8,7 @@ FROM ubuntu:22.04
 WORKDIR /app
 EXPOSE 4000
 RUN apt update \
+&& apt install -y tzdata \
 && apt install -y ca-certificates \
 && rm -rf /var/lib/apt/lists/* \
 && update-ca-certificates
