@@ -1,11 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/traPtitech/piscon-portal/service"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	shellwords "github.com/mattn/go-shellwords"
 	plugin "github.com/traPtitech/piscon-portal/aws"
 	"github.com/traPtitech/piscon-portal/model"
 	"github.com/traPtitech/piscon-portal/router"
@@ -103,59 +101,12 @@ func main() {
 func benchmarkWorker() {
 	for {
 		task := <-sendWorker
-		fmt.Println("recieve task")
+		log.Println("recieve task")
+
 		task.State = "benchmark"
 		db.Save(task)
 
-		command, _ := shellwords.Parse(task.CmdStr)
-		fmt.Println(command)
-		var res []byte
-		// ISUCON11のベンチマーカーはディレクトリの移動が必要
-		err := os.Chdir("/bench")
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			res, err = exec.Command(command[0], command[1:]...).Output()
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
-
-		fmt.Println("end benchmark")
-
-		fmt.Println(string(res))
-		data := &model.Output{}
-		err = json.Unmarshal(res, data)
-		if err != nil {
-			result := &model.Result{
-				TeamID:    task.TeamID,
-				TaskID:    task.ID,
-				Pass:      false,
-				Score:     0,
-				Campaign:  0,
-				Betterize: task.Betterize,
-				Messages:  []*model.Message{{Text: err.Error()}},
-			}
-			db.Create(result)
-
-			task.State = "done"
-			db.Save(task)
-			continue
-		}
-		messages := make([]*model.Message, len(data.Messages))
-		for i, text := range data.Messages {
-			messages[i] = &model.Message{Text: text.Text}
-		}
-
-		result := &model.Result{
-			TeamID:    task.TeamID,
-			TaskID:    task.ID,
-			Pass:      data.Pass,
-			Score:     data.Score,
-			Betterize: task.Betterize,
-			Messages:  messages,
-		}
-
+		result := service.RunBenchmark(task)
 		db.Create(result)
 
 		task.State = "done"

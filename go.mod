@@ -11,6 +11,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gophercloud/gophercloud v0.12.0
 	github.com/gorilla/sessions v1.2.1
+	github.com/isucon/isucon10-portal v0.0.0-20201008112716-8c0b637e1bd8
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo-contrib v0.11.0
 	github.com/labstack/echo/v4 v4.5.0
