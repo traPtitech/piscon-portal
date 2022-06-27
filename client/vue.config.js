@@ -1,6 +1,7 @@
 // const path = require('path')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 const webpack = require('webpack')
+
 module.exports = {
   lintOnSave: true,
   // transpileDependencies: [

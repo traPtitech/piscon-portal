@@ -9,7 +9,7 @@
             <p>
               A.
               <a href="https://trap.jp" target="_blank"
-                >東京工業大学デジタル創作同好会traP</a
+              >東京工業大学デジタル創作同好会traP</a
               >の部内ISUCONのことです。
             </p>
           </div>
@@ -21,7 +21,7 @@
               <br />毎年秋くらいにコンテストを開催しています。 <br /><a
                 href="http://isucon.net/"
                 target="_blank"
-                >ISUCON公式サイト</a
+              >ISUCON公式サイト</a
               >
             </p>
           </div>

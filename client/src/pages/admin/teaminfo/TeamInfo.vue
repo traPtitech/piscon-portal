@@ -49,7 +49,7 @@
             <va-card class="flex md12 item mb-3">
               <va-card-title>最新の結果</va-card-title>
               <va-card-content
-                ><h6>{{ lastResult }}</h6></va-card-content
+              ><h6>{{ lastResult }}</h6></va-card-content
               >
             </va-card>
             <va-card class="flex md12 item mb-3">
@@ -78,7 +78,7 @@
                               color="info"
                               size="small"
                               @click="showInfo(i)"
-                              >Info</va-button
+                            >Info</va-button
                             >
                           </td>
                         </tr>
@@ -110,7 +110,7 @@
                       :rounded="false"
                       class="ml-2"
                       @click="registerTeam"
-                      >登録</va-button
+                    >登録</va-button
                     >
                   </div>
                 </div>
