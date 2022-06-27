@@ -9,6 +9,7 @@ services:
     depends_on:
       - db
     environment:
+      TZ: Asia/Tokyo
       MARIADB_HOST: db
       MARIADB_USERNAME: isucon
       MARIADB_PASSWORD: isucon
