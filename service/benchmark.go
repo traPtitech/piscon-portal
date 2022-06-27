@@ -1,16 +1,16 @@
 package service
 
 import (
+	"encoding/binary"
 	"errors"
-	"github.com/golang/protobuf/proto"
 	isuxportalResources "github.com/isucon/isucon10-portal/proto.go/isuxportal/resources"
 	"github.com/mattn/go-shellwords"
 	"github.com/traPtitech/piscon-portal/model"
+	"google.golang.org/protobuf/proto"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 func RunBenchmark(task *model.Task) *model.Result {
@@ -32,6 +32,7 @@ func RunBenchmark(task *model.Task) *model.Result {
 	return resultFromOutput(task, output)
 }
 
+// TODO: 最終的に BenchmarkResult -> Output -> Result と変換されているので, 設計を見直す
 func runBenchmarkCommand(args []string) (*model.Output, error) {
 	// ISUCON11のベンチマーカーはディレクトリの移動が必要
 	if err := os.Chdir("/bench"); err != nil {
@@ -62,30 +63,17 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(pipeRead)
+	// wire-formatのデータが連続するバイト列
+	wires, err := ioutil.ReadAll(pipeRead)
 	if err != nil {
 		return nil, err
 	}
-	if len(data) < 2 {
-		log.Println(data)
-		return nil, errors.New("invalid response")
-	}
-	// data[:2]はlen(wire)が書き込まれる
-	// ここでは特にチェックしない
-	wire := data[2:]
-	result := &isuxportalResources.BenchmarkResult{}
-	if err := proto.Unmarshal(wire, result); err != nil {
-		log.Println(wire)
+	result, err := lastBenchmarkResultFromBinary(wires)
+	if err != nil {
 		return nil, err
 	}
 
-	// TODO: 最終的に BenchmarkResult -> Output -> Result と変換されているので, 設計を見直す
-	var messages []model.OutputMessage
-	for _, text := range strings.Split(result.Execution.Stdout, "\n") {
-		if text != "" {
-			messages = append(messages, model.OutputMessage{Text: text})
-		}
-	}
+	var messages []model.OutputMessage // TODO: OutputMessageを入れる
 	output := &model.Output{
 		Pass:     result.Passed,
 		Score:    result.Score,
@@ -94,6 +82,30 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 		Messages: messages,
 	}
 	return output, nil
+}
+
+func lastBenchmarkResultFromBinary(wires []byte) (*isuxportalResources.BenchmarkResult, error) {
+	head := 0
+	size := 0
+	// 最後のデータの先頭まで走査
+	for {
+		// 各データの先頭2byteはデータのサイズ
+		size = int(binary.BigEndian.Uint16(wires[head : head+2]))
+		next := head + 2 + size
+		if next == len(wires) {
+			break
+		}
+		head = next
+	}
+
+	result := &isuxportalResources.BenchmarkResult{}
+	if err := proto.Unmarshal(wires[head+2:head+2+size], result); err != nil {
+		return nil, err
+	}
+	if !result.Finished {
+		return nil, errors.New("not reported final result")
+	}
+	return result, nil
 }
 
 // TODO: ユーザーに見せるべきでないエラーが含まれ得る
