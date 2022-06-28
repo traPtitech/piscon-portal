@@ -59,7 +59,10 @@
                 <div class="mb-4">
                   <h6>ISU の登録</h6>
                   <p>
-                    ブラウザより ISU の登録を行う際にも JIA API Mock が必要です. こちらについては アプリケーションマニュアル をご確認ください.
+                    ブラウザより ISU の登録を行う際にも JIA API Mock が必要です. こちらについては
+                    <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
+                      アプリケーションマニュアル
+                    </a> をご確認ください.
                   </p>
                 </div>
               </div>
