@@ -11,7 +11,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./bench:/bench  # ベンチマーカーのバイナリを置くディレクトリ
+      - /home/isucon/bench:/bench  # ベンチマーカーを置くディレクトリ
+      - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
   frontend:
