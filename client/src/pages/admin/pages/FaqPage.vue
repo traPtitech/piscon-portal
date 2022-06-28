@@ -97,9 +97,8 @@ export default {
       const question: Questions = {
         question: questionText
       }
-      await apis.questionsPost(question).then(res => {
-        newQ.value = ''
-      })
+      await apis.questionsPost(question)
+      newQ.value = ''
       await getQuestions()
     }
     const newAnswer = async (id: number, index: number) => {

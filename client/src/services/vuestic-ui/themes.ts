@@ -159,7 +159,7 @@ export const useTheme = () => {
     }
 
     mergeGlobalConfig({
-      colors: theme.colors as any,
+      colors: theme.colors,
       components: theme.components
     })
   }

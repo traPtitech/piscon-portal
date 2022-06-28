@@ -31,6 +31,13 @@ export default {
       meta: {
         icon: 'vuestic-iconset-forms'
       }
+    },
+    {
+      name: 'manual',
+      displayName: 'menu.manual',
+      meta: {
+        icon: 'vuestic-iconset-files'
+      }
     }
   ]
 }

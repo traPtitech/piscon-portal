@@ -65,21 +65,16 @@ export default {
     this.loadMore()
   },
   methods: {
-    loadMore () {
+    async loadMore () {
       this.loading = true
 
-      this.readUsers()
-        .then(users => {
-          this.users = this.users.concat(users)
-          this.loading = false
-        })
+      const users = await this.readUsers()
+      this.users = this.users.concat(users)
+      this.loading = false
     },
-    readUsers () {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(users.slice(0, 10))
-        }, 600)
-      })
+    async readUsers () {
+      await new Promise(resolve => setTimeout(resolve, 600))
+      return users.slice(0, 10)
     },
     onScroll (e) {
       if (this.loading) {
