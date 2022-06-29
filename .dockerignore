@@ -2,6 +2,7 @@ db/
 client/
 conoha/
 .git/
+docs/
 
 .dockerignore
 .gitignore
