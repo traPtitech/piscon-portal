@@ -17,7 +17,7 @@
         >
           <va-card class="mb-6" :color="'info'">
             <va-card-content>
-              <p style="color: white;">参加人数</p>
+              <p style="color: white;">参加チーム数</p>
               <p class="display-2 mb-0" style="color: white;">{{ length }}</p>
             </va-card-content>
           </va-card>
