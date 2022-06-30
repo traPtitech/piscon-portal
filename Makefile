@@ -34,3 +34,7 @@ enter-frontend:
 .PHONY: enter-db
 enter-db:
 	docker container exec -it piscon-portal-db bash
+
+.PHONY: log-backend
+log-backend:
+	docker logs piscon-portal-backend -f
