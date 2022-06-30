@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { mergeGlobalConfig } from 'vuestic-ui'
+import { useGlobalConfig } from 'vuestic-ui'
 
 export const THEME_NAMES = {
   LIGHT: 'LIGHT',
@@ -158,10 +158,12 @@ export const useTheme = () => {
       throw new Error('Theme not found')
     }
 
-    mergeGlobalConfig({
+    const providedGlobalConfig = useGlobalConfig()
+
+    providedGlobalConfig.globalConfig.value = {
       colors: theme.colors,
       components: theme.components
-    })
+    }
   }
 
   const theme = computed(() =>
