@@ -1,0 +1,50 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: .
+    container_name: piscon-portal-backend
+    ports:
+      - "4000:4000"
+      - "5000:5000" # ISUCON11で使用するJIA APIのポート
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - /home/isucon/bench:/bench  # ベンチマーカーを置くディレクトリ
+      - /etc/ssl/certs:/etc/ssl/certs
+    environment:
+      TZ: Asia/Tokyo
+  frontend:
+    build:
+      context: ./client
+    container_name: piscon-portal-frontend
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - /var/log/caddy:/var/log/caddy
+      - ./client/caddy/Caddyfile-prod:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+  db:
+    image: mariadb:10.8-jammy
+    container_name: piscon-portal-db
+    expose:
+      - "3306"
+    command: mysqld --default-time-zone=Asia/Tokyo
+    volumes:
+      # 初期データを投入するSQLが格納されているdir
+      - ./db/init:/docker-entrypoint-initdb.d
+      - db:/var/lib/mysql
+      - ./db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Tokyo
+volumes:
+  db:
+  caddy-data:
+    external: true
+  caddy-config:

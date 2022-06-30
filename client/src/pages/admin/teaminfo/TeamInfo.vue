@@ -49,7 +49,7 @@
             <va-card class="flex md12 item mb-3">
               <va-card-title>最新の結果</va-card-title>
               <va-card-content
-                ><h6>{{ lastResult }}</h6></va-card-content
+              ><h6>{{ lastResult }}</h6></va-card-content
               >
             </va-card>
             <va-card class="flex md12 item mb-3">
@@ -78,7 +78,7 @@
                               color="info"
                               size="small"
                               @click="showInfo(i)"
-                              >Info</va-button
+                            >Info</va-button
                             >
                           </td>
                         </tr>
@@ -110,7 +110,7 @@
                       :rounded="false"
                       class="ml-2"
                       @click="registerTeam"
-                      >登録</va-button
+                    >登録</va-button
                     >
                   </div>
                 </div>
@@ -204,29 +204,16 @@ export default {
         name: teamName.value,
         group: group
       }
-      const userReq = await apis
-        .teamPost(req)
-        .then(data => {
-          if (!store.state.User) {
-            return
-          }
-          const req: User = {
-            name: store.state.User.name,
-            screen_name: store.state.User.screen_name,
-            team_id: data.data.ID
-          }
-          return req
-        })
-        .catch(err => {
-          error.value = err
-          return
-        })
-      if (!userReq) {
-        return
+      const team = await apis.teamPost(req).then(res => res.data)
+      const userReq: User = {
+        name: store.state.User.name,
+        screen_name: store.state.User.screen_name,
+        team_id: team.ID
       }
+
       const user = await apis.userPost(userReq).then(res => res.data)
-      store.commit.setUser(user)
-      await store.dispatch.getData().catch(e => console.warn(e))
+      await store.commit.setUser(user)
+      await store.commit.setTeam(team)
     }
     const showModal = (data: Result) => {
       modalText.value = JSON.stringify(data, null, '  ')

@@ -71,11 +71,11 @@ const { store, rootActionContext } = createDirectStore({
       } else {
         return state.Team.results
           ? state.Team.results.reduce(
-              (a, b) => {
-                return a.score < b.score ? b : a
-              },
-              { score: 0 }
-            )
+            (a, b) => {
+              return a.score < b.score ? b : a
+            },
+            { score: 0 }
+          )
           : []
       }
     }
@@ -116,10 +116,8 @@ const { store, rootActionContext } = createDirectStore({
   actions: {
     async fetchMe(context) {
       const { commit } = rootActionContext(context)
-      await apis
-        .meGet()
-        .then(data => commit.setUser(data.data))
-        .catch(e => console.error(e))
+      const res = await apis.meGet()
+      commit.setUser(res.data)
     },
     async fetchInstances(context) {
       const { commit } = rootActionContext(context)
@@ -133,30 +131,29 @@ const { store, rootActionContext } = createDirectStore({
         commit.setInstances(data.data)
       })
     },
-    async getData(context) {
+    async fetchUser(context) {
+      if (!store.state.User) {
+        throw new Error('no user information')
+      }
+
+      const { commit } = rootActionContext(context)
+      const res = await apis.userNameGet(store.state.User.name)
+      commit.setUser(res.data)
+    },
+    async fetchTeam(context) {
+      if (!store.state.User) {
+        throw new Error('no user information')
+      }
+
+      const { commit } = rootActionContext(context)
+      const res = await apis.teamIdGet(store.state.User.team_id)
+      commit.setTeam(res.data)
+    },
+    async fetchData(context) {
       const { commit } = rootActionContext(context)
       apis.resultsGet().then(data => commit.setAllResults(data.data))
       apis.newerGet().then(data => commit.setNewer(data.data))
       apis.benchmarkQueueGet().then(data => commit.setQueue(data.data))
-      if (!store.state.User) {
-        return
-      }
-      await apis
-        .userNameGet(store.state.User.name)
-        .then(data => {
-          commit.setUser(data.data)
-          return data.data
-        })
-        .catch(() => {
-          return null
-        })
-      if (store.state.User) {
-        await apis.teamIdGet(store.state.User.team_id).then(data => {
-          commit.setTeam(data.data)
-        })
-      } else {
-        console.log('user is empty')
-      }
     }
   }
 })

@@ -96,7 +96,7 @@ export default defineComponent({
         .benchmarkNameInstanceNumberPost(store.state.Team?.name, id, req)
         .then(() => {
           betterize.value = ''
-          store.dispatch.getData()
+          store.dispatch.fetchData()
         })
         .catch((err: AxiosError<Response>) => {
           error.value = !err.response?.data.message
@@ -174,7 +174,7 @@ export default defineComponent({
           apis
             .instanceTeamIdInstanceNumberDelete(store.state.Team?.ID, id)
             .then(() => {
-              store.dispatch.getData()
+              store.dispatch.fetchData()
               waiting.value = false
             })
             .catch((err: AxiosError<Response>) => {
@@ -188,7 +188,7 @@ export default defineComponent({
           apis
             .instanceTeamIdInstanceNumberPost(store.state.Team.ID, id)
             .then(() => {
-              store.dispatch.getData()
+              store.dispatch.fetchData()
               waiting.value = false
             })
             .catch((err: AxiosError<Response>) => {

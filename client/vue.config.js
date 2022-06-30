@@ -1,6 +1,7 @@
 // const path = require('path')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 const webpack = require('webpack')
+
 module.exports = {
   lintOnSave: true,
   // transpileDependencies: [
@@ -56,6 +57,14 @@ module.exports = {
     workboxOptions: {
       swSrc: './src/service-worker.js',
       importWorkboxFrom: 'local'
+    },
+    iconPaths: {
+      faviconSVG: null,
+      favicon32: null,
+      favicon16: null,
+      appleTouchIcon: null,
+      maskIcon: null,
+      msTileImage: null
     }
   }
 }

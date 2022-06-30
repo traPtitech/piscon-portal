@@ -3,181 +3,69 @@
     <div class="row">
       <div v-if="user" class="flex md12">
         <va-card>
-          <va-card-title>
-            <h3 class="h-fix">レギュレーション</h3>
-          </va-card-title>
           <va-card-content>
             <div class="mb-4">
-              <p>
-                指定された競技用サーバー上のアプリケーションのチューニングを行い、それに対するベンチマーク走行のスコアで競技を行います。
-                与えられた競技用サーバーのみでアプリケーションの動作が可能であれば、どのような変更を加えても構いません。
-                ベンチマーカーとブラウザの挙動に差異がある場合、ベンチマーカーの挙動を正とします。
-                また、初期実装は言語毎に若干の挙動の違いはありますが、ベンチマーカーに影響のない挙動に関しては仕様とします。
-              </p>
-              <h5>ベンチマーク走行</h5>
-              <p>ベンチマーク走行は以下のように実施されます。</p>
-              <ul>
-                <li>初期化処理の実行 POST /initialize (20秒以内)</li>
-                <li>
-                  アプリケーション互換性チェックの走行 (適宜: 数秒〜数十秒)
-                </li>
-                <li>負荷走行 (60秒)</li>
-                <li>負荷走行後の確認 (適宜: 数秒〜数十秒)</li>
-              </ul>
-              <p>
-                各ステップで失敗が見付かった場合にはその時点で停止します。
-                ただし、負荷走行中のエラーについては、タイムアウトや500エラーを含む幾つかのエラーについては無視され、ベンチマーク走行が継続します。
-              </p>
-              <p>
-                また負荷走行が60秒行われた後、レスポンスが返ってきていないリクエストはすべて強制的に切断されます。
-                その際にnginxのアクセスログにステータスコード499が記録されることがありますが、これらのリクエストについては減点の対象外です。
-              </p>
-            </div>
-            <div class="mb-4">
-              <h5>スコア計算</h5>
-              <p>
-                スコアは<strong
-                  >取引が完了した商品（椅子）の価格の合計（ｲｽｺｲﾝ）</strong
-                >
-                をベースに以下の計算式で計算されます。
-              </p>
-              <pre><code>取引が完了した商品（椅子）の価格の合計（ｲｽｺｲﾝ） - 減点 = スコア（ｲｽｺｲﾝ）</code></pre>
-              <p>
-                以下の条件のエラーが発生すると、失格・減点の対象となります。
-              </p>
+              <h3 class="h-fix">Links</h3>
               <ul>
                 <li>
-                  致命的なエラー
-                  <ul>
-                    <li>1回以上で失格</li>
-                    <li>
-                      メッセージの最後に
-                      <code>(critical error)</code> が付与されます
-                    </li>
-                  </ul>
+                  <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/manual.md">
+                    ISUCON11 予選当日マニュアル
+                  </a>
                 </li>
                 <li>
-                  HTTPステータスコードやレスポンスの内容などに誤りがある
-                  <ul>
-                    <li>1回で500ｲｽｺｲﾝ減点、10回以上で失格</li>
-                  </ul>
+                  <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
+                    ISUCONDITION アプリケーションマニュアル
+                  </a>
                 </li>
-                <li>
-                  一定時間内にレスポンスが返却されない・タイムアウト
-                  <ul>
-                    <li>200回を超えたら100回毎に5000ｲｽｺｲﾝ減点、失格はなし</li>
-                    <li>
-                      メッセージの最後に
-                      <code>（タイムアウトしました）</code> か
-                      <code>（一時的なエラー）</code> が付与されます
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-              <p>
-                HTTPステータスコードは、基本的に参照実装と同一のものを想定しています。またベンチマーカーのメッセージは同一のメッセージを1つにまとめます。表示されているメッセージの数とエラー数は一致しないことがあります。
-              </p>
-              <p>また減点により0ｲｽｺｲﾝ以下になった場合は失格となります。</p>
-            </div>
-            <div class="mb-4">
-              <h5>制約事項</h5>
-              <p>
-                以下の事項に抵触すると失格(fail)となり、点数が0点になります。
-              </p>
-              <ul>
-                <li>POST /initialize へのレスポンスが20秒以内に戻らない場合</li>
-                <li>アプリケーション互換性チェックに失敗した場合</li>
-                <li>アプリケーションがレスポンスを10秒以内に返さない場合</li>
-                <li>その他、ベンチマーカーのチェッカが失敗を検出したケース</li>
-              </ul>
-              <p>
-                最初に呼ばれる初期化処理<code>POST /initialize</code>
-                は用意された環境内で、チェッカツールが要求する範囲の整合性を担保します。
-                サーバーサイドで処理の変更・データ構造の変更などを行う場合、この処理が行っている内容を漏れなく提供してください。
-              </p>
-              <p>
-                予選終了後に行われる主催者による確認作業（追試）において下記の点が確認できなかった場合は失格となります。
-              </p>
-              <ul>
-                <li>
-                  アプリケーションは全て保存データを永続化する必要があります
-                  <ul>
-                    <li>
-                      処理実施後に再起動が行われた場合、再起動前に行われた処理内容が再起動後に保存されている必要があります
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  アプリケーションはブラウザ上での表示を初期状態と同様に保つ必要があります
-                </li>
-              </ul>
-              また、以下に示す改変を行ってはいけません。
-              <ul>
-                <li>パスワードを平文で保存する</li>
               </ul>
             </div>
+
             <div class="mb-4">
-              <h5>禁止事項</h5>
-              <p>以下の事項は特別に禁止します。</p>
-              <ul>
-                <li>他のチームへの妨害と主催者がみなす全ての行為</li>
-              </ul>
-            </div>
-            <div class="mb-4">
-              <h5>その他</h5>
-              <h5>キャンペーン機能</h5>
-              <p>
-                <code>POST /initialize</code>
-                のレスポンスにて、ｲｽｺｲﾝ還元キャンペーンの「還元率の設定」を返すことができます。この還元率によりユーザが増減します。
-              </p>
-              <p><code>POST /initialize</code> のレスポンスは JSON 形式で</p>
-              <pre><code>{
-  "campaign": 0,
-  "language": "実装言語"
-}</code></pre>
-              <p>
-                としてください。campaignが還元率の設定となります。有効な値は 0
-                以上 4 以下の整数で 0 の場合はキャンペーン機能が無効になります。
-              </p>
-              <p>
-                なお、ｲｽｺｲﾝ還元の費用が下で説明するスコアから引かれることはありません。
-              </p>
-              <p>
-                また、languageの値として、本競技で利用した言語を出力してください(ベンチマーカーの仕様によるもので特に意味はありません。なお、参考実装では最初から入っているので気にする必要はありません)。languageが空の場合はベンチマークは失敗と見なされます。
-              </p>
-              <h5>参照実装の切り替え方</h5>
-              <p>初期状態ではGoによる実装が起動している状態になります。</p>
-              <p>
-                各言語実装は <code>systemd</code> で管理されています。
-                例えば、参照実装をGoからPerlに切り替えるには次のようにします。
-              </p>
-              <pre>
-$ sudo systemctl stop    isucari.golang.service
-$ sudo systemctl disable isucari.golang.service
-$ sudo systemctl start   isucari.perl.service
-$ sudo systemctl enable isucari.perl.service</pre
-              >
-              <p>
-                ただし、PHPを使う場合のみ、
-                <code>systemd</code> の設定変更の他に、次のように nginx
-                の設定ファイルの変更が必要です。
-              </p>
-              <pre>
-$ sudo unlink /etc/nginx/sites-enabled/isucari.conf
-$ sudo ln -s /etc/nginx/sites-available/isucari.php.conf /etc/nginx/sites-enabled/isucari.conf
-$ sudo systemctl restart nginx.service</pre
-              >
-              <p>
-                なお、参考実装としてGo, Perl, PHP, Ruby, Python,
-                Node.jsによるアプリケーションが用意されています。
-              </p>
-              <h5>DBのリカバリ方法</h5>
-              <p>
-                DB(isucari)を初期状態にもどすには、次のコマンドを実行します。
-              </p>
-              <pre>$ /home/isucon/isucari/webapp/sql/init.sql</pre>
-              <hr />
-              <p>この他に、なにかあったらhijiki51まで教えてください。</p>
+              <h3 class="h-fix">補足事項</h3>
+              <div class="mb-4">
+                <h5>競技環境について</h5>
+                <p>
+                  ISUCON11 予選当日とは異なり, PISCONでは各チームで競技環境の構築を行う必要はありません.
+                  TeamInfo ページより, インスタンスの作成, 及びサーバー情報の確認を行ってください.
+                </p>
+                <p>
+                  競技用インスタンスには <a href="https://aws.amazon.com/jp/ec2/instance-types/t2/">Amazon EC2 T2 インスタンス</a> を使用しています.
+                  そのため, 短時間に多数回ベンチマークを行うと, CPU クレジットの不足により, サーバーのパフォーマンスが低下する場合があります.
+                  急なパフォーマンスの低下が見られた場合, しばらく時間を置いて, 再度ベンチマークを行ってください.
+                  なお, 競技の性質上, 基本的にこの現象が発生することはありません.
+                </p>
+                <p>
+                  参考:
+                  <a href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html">
+                    バーストパフォーマンスインスタンスに関する主要な概念と定義
+                  </a>
+                </p>
+              </div>
+
+              <div class="mb-4">
+                <h5>ブラウザでのアクセスにおける留意点</h5>
+                <p>競技用インスタンスで動作している isucondition にブラウザからアクセスする際の留意点です.</p>
+                <div class="mb-4">
+                  <h6>ログイン</h6>
+                  <p>
+                    「JIAのアカウントでログイン」を押すと <code>http://localhost:5000</code> に遷移するようになっています.
+                    このアクセスは競技用サーバ上で動作する <code>jiaapi-mock.service</code> が受ける想定です.
+                  </p>
+                  <p>
+                    以下のコマンドより <code>localhost:5000</code> が競技用サーバ上の 5000 番ポートにローカルフォワードされるようにした上でブラウザ操作を行ってください.
+                  </p>
+                  <pre><code>ssh isucon@[競技用サーバのグローバルアドレス] -L 5000:localhost:5000</code></pre>
+                </div>
+                <div class="mb-4">
+                  <h6>ISU の登録</h6>
+                  <p>
+                    ブラウザより ISU の登録を行う際にも JIA API Mock が必要です. こちらについては
+                    <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
+                      アプリケーションマニュアル
+                    </a> をご確認ください.
+                  </p>
+                </div>
+              </div>
             </div>
           </va-card-content>
         </va-card>
@@ -199,7 +87,7 @@ $ sudo systemctl restart nginx.service</pre
 </template>
 
 <script lang="ts">
-import store from '../../..//store'
+import store from '../../../store'
 export default {
   setup() {
     const user = store.state.User
@@ -222,22 +110,19 @@ a
   padding: 1rem 1.5rem
 
 pre
-  padding: 1em
-  margin-left: 20px
-  background-color: #f6f8fa
-  white-space: -moz-pre-wrap; /* Mozilla */
-  white-space: -pre-wrap; /* Opera 4-6 */
-  white-space: -o-pre-wrap; /* Opera 7 */
-  white-space: pre-wrap; /* CSS3 */
-  word-wrap: break-word; /* IE 5.5+ */
+  padding: 16px
+  margin-bottom: 1.5em
+  line-height: 1.45
+  border-radius: 6px
+  background: #25292f
+  color: #fff
+  overflow: auto
 
 code
   font-family: monospace
-  font-weight: normal
-  line-height: 150%
-  font-size: 110%
-  text-align: left
-  margin-bottom: 10px
+  line-height: inherit
+  overflow: visible
+  font-size: 95%
 
 .h-fix
   margin-bottom: auto

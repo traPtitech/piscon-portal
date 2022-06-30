@@ -11,23 +11,24 @@ piscon用のポータルサイト
 直下に`.env`を置いてそこに配置
 
 
-| key                 | value                 |
-| ------------------- | --------------------- |
-| `ENV`               | `prod`or `""`         |
-| `ACCESS_ID`         | AWSのアクセスID       |
-| `ACCESS_SECRET_KEY` | AWSのシークレットキー |
-| `MARIADB_USERNAME`  | DBのユーザーネーム    |
-| `MARIADB_PASSWORD`  | DBのパスワード        |
-| `MARIADB_PORT`      | DBのポート番号        |
-| `MARIADB_HOSTNAME`  | DBのホスト名          |
-| `MARIADB_DATABASE`  | DBのデータベース名    |
+| key                | value                |
+|--------------------|----------------------|
+| `ENV`              | `prod`or `""`        |
+| `OAUTH_CLIENT_ID`  | traPのOAuth2クライアントのID |
+| `BENCH_PRIVATE_IP` | ベンチマーカーのPrivate IP   |
+| `MARIADB_USERNAME` | DBのユーザーネーム           |
+| `MARIADB_PASSWORD` | DBのパスワード             |
+| `MARIADB_PORT`     | DBのポート番号             |
+| `MARIADB_HOSTNAME` | DBのホスト名              |
+| `MARIADB_DATABASE` | DBのデータベース名           |
 
 ### AWS
-| key                 | value                 |
-| ------------------- | --------------------- |
-| `AWS_SUBNET_ID`     | VPCのサブネットIP     |
-| `AWS_ACCESS_KEY`    | AWSのアクセスID       |
-| `AWS_ACCESS_SECRET` | AWSのシークレットキー |
+| key                     | value        |
+|-------------------------|--------------|
+| `AWS_SUBNET_ID`         | VPCのサブネットID  |
+| `AWS_SECURITY_GROUP_ID` | セキュリティグループID |
+| `AWS_ACCESS_KEY`        | AWSのアクセスID   |
+| `AWS_ACCESS_SECRET`     | AWSのシークレットキー |
 
 
 ### conoha
@@ -44,5 +45,3 @@ Dockerが入っていることが必要です
 https://github.com/epicmaxco/vuestic-admin
 
 Vuestic admin ベースに構築されています
-
-

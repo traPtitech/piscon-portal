@@ -3,15 +3,16 @@ package router
 import (
 	"errors"
 	"fmt"
-	"log"
-	"math/rand"
-	"net/http"
-	"strconv"
-
 	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
 	"github.com/traPtitech/piscon-portal/oauth"
 	"gorm.io/gorm"
+	"log"
+	"math/rand"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -46,11 +47,13 @@ func genPassword() string {
 }
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
-func formatCommand(ip string) string {
-	return fmt.Sprintf("/home/isucon/isuumo/bench/bench "+
-		"--data-dir \"/home/isucon/isuumo/initial-data\" "+
-		"--fixture-dir \"/home/isucon/isuumo/webapp/fixture\" "+
-		"--target-url \"http://%s\"", ip)
+func formatCommand(ip string, allAddresses []string) string {
+	// TODO: target, all-addressesを環境変数で渡すようにする
+	return fmt.Sprintf("/bench/bench "+
+		"-tls "+
+		"-target=%s "+
+		"-all-addresses=%s "+
+		"-jia-service-url=http://%s:5000", ip, strings.Join(allAddresses, ","), os.Getenv("BENCH_PRIVATE_IP"))
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
@@ -237,7 +240,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 			Message: "起動中です"})
 	}
 
-	privateIP := fmt.Sprintf("10.0.0.%d", teamId*10+instanceNumber)
+	privateIP := fmt.Sprintf("192.168.0.%d", teamId*10+instanceNumber)
 	id, err := h.client.CreateInstance(name, privateIP, pass)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
@@ -357,9 +360,13 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 			Message: "登録されていません"})
 	}
 
-	ip := team.Instance[0].PrivateIPAddress
+	ip := ""
+	var allIP []string
 
 	for _, instance := range team.Instance {
+		if instance.PrivateIPAddress != "" {
+			allIP = append(allIP, instance.PrivateIPAddress)
+		}
 		if uint(instanceNumber) == instance.InstanceNumber {
 			ip = instance.PrivateIPAddress
 		}
@@ -386,7 +393,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 			Message: "既に登録されています"})
 	}
 
-	cmdStr := formatCommand(ip)
+	cmdStr := formatCommand(ip, allIP)
 	t := &model.Task{
 		CmdStr:    cmdStr,
 		IP:        ip,

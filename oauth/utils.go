@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math/big"
+	"os"
 
 	"github.com/dvsekhvalnov/jose2go/base64url"
 )
@@ -31,7 +32,7 @@ func GenerateCode() (*PkceParams, error) {
 	b := sha256.Sum256(bcodeVerifier)
 	pkce.CodeChallenge = base64url.Encode(b[:])
 	pkce.CodeChallengeMethod = "S256"
-	pkce.ClientID = clientID
+	pkce.ClientID = os.Getenv("OAUTH_CLIENT_ID")
 	return &pkce, nil
 }
 

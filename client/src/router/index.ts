@@ -37,14 +37,25 @@ const routes: Array<RouteRecordRaw> = [
         path: 'readme',
         component: () => import('@/pages/admin/readme/Readme.vue')
       },
+      {
+        name: 'manual',
+        path: 'manual',
+        component: () => import('@/pages/admin/manual/Manual.vue')
+      },
       UIRoute
     ],
     beforeEnter: async (to, from, next) => {
       try {
+        await store.dispatch.fetchData()
+
+        // TODO: ログインしていないときも実行され, 401が返る
         if (!store.state.User) {
           await store.dispatch.fetchMe()
         }
-        await store.dispatch.getData()
+        // TODO: チームに所属していないときも実行され, 404が返る
+        // チームに所属するまで, DBにuser, teamの情報が存在しない
+        await store.dispatch.fetchUser()
+        await store.dispatch.fetchTeam()
       } catch (e) {
         console.error(e)
       } finally {
@@ -61,7 +72,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/auth/Callback.vue'),
     beforeEnter: async (to, from, next) => {
       try {
-        await store.dispatch.getData()
+        await store.dispatch.fetchData()
         if (!store.state.User) {
           await redirectAuthorizationEndpoint()
         }

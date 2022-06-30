@@ -1,9 +1,9 @@
 <template>
   <div>
     <va-card-title
-      ><h4 class="h-fix">サーバー情報</h4>
+    ><h4 class="h-fix">サーバー情報</h4>
       <va-button :rounded="false" class="ml-2 mt-3" @click="fetchInstanceInfo"
-        >更新</va-button
+      >更新</va-button
       ></va-card-title
     >
     <va-card-content>
