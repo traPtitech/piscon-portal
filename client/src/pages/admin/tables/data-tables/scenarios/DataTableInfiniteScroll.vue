@@ -13,9 +13,8 @@
       </va-data-table>
 
       <div class="flex-center ma-3">
-        <spring-spinner
+        <pulse-loader
           v-if="loading"
-          :animation-duration="2000"
           :size="60"
           :color="theme.primary"
         />
@@ -25,13 +24,13 @@
 </template>
 
 <script>
-import { SpringSpinner } from 'epic-spinners'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 import users from '../data/users.json'
 import { useGlobalConfig } from 'vuestic-ui'
 
 export default {
   components: {
-    SpringSpinner,
+    PulseLoader,
   },
   data () {
     return {

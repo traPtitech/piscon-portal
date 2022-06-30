@@ -1,5 +1,5 @@
 # ビルド環境
-FROM node:14-alpine as build
+FROM node:18-alpine as build
 WORKDIR /app
 # https://github.com/docker/getting-started/issues/124
 RUN apk --no-cache add \

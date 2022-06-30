@@ -25,7 +25,7 @@ app.use(store.original)
 app.use(router)
 if (process.env.VUE_APP_GTM_ENABLED === 'true') {
   const gtmConfig = {
-    id: process.env.VUE_APP_GTM_KEY,
+    id: process.env.VUE_APP_GTM_KEY ?? '',
     debug: false,
     vueRouter: router
   }

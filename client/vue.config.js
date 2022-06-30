@@ -52,19 +52,24 @@ module.exports = {
       }
     }
   },
-  pwa: {
-    workboxPluginMode: 'InjectManifest',
-    workboxOptions: {
-      swSrc: './src/service-worker.js',
-      importWorkboxFrom: 'local'
-    },
-    iconPaths: {
-      faviconSVG: null,
-      favicon32: null,
-      favicon16: null,
-      appleTouchIcon: null,
-      maskIcon: null,
-      msTileImage: null
-    }
-  }
+  // pwa: {
+  //   workboxPluginMode: 'InjectManifest',
+  //   workboxOptions: {
+  //     swSrc: './src/service-worker.js',
+  //     swDest: 'sw.js',
+  //     exclude: [
+  //       /\.map$/, /manifest$/,
+  //       /\.htaccess$/, /service-worker\.js$/,
+  //       /sw\.js$/,
+  //     ],
+  //   },
+  //   iconPaths: {
+  //     faviconSVG: null,
+  //     favicon32: null,
+  //     favicon16: null,
+  //     appleTouchIcon: null,
+  //     maskIcon: null,
+  //     msTileImage: null
+  //   }
+  // }
 }
