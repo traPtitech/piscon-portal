@@ -12,7 +12,9 @@ WORKDIR /app
 EXPOSE 4000
 RUN apt update \
 && apt install -y tzdata \
-&& rm -rf /var/lib/apt/lists/*
+&& apt install -y ca-certificates \
+&& rm -rf /var/lib/apt/lists/* \
+&& update-ca-certificates
 COPY --from=build /go/src/github.com/traPtitech/piscon-portal/piscon_portal \
 									/go/src/github.com/traPtitech/piscon-portal/.env  ./
 ENTRYPOINT ["/app/piscon_portal"]
