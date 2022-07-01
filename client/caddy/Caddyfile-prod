@@ -1,5 +1,6 @@
 {
-  acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+  # テスト環境用の設定
+  # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
 (default) {
