@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bufio"
 	"encoding/binary"
 	"errors"
 	isuxportalResources "github.com/isucon/isucon10-portal/proto.go/isuxportal/resources"
@@ -64,10 +65,16 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	}
 	// readをブロックしないように, 不要なファイルは閉じる
 	pipeWrite.Close()
-	outputText, err := ioutil.ReadAll(r)
-	if err != nil {
+
+	var messages []model.OutputMessage
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		messages = append(messages, model.OutputMessage{Text: scanner.Text()})
+	}
+	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
+
 	if err := cmd.Wait(); err != nil {
 		return nil, err
 	}
@@ -82,10 +89,6 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 		return nil, err
 	}
 
-	messages := []model.OutputMessage{{
-		Text:  string(outputText),
-		Count: 0,
-	}}
 	output := &model.Output{
 		Pass:     result.Passed,
 		Score:    result.Score,
