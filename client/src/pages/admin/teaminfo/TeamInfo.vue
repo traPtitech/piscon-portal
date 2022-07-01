@@ -48,9 +48,11 @@
             </va-card>
             <va-card class="flex md12 item mb-3">
               <va-card-title>最新の結果</va-card-title>
-              <va-card-content
-              ><h6>{{ lastResult }}</h6></va-card-content
-              >
+              <va-card-content>
+                <div v-for="(message, index) in lastResultMessages" :key="index">
+                  {{ message }}
+                </div>
+              </va-card-content>
             </va-card>
             <va-card class="flex md12 item mb-3">
               <va-card-title>これまでの結果</va-card-title>
@@ -138,7 +140,6 @@
 </template>
 <script lang="ts">
 //TODO: ファイル分割する
-/* eslint-disable @typescript-eslint/camelcase */
 import apis, { PostTeamRequest, Result, User, Message } from '../../../lib/apis'
 import store from '../../../store'
 import { computed, ref, watchEffect } from 'vue'
@@ -163,7 +164,7 @@ export default {
       better: '',
       message: ''
     })
-    const lastResult = computed(() => store.getters.lastResult)
+    const lastResultMessages = computed(() => store.getters.lastResultMessages)
     const teamResults = computed(() =>
       store.state.Team && store.state.Team.results
         ? store.state.Team.results.sort((a, b) => {
@@ -254,7 +255,7 @@ export default {
       error,
       team,
       user,
-      lastResult,
+      lastResultMessages,
       teamName,
       sortedInstance,
       teamResults,

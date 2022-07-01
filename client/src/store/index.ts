@@ -65,6 +65,16 @@ const { store, rootActionContext } = createDirectStore({
         ? JSON.stringify(state.Team.results[0], null, '  ')
         : 'まだベンチマークは行われていません'
     },
+    lastResultMessages(state) {
+      if (!state.Team) {
+        return
+      }
+      const results = state.Team.results
+      if (!results) {
+        return ['まだベンチマークは行われていません']
+      }
+      return results[0].messages.map(m => m.text)
+    },
     maxScore(state) {
       if (!state.Team) {
         return
