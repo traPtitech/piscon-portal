@@ -7,6 +7,7 @@ import (
 	"github.com/mattn/go-shellwords"
 	"github.com/traPtitech/piscon-portal/model"
 	"google.golang.org/protobuf/proto"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -51,14 +52,22 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	cmd.ExtraFiles = []*os.File{pipeWrite}
 	// 子プロセスの3番のfdの先がパイプの書き口になる
 	cmd.Env = append(os.Environ(), "ISUXBENCH_REPORT_FD=3")
-	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmdOut, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+	r := io.TeeReader(cmdOut, os.Stdout)
 
 	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
 	// readをブロックしないように, 不要なファイルは閉じる
 	pipeWrite.Close()
+	outputText, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
 	if err := cmd.Wait(); err != nil {
 		return nil, err
 	}
@@ -73,7 +82,10 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 		return nil, err
 	}
 
-	var messages []model.OutputMessage // TODO: OutputMessageを入れる
+	messages := []model.OutputMessage{{
+		Text:  string(outputText),
+		Count: 0,
+	}}
 	output := &model.Output{
 		Pass:     result.Passed,
 		Score:    result.Score,
