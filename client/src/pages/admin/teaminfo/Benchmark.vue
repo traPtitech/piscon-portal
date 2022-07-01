@@ -16,7 +16,7 @@
         :rounded="false"
         class="mr-4 item"
         @click="benchmark(i)"
-        :disabled="benchmarkButton(i) || betterize === ''"
+        :disabled="benchmarkButton(i)"
       >
         サーバ{{ i }}にベンチマークを行う
       </va-button>
