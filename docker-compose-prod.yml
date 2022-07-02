@@ -15,6 +15,11 @@ services:
       - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
+    sysctls:
+      # Tune up network
+      net.core.somaxconn: 65535
+      net.ipv4.tcp_tw_reuse: 1
+      net.ipv4.tcp_fin_timeout: 10
   frontend:
     build:
       context: ./client
