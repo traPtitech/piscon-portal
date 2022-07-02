@@ -668,48 +668,6 @@ export class AuthApi extends BaseAPI {
 export const BenchApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
-         * @summary Queue benchmark task
-         * @param {string} name 
-         * @param {number} instanceNumber current instance number
-         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        benchmarkNameInstanceNumberPost: async (name: string, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'name' is not null or undefined
-            assertParamExists('benchmarkNameInstanceNumberPost', 'name', name)
-            // verify required parameter 'instanceNumber' is not null or undefined
-            assertParamExists('benchmarkNameInstanceNumberPost', 'instanceNumber', instanceNumber)
-            const localVarPath = `/benchmark/{name}/{instance_number}`
-                .replace(`{${"name"}}`, encodeURIComponent(String(name)))
-                .replace(`{${"instance_number"}}`, encodeURIComponent(String(instanceNumber)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(postBenchmarkRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * Returns an array of task model
          * @summary Get bench queue data
          * @param {*} [options] Override http request option.
@@ -739,6 +697,48 @@ export const BenchApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Queue benchmark task
+         * @param {number} teamId 
+         * @param {number} instanceNumber current instance number
+         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        benchmarkTeamIdInstanceNumberPost: async (teamId: number, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'teamId' is not null or undefined
+            assertParamExists('benchmarkTeamIdInstanceNumberPost', 'teamId', teamId)
+            // verify required parameter 'instanceNumber' is not null or undefined
+            assertParamExists('benchmarkTeamIdInstanceNumberPost', 'instanceNumber', instanceNumber)
+            const localVarPath = `/benchmark/{team_id}/{instance_number}`
+                .replace(`{${"team_id"}}`, encodeURIComponent(String(teamId)))
+                .replace(`{${"instance_number"}}`, encodeURIComponent(String(instanceNumber)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postBenchmarkRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -750,19 +750,6 @@ export const BenchApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = BenchApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
-         * @summary Queue benchmark task
-         * @param {string} name 
-         * @param {number} instanceNumber current instance number
-         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async benchmarkNameInstanceNumberPost(name: string, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.benchmarkNameInstanceNumberPost(name, instanceNumber, postBenchmarkRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * Returns an array of task model
          * @summary Get bench queue data
          * @param {*} [options] Override http request option.
@@ -770,6 +757,19 @@ export const BenchApiFp = function(configuration?: Configuration) {
          */
         async benchmarkQueueGet(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Task>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.benchmarkQueueGet(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Queue benchmark task
+         * @param {number} teamId 
+         * @param {number} instanceNumber current instance number
+         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async benchmarkTeamIdInstanceNumberPost(teamId: number, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.benchmarkTeamIdInstanceNumberPost(teamId, instanceNumber, postBenchmarkRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -783,18 +783,6 @@ export const BenchApiFactory = function (configuration?: Configuration, basePath
     const localVarFp = BenchApiFp(configuration)
     return {
         /**
-         * 
-         * @summary Queue benchmark task
-         * @param {string} name 
-         * @param {number} instanceNumber current instance number
-         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        benchmarkNameInstanceNumberPost(name: string, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any): AxiosPromise<Response> {
-            return localVarFp.benchmarkNameInstanceNumberPost(name, instanceNumber, postBenchmarkRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
          * Returns an array of task model
          * @summary Get bench queue data
          * @param {*} [options] Override http request option.
@@ -802,6 +790,18 @@ export const BenchApiFactory = function (configuration?: Configuration, basePath
          */
         benchmarkQueueGet(options?: any): AxiosPromise<Array<Task>> {
             return localVarFp.benchmarkQueueGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Queue benchmark task
+         * @param {number} teamId 
+         * @param {number} instanceNumber current instance number
+         * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        benchmarkTeamIdInstanceNumberPost(teamId: number, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any): AxiosPromise<Response> {
+            return localVarFp.benchmarkTeamIdInstanceNumberPost(teamId, instanceNumber, postBenchmarkRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -814,20 +814,6 @@ export const BenchApiFactory = function (configuration?: Configuration, basePath
  */
 export class BenchApi extends BaseAPI {
     /**
-     * 
-     * @summary Queue benchmark task
-     * @param {string} name 
-     * @param {number} instanceNumber current instance number
-     * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BenchApi
-     */
-    public benchmarkNameInstanceNumberPost(name: string, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any) {
-        return BenchApiFp(this.configuration).benchmarkNameInstanceNumberPost(name, instanceNumber, postBenchmarkRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * Returns an array of task model
      * @summary Get bench queue data
      * @param {*} [options] Override http request option.
@@ -836,6 +822,20 @@ export class BenchApi extends BaseAPI {
      */
     public benchmarkQueueGet(options?: any) {
         return BenchApiFp(this.configuration).benchmarkQueueGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Queue benchmark task
+     * @param {number} teamId 
+     * @param {number} instanceNumber current instance number
+     * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BenchApi
+     */
+    public benchmarkTeamIdInstanceNumberPost(teamId: number, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any) {
+        return BenchApiFp(this.configuration).benchmarkTeamIdInstanceNumberPost(teamId, instanceNumber, postBenchmarkRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2104,7 +2104,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
     return {
         /**
          * 
-         * @summary Get team description
+         * @summary Get user description
          * @param {string} name 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2182,7 +2182,7 @@ export const UserApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get team description
+         * @summary Get user description
          * @param {string} name 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2214,7 +2214,7 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
     return {
         /**
          * 
-         * @summary Get team description
+         * @summary Get user description
          * @param {string} name 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2244,7 +2244,7 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
 export class UserApi extends BaseAPI {
     /**
      * 
-     * @summary Get team description
+     * @summary Get user description
      * @param {string} name 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2302,20 +2302,6 @@ export class Apis extends BaseAPI {
     }
 
     /**
-     *
-     * @summary Queue benchmark task
-     * @param {string} name
-     * @param {number} instanceNumber current instance number
-     * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BenchApi
-     */
-    public benchmarkNameInstanceNumberPost(name: string, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any) {
-        return BenchApiFp(this.configuration).benchmarkNameInstanceNumberPost(name, instanceNumber, postBenchmarkRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * Returns an array of task model
      * @summary Get bench queue data
      * @param {*} [options] Override http request option.
@@ -2324,6 +2310,20 @@ export class Apis extends BaseAPI {
      */
     public benchmarkQueueGet(options?: any) {
         return DefaultApiFp(this.configuration).benchmarkQueueGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *
+     * @summary Queue benchmark task
+     * @param {number} teamId
+     * @param {number} instanceNumber current instance number
+     * @param {PostBenchmarkRequest} [postBenchmarkRequest] betterize (Sorry, but I dont understand)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BenchApi
+     */
+    public benchmarkTeamIdInstanceNumberPost(teamId: number, instanceNumber: number, postBenchmarkRequest?: PostBenchmarkRequest, options?: any) {
+        return BenchApiFp(this.configuration).benchmarkTeamIdInstanceNumberPost(teamId, instanceNumber, postBenchmarkRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2494,7 +2494,7 @@ export class Apis extends BaseAPI {
 
     /**
      *
-     * @summary Get team description
+     * @summary Get user description
      * @param {string} name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

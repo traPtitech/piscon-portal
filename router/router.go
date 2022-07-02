@@ -27,7 +27,7 @@ func (h *Handlers) SetUp(e *echo.Echo) {
 	apiWithAuth.PUT("/team/:id/instances", h.GetInstanceInfo)
 	//TODO queryにする
 	apiWithAuth.GET("/user/:name", h.GetUser)
-	apiWithAuth.POST("/benchmark/:name/:instance_number", h.QueBenchmark)
+	apiWithAuth.POST("/benchmark/:team_id/:instance_number", h.QueBenchmark)
 	apiWithAuth.GET("/admin/team", h.GetAllTeam)
 
 	apiWithAuth.POST("/questions", h.PostQuestions)
