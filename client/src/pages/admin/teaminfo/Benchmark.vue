@@ -7,7 +7,7 @@
           class="mb-4"
           v-model="betterize"
           type="textarea"
-          placeholder="改善点を入力してください(記入しないとベンチマークを行えません)"
+          placeholder="改善点を入力してください"
         />
       </div>
     </div>
