@@ -3,16 +3,17 @@ package router
 import (
 	"errors"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/traPtitech/piscon-portal/model"
-	"github.com/traPtitech/piscon-portal/oauth"
-	"gorm.io/gorm"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/labstack/echo/v4"
+	"github.com/traPtitech/piscon-portal/model"
+	"github.com/traPtitech/piscon-portal/oauth"
+	"gorm.io/gorm"
 )
 
 const (
@@ -335,7 +336,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 			Success: false,
 			Message: err.Error()})
 	}
-	name := c.Param("name")
+	team_id := c.Param("team_id")
 
 	req := struct {
 		Betterize string `json:"betterize"`
@@ -349,7 +350,7 @@ func (h *Handlers) QueBenchmark(c echo.Context) error {
 	}
 
 	team := &model.Team{}
-	if err = h.db.Where("name = ?", name).Preload("Instance").Find(team).Error; err != nil {
+	if err = h.db.Where("id = ?", team_id).Preload("Instance").Find(team).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
 			Message: err.Error()})

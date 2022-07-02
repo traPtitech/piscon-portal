@@ -93,7 +93,7 @@ export default defineComponent({
         betterize: betterize.value
       }
       apis
-        .benchmarkNameInstanceNumberPost(store.state.Team?.name, id, req)
+        .benchmarkTeamIdInstanceNumberPost(store.state.Team?.ID, id, req)
         .then(() => {
           betterize.value = ''
           store.dispatch.fetchData()
