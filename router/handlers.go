@@ -242,7 +242,13 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	}
 
 	n := teamId*10 + instanceNumber
-	privateIP := fmt.Sprintf("192.168.%d.%d", n/255, n%255)
+	var privateIP string
+	// TODO: サブネットの設定ミスでIPアドレスが足りないので応急処置. 競技後revert.
+	if n <= 255 {
+		privateIP = fmt.Sprintf("192.168.0.%d", n)
+	} else {
+		privateIP = fmt.Sprintf("192.168.0.%d", n%250+3)
+	}
 	id, err := h.client.CreateInstance(name, privateIP, pass)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
