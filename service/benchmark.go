@@ -24,6 +24,8 @@ func RunBenchmark(task *model.Task) *model.Result {
 		log.Println(err)
 		return resultFromError(task, err)
 	}
+	
+	log.Println(args)
 
 	output, err := runBenchmarkCommand(args)
 	if err != nil {
