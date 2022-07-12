@@ -110,7 +110,7 @@ func lastBenchmarkResultFromBinary(wires []byte) (*isuxportalResources.Benchmark
 		// 各データの先頭2byteはデータのサイズ
 		size = int(binary.BigEndian.Uint16(wires[head : head+2]))
 		next := head + 2 + size
-		if next+2 >= len(wires) {
+		if next == len(wires) {
 			break
 		}
 		head = next
