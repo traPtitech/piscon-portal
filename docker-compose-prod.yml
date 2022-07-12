@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /home/isucon/isuumo/bench:/bench  # ベンチマーカーを置くディレクトリ
+      - /home/isucon/isuumo:/isuumo  # ベンチマーカーを置くディレクトリ
       - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
