@@ -4,15 +4,16 @@ import (
 	"bufio"
 	"encoding/binary"
 	"errors"
-	isuxportalResources "github.com/isucon/isucon10-portal/proto.go/isuxportal/resources"
-	"github.com/mattn/go-shellwords"
-	"github.com/traPtitech/piscon-portal/model"
-	"google.golang.org/protobuf/proto"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+
+	isuxportalResources "github.com/isucon/isucon10-portal/proto.go/isuxportal/resources"
+	"github.com/mattn/go-shellwords"
+	"github.com/traPtitech/piscon-portal/model"
+	"google.golang.org/protobuf/proto"
 )
 
 func RunBenchmark(task *model.Task) *model.Result {
@@ -24,7 +25,7 @@ func RunBenchmark(task *model.Task) *model.Result {
 		log.Println(err)
 		return resultFromError(task, err)
 	}
-	
+
 	log.Println(args)
 
 	output, err := runBenchmarkCommand(args)
@@ -109,7 +110,7 @@ func lastBenchmarkResultFromBinary(wires []byte) (*isuxportalResources.Benchmark
 		// 各データの先頭2byteはデータのサイズ
 		size = int(binary.BigEndian.Uint16(wires[head : head+2]))
 		next := head + 2 + size
-		if next == len(wires) {
+		if next+2 >= len(wires) {
 			break
 		}
 		head = next
