@@ -6,9 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
@@ -51,10 +49,7 @@ func genPassword() string {
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
 	return fmt.Sprintf("/bench/bench "+
-		"-tls "+
-		"-target=%s "+
-		"-all-addresses=%s "+
-		"-jia-service-url=http://%s:5000", ip, strings.Join(allAddresses, ","), os.Getenv("BENCH_PRIVATE_IP"))
+		"--target-url=%s ", ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
