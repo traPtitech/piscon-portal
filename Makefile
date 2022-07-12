@@ -1,27 +1,27 @@
 # development
 .PHONY: up
 up:
-	docker compose -p piscon-portal-dev -f docker-compose-dev.yml up -d
+	docker-compose -p piscon-portal-dev -f docker-compose-dev.yml up -d
 .PHONY: build-up
 build-up:
-	docker compose -p piscon-portal-dev -f docker-compose-dev.yml up -d --build
+	docker-compose -p piscon-portal-dev -f docker-compose-dev.yml up -d --build
 .PHONY: build-front
 build-front:
-	docker compose -p piscon-portal-dev -f docker-compose-dev.yml up -d --build frontend
+	docker-compose -p piscon-portal-dev -f docker-compose-dev.yml up -d --build frontend
 .PHONY: build-back
 build-back:
-	docker compose -p piscon-portal-dev -f docker-compose-dev.yml up -d --build backend
+	docker-compose -p piscon-portal-dev -f docker-compose-dev.yml up -d --build backend
 .PHONY: down
 down:
-	docker compose -p piscon-portal-dev -f docker-compose-dev.yml down
+	docker-compose -p piscon-portal-dev -f docker-compose-dev.yml down
 .PHONY: down-v
 down-v:
-	docker compose -p piscon-portal-dev -f docker-compose-dev.yml down -v
+	docker-compose -p piscon-portal-dev -f docker-compose-dev.yml down -v
 
 # production
 .PHONY: deploy
 deploy:
-	docker compose -f docker-compose-prod.yml up -d --build
+	docker-compose -f docker-compose-prod.yml up -d --build
 
 .PHONY: enter-backend
 enter-backend:
