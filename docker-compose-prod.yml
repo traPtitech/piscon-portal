@@ -6,12 +6,11 @@ services:
     container_name: piscon-portal-backend
     ports:
       - "4000:4000"
-      - "5000:5000" # ISUCON11で使用するJIA APIのポート
     restart: always
     depends_on:
       - db
     volumes:
-      - /home/isucon/bench:/bench  # ベンチマーカーを置くディレクトリ
+      - /home/isucon/isuumo/bench:/bench  # ベンチマーカーを置くディレクトリ
       - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
