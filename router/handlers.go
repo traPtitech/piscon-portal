@@ -49,7 +49,9 @@ func genPassword() string {
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
 	return fmt.Sprintf("/isuumo/bench/bench "+
-		"--target-url=http://%s ", ip)
+		"--target-url=http://%s "+
+		"--data-dir=/isuumo/initial-data "+
+		"--fixture-dir /isuumo/webapp/fixture", ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
