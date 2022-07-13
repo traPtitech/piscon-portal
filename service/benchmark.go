@@ -3,11 +3,9 @@ package service
 import (
 	"bufio"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
-	"io"
-	"io/ioutil"
 	"log"
-	"os"
 	"os/exec"
 
 	isuxportalResources "github.com/isucon/isucon10-portal/proto.go/isuxportal/resources"
@@ -15,6 +13,13 @@ import (
 	"github.com/traPtitech/piscon-portal/model"
 	"google.golang.org/protobuf/proto"
 )
+
+type Result struct {
+	Pass     bool   `json:"pass"`
+	Score    int64  `json:"score"`
+	Reason   string `json:"reason"`
+	Language string `json:"language"`
+}
 
 func RunBenchmark(task *model.Task) *model.Result {
 	log.Println("run benchmark")
@@ -45,34 +50,37 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	// }
 
 	// パイプを使ってベンチマーカーのプロセスから結果を取得する
-	pipeRead, pipeWrite, err := os.Pipe()
-	if err != nil {
-		return nil, err
-	}
-	defer pipeRead.Close()
-	defer pipeWrite.Close()
+	// pipeRead, pipeWrite, err := os.Pipe()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer pipeRead.Close()
+	// defer pipeWrite.Close()
 
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.ExtraFiles = []*os.File{pipeWrite}
+	// cmd.ExtraFiles = []*os.File{pipeWrite}
 	// 子プロセスの3番のfdの先がパイプの書き口になる
-	cmd.Env = append(os.Environ(), "ISUXBENCH_REPORT_FD=3")
-	cmd.Stderr = os.Stderr
+	// cmd.Env = append(os.Environ(), "ISUXBENCH_REPORT_FD=3")
+	// cmd.Stderr = os.Stderr
+
 	cmdOut, err := cmd.StdoutPipe()
 	if err != nil {
 		return nil, err
 	}
-	r := io.TeeReader(cmdOut, os.Stdout)
+	// r := io.TeeReader(cmdOut, os.Stdout)
 
 	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
 	// readをブロックしないように, 不要なファイルは閉じる
-	pipeWrite.Close()
+	// pipeWrite.Close()
 
 	var messages []model.OutputMessage
-	scanner := bufio.NewScanner(r)
+	scanner := bufio.NewScanner(cmdOut)
 	for scanner.Scan() {
-		messages = append(messages, model.OutputMessage{Text: scanner.Text()})
+		text := scanner.Text()
+		log.Println(text)
+		messages = append(messages, model.OutputMessage{Text: text})
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, err
@@ -83,20 +91,25 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	}
 
 	// wire-formatのデータが連続するバイト列
-	wires, err := ioutil.ReadAll(pipeRead)
-	if err != nil {
-		return nil, err
-	}
-	result, err := lastBenchmarkResultFromBinary(wires)
-	if err != nil {
-		return nil, err
-	}
+	// wires, err := ioutil.ReadAll(pipeRead)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// result, err := lastBenchmarkResultFromBinary(wires)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	result := &Result{}
+
+	json.Unmarshal([]byte(messages[len(messages)-1].Text), result)
 
 	output := &model.Output{
-		Pass:     result.Passed,
+		Pass:     result.Pass,
 		Score:    result.Score,
-		Reason:   result.Execution.Reason,
-		Language: result.SurveyResponse.Language,
+		Reason:   result.Reason,
+		Language: result.Language,
 		Messages: messages,
 	}
 	return output, nil
