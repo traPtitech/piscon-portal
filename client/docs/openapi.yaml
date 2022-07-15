@@ -1,0 +1,683 @@
+openapi: 3.0.0
+info:
+  title: Piscon-portal API
+  description: this is a api docment of piscon-portal.
+  version: 2.0.0
+
+servers:
+  - url: https://piscon.trap.jp/api
+    description: production(予定)
+paths:
+  /results:
+    get:
+      tags:
+        - default
+      summary: Get all result data.
+      description: Returns an array of team model
+      responses:
+        '200':
+          description: A JSON array of team model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+  /newer:
+    get:
+      tags:
+        - default
+      summary: Get top team data.
+      description: Returns an array of team model
+      responses:
+        '200':
+          description: A JSON array of team model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+  /questions:
+    get:
+      tags:
+        - default
+        - questions
+      summary: Get question data.
+      description: Returns an array of question model
+      responses:
+        '200':
+          description: A JSON array of question model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Questions'
+    post:
+      tags:
+        - questions
+      summary: Post new question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Questions'
+      responses:
+        '201':
+          description: No content
+  /benchmark/queue:
+    get:
+      tags:
+        - default
+        - bench
+      summary: Get bench queue data
+      description: Returns an array of task model
+      responses:
+        '200':
+          description: A JSON array of task model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+  /team:
+    post:
+      tags:
+        - team
+      summary: Create team
+      description: Returns an new Team model
+      requestBody:
+        description: Team to create
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/PostTeamRequest'
+      responses:
+        '201':
+          description: A JSON model of team(some param will be empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Team'
+        '400':
+          description: リクエストボディの要素が足りません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '409':
+          description: 登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create User
+      description: Create new user
+      requestBody:
+        description: User to create
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: A JSON model of user(some param will be empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+        '409':
+          description: 登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /instance/{team_id}/{instance_number}:
+    post:
+      tags:
+        - instance
+      summary: Start new instance
+      description: Start new instance but its numbers are restricted by admin
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          schema:
+            type: integer
+        - name: instance_number
+          in: path
+          description: current instance number
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: A JSON model of Instance(some param will be empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Instance'
+        '400':
+          description: error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '409':
+          description: 登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+    delete:
+      tags:
+        - instance
+      summary: Delete instance
+      description: Delete instance
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          schema:
+            type: integer
+        - name: instance_number
+          in: path
+          description: current instance number
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: No content
+        '400':
+          description: error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '404':
+          description: 指定したインスタンスが見つかりません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /team/{id}:
+    get:
+      tags:
+        - team
+      summary: Get team description
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON model of Team
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Team'
+        '404':
+          description: 登録されていません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /user/{name}:
+    get:
+      tags:
+        - user
+      summary: Get user description
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON model of User
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+        '404':
+          description: 登録されていません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /benchmark/{team_id}/{instance_number}:
+    post:
+      tags:
+        - bench
+      summary: Queue benchmark task
+      parameters:
+      - name: team_id
+        in: path
+        required: true
+        schema:
+          type: number
+      - name: instance_number
+        in: path
+        description: current instance number
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: betterize (Sorry, but I dont understand)
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/PostBenchmarkRequest'
+      responses:
+        '201':
+          description: キューに追加しました
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: インスタンスが存在しません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '409':
+          description: 既に登録されています
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '404':
+          description: 登録されていません
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /admin/team:
+    get:
+      tags:
+        - admin
+        - team
+      summary: Get All team description
+      responses:
+        '200':
+          description: A JSON array of Team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+  /questions/{id}:
+    put:
+      tags:
+        - questions
+      summary: Answer question
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: answer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Questions'
+      responses:
+        '200':
+          description: A JSON model of Question
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Questions'
+    delete:
+      tags:
+        - questions
+      summary: Answer question
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON model of Question
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Questions'
+  /auth/code:
+    post:
+      tags:
+        - auth
+      summary: Generate codeVerifier
+      responses:
+        '200':
+          description: A JSON model of PkceParams
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/PkceParams'
+  /auth/callback:
+    get:
+      tags:
+        - auth
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The authorize is finish successfully
+  /me:
+    get:
+      summary: get user data from traq
+      responses:
+        '200':
+          description: A JSON model of User
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+  /me/group:
+    get:
+      summary: get group data from traq
+      responses:
+        '200':
+          description: A string of group
+          content:
+            application/json:
+              schema:
+                type: string
+  /team/{id}/member:
+    get:
+      tags:
+      - team
+      summary: get team member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON array of User
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /team/{id}/instances:
+    put:
+      tags:
+      - team
+      summary:
+        チームのインスタンス情報を更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON Array of Instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instance'
+components:
+  schemas:
+    Instance:
+      type: object
+      required:
+        - team_id
+        - instance_number
+        - status
+        - name
+      properties:
+        id:
+          type: integer
+          format: uint
+        team_id:
+          type: integer
+          format: uint
+        grobal_ip_address:
+          type: string
+        private_ip_address:
+          type: string
+        password:
+          type: string
+        instance_number:
+          type: integer
+          format: uint
+        instance_id:
+          type: string
+        status:
+          type: string
+        name:
+          type: string
+    Message:
+      type: object
+      required:
+        - result_id
+      properties:
+        id:
+          type: integer
+          format: uint
+        result_id:
+          type: integer
+          format: uint
+        text:
+          type: string
+    Questions:
+      type: object
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+    Response:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    Result:
+      type: object
+      required:
+        - id
+        - team_id
+        - pass
+        - messages
+        - score
+        - created_at
+      properties:
+        id:
+          type: integer
+        team_id:
+          type: integer
+          format: uint
+        task_id:
+          type: integer
+          format: uint
+        pass:
+          type: boolean
+        score:
+          type: integer
+          format: int64
+        capmpaign:
+          type: integer
+          format: int64
+        betterize:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        created_at:
+          type: string
+          format: date
+    Task:
+      type: object
+      required:
+        - state
+        - team_id
+        - team
+      properties:
+        id:
+          type: integer
+          format: uint
+        cmd_str:
+          type: string
+        ip:
+          type: string
+        state:
+          type: string
+        betterize:
+          type: string
+        team_id:
+          type: integer
+          format: uint
+        team:
+          type: object
+          $ref: '#/components/schemas/Team'
+    Team:
+      type: object
+      required:
+        - name
+        - instance
+        - max_instance_number
+        - group
+        - results
+        - ID
+      properties:
+        ID:
+          type: integer
+          format: uint
+        name:
+          type: string
+          description: team name
+        instance:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instance'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        max_instance_number:
+          type: integer
+        group:
+          type: string
+    User:
+      type: object
+      required:
+        - name
+        - screen_name
+        - team_id
+      properties:
+        id:
+          type: integer
+          format: uint
+        name:
+          type: string
+        screen_name:
+          type: string
+        team_id:
+          type: integer
+          format: uint
+    PostTeamRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        group:
+          type: string
+    PostBenchmarkRequest:
+      type: object
+      required:
+        - name
+      properties:
+        betterize:
+          type: string
+    PkceParams:
+      type: object
+      required:
+        - code_challenge
+        - code_challenge_method
+        - code_verifier
+        - client_id
+        - response_type
+      properties:
+        code_challenge:
+          type: string
+        code_challenge_method:
+          type: string
+        code_verifier:
+          type: string
+        client_id:
+          type: string
+        response_type:
+          type: string

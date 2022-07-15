@@ -1,15 +1,13 @@
 {
   "auth": {
     "agree": "Acepto",
-    "alreadyJoined": "Ya tienes una cuenta?",
     "createAccount": "Create cuenta",
     "createNewAccount": "Crear cuenta",
     "email": "Email",
     "login": "Iniciar sesión",
     "password": "Contraseña",
     "signUp": "Registrar",
-    "termsOfUse": "Los terminos de uso",
-    "welcome": "Bienvenido!"
+    "termsOfUse": "Los terminos de uso"
   },
   "buttons": {
     "advanced": "Iconos, Grupos, Dropdowns",
@@ -31,12 +29,23 @@
     "pieChart": "Pie Chart",
     "verticalBarChart": "Vertical Bar Chart"
   },
+  "collapse": {
+    "accordion": "Acordeón",
+    "buttons": "Botones"
+  },
   "dashboard": {
     "elements": "Elementos",
     "success": "ÉXITO",
     "successMessage": "Ha leído correctamente este mensaje de alerta importante.",
     "teamMembers": "Miembros del Equipo",
-    "versions": "Versiones"
+    "versions": "Versiones",
+    "table": {
+      "title": "Mesa impresionante",
+      "brief": "Breve",
+      "detailed": "Detallado",
+      "resolve": "Resolver",
+      "resolved": "Resuelto"
+    }
   },
   "notificationsPage": {
     "alerts": {
@@ -70,20 +79,8 @@
       "launchToast": "Lanzar tostadas"
     }
   },
-  "extra": {
-    "tabs": {
-      "title": "Tabs",
-      "maps": "Mapas",
-      "overview": "Visión de conjunto",
-      "setupProfile": "Perfil de Configuración"
-    },
-    "chat": "Chat",
-    "profileCard": "Tarjeta de Perfil"
-  },
   "forms": {
     "controls": {
-      "female": "Mujer",
-      "male": "Hombre",
       "title": "Checkboxes, Radios, Switches",
       "radioDisabled": "Radio Desactivado",
       "radio": "Radio",
@@ -111,18 +108,6 @@
       "multi": "Multi Select",
       "simple": "Select Simple",
       "title": "Selects"
-    },
-    "wizard": {
-      "completed": "Asistente Completado!",
-      "confirmSelection": "Confirmar selección",
-      "name": "Nombre",
-      "rich": "Asistente Rico",
-      "simple": "Asistente Simple",
-      "stepOne": "Step 1. Nombre",
-      "stepTwo": "Step 2. País",
-      "stepThree": "Step 3. Confirmar",
-      "verticalRich": "Asistente Rico Vertical",
-      "verticalSimple": "Asistente Simple Vertical"
     }
   },
   "grid": {
@@ -140,20 +125,22 @@
   "language": {
     "brazilian_portuguese": "Português",
     "english": "English",
-    "spanish": "Spanish"
+    "spanish": "Spanish",
+    "simplified_chinese": "Versión abreviada"
   },
   "menu": {
     "auth": "Autenticación",
     "buttons": "Botones",
     "charts": "Gráficos",
+    "collapse": "Colapso",
+    "colorPickers": "Selector de color",
     "dashboard": "Dashboard",
-    "extra": "Extra",
     "formElements": "Elementos de un Formulario",
     "forms": "Formularios",
-    "formWizards": "Asistente para Formularios",
     "mediumEditor": "Medium Editor",
     "grid": "Grid",
     "icons": "Iconos",
+    "cards": "Cards",
     "login": "Iniciar sesión",
     "maps": "Mapas",
     "modals": "Modals",
@@ -161,9 +148,14 @@
     "progressBars": "Barras de Progreso",
     "signUp": "Registrar",
     "statistics": "Estadisticas",
+    "lists": "Listas",
     "tables": "Tablas",
+    "markupTables": "Tablas de Marcado",
+    "dataTables": "Tablas de Datos",
     "typography": "Tipografía",
-    "uiElements": "Elementos UI"
+    "uiElements": "Elementos UI",
+    "colors": "Colores",
+    "chat": "Chat"
   },
   "messages": {
     "all": "Ver todos los mensajes",
@@ -180,10 +172,28 @@
     "small": "Pequeño",
     "static": "Estático",
     "smallTitle": "Modal Pequeña",
-    "staticMessage":
-      "Esto es un modal estático. No se cerrará haciendo clic en el fondo.",
+    "staticMessage": "Esto es un modal estático. No se cerrará haciendo clic en el fondo.",
     "staticTitle": "Modal Estático",
     "title": "Modals"
+  },
+  "fileUpload": {
+    "advancedMediaGallery": "Avanzado, Galería de medios",
+    "advancedUploadList": "Avanzado, lista de carga",
+    "mediaGallery": "Galería media",
+    "uploadList": "Lista de carga",
+    "single": "Soltero",
+    "dragNdropFiles": "Arrastrar y soltar archivos",
+    "uploadedOn": "Subido en",
+    "fileDeleted": "El archivo fue eliminado exitosamente",
+    "undo": "Deshacer",
+    "preview": "Avance",
+    "delete": "Borrar",
+    "deleteFile": "Borrar archivo",
+    "uploadFile": "Subir archivo",
+    "uploadMedia": "Cargar medios",
+    "addAttachment": "Añadir un adjunto",
+    "modalTitle": "Validación de archivo",
+    "modalText": "El tipo de archivo es incorrecto!"
   },
   "navbar": {
     "messageUs": "Envíenos sus preguntas o comentarios a"
@@ -195,25 +205,49 @@
     "startedTopic": "{name} ha creado una tema nueva"
   },
   "progressBars": {
-    "basic": "Basico",
-    "basicVertical": "Basico y Vertical",
-    "circle": "Circular",
-    "colorFulTitle": "Barras Coloridas",
-    "thin": "Delgado",
-    "thinVertical": "Delgado Vertical",
-    "thick": "Grueso",
-    "title": "Barras de Progresso"
+    "circle": "Circulo",
+    "horizontal": "Horizontal",
+    "colors": "Colores"
+  },
+  "lists": {
+    "customers": "Clientes",
+    "recentMessages": "Mensajes recientes",
+    "archieved": "Archivado",
+    "starterKit": "Kit de inicio",
+    "notifications": "Notificaciones"
   },
   "tables": {
     "basic": "Tabla basica",
-    "styled": "Colores, Iconos, Etiquetas",
-    "advanced": "Búsqueda y Paginación",
+    "stripedHoverable": "Rayado, Hoverable",
+    "labelsActions": "Etiquetas, Acciones como Botones",
+    "sortingPaginationActionsAsIcons": "Clasificación, Paginación, Acciones como Iconos",
+    "star": "Star",
+    "unstar": "Unstar",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "searchByName": "Buscar por nombre",
+    "searchTrendsBadges": "Búsqueda, Tendencias, Insignias",
+    "perPage": "Por página",
+    "report": "Informe",
+    "infiniteScroll": "Scroll infinito",
+    "selectable": "Seleccionable",
+    "selected": "Seleccionado",
+    "serverSidePagination": "Server-Side Paginación",
+    "emptyTable": "Mesa vacía",
+    "noDataAvailable": "Datos no disponibles.",
+    "noReport": "No hay datos para mostrar. El informe estará disponible el 3 de noviembre de 2018.",
+    "loading": "Cargando",
     "headings": {
-      "city": "Ciudad",
       "email": "Email",
       "name": "Nombre",
-      "score": "Puntuación"
+      "firstName": "Nombre de pila",
+      "lastName": "Apellido",
+      "status": "Estado",
+      "country": "País"
     }
+  },
+  "chat": {
+    "title": "Chat"
   },
   "user": {
     "language": "Cambiar Idioma",

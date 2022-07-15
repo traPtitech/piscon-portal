@@ -1,0 +1,37 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: .
+    ports:
+      - "4000"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      TZ: Asia/Tokyo
+      MARIADB_HOST: db
+      MARIADB_USERNAME: isucon
+      MARIADB_PASSWORD: isucon
+      MARIADB_DATABASE: isucon
+      MARIADB_PORT: 3306
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./client/caddy/Caddyfile-dev:/etc/caddy/Caddyfile
+  db:
+    image: mariadb:10.8-jammy
+    expose:
+      - "3306"
+    volumes:
+      # 初期データを投入するSQLが格納されているdir
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Tokyo
