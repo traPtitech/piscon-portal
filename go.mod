@@ -18,14 +18,11 @@ require (
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/srinathgs/mysqlstore v0.0.0-20200417050510-9cbb9420fc4c
-	golang.org/x/crypto v0.0.0-20210812204632-0ba0e8f03122 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
-	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/text v0.3.8 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.13
 )
