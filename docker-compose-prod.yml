@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /home/isucon/isuumo:/isuumo  # ベンチマーカーを置くディレクトリ
+      - /home/isucon/isucari:/isucari  # ベンチマーカーを置くディレクトリ
       - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
@@ -45,7 +45,7 @@ services:
       - db:/var/lib/mysql
       - ./db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MARIADB_PASSWORD}
       TZ: Asia/Tokyo
 volumes:
   db:
