@@ -8,10 +8,8 @@
               <h3 class="h-fix">Links</h3>
               <ul>
                 <li>
-                  <a
-                    href="https://gist.github.com/progfay/25edb2a9ede4ca478cb3e2422f1f12f6"
-                  >
-                    ISUCON10 予選当日マニュアル
+                  <a href="https://github.com/isucon/isucon9-qualify/blob/master/docs/manual.md">
+                    ISUCON9 予選当日マニュアル
                   </a>
                 </li>
               </ul>
@@ -22,16 +20,14 @@
               <div class="mb-4">
                 <h5>競技環境について</h5>
                 <p>
-                  ISUCON10 予選当日とは異なり,
+                  ISUCON9 予選当日とは異なり,
                   PISCONでは各チームで競技環境の構築を行う必要はありません.
                   TeamInfo ページより, インスタンスの作成,
                   及びサーバー情報の確認を行ってください.
                 </p>
                 <p>
                   競技用インスタンスには
-                  <a href="https://aws.amazon.com/jp/ec2/instance-types/t2/"
-                    >Amazon EC2 T2 インスタンス</a
-                  >
+                  <a href="https://aws.amazon.com/jp/ec2/instance-types/t2/">Amazon EC2 T2 インスタンス</a>
                   を使用しています. そのため,
                   短時間に多数回ベンチマークを行うと, CPU
                   クレジットの不足により,
@@ -43,8 +39,7 @@
                 <p>
                   参考:
                   <a
-                    href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html"
-                  >
+                    href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html">
                     バーストパフォーマンスインスタンスに関する主要な概念と定義
                   </a>
                 </p>
