@@ -50,8 +50,9 @@ func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
 	return fmt.Sprintf("/isucari/bin/benchmarker "+
 		"-data-dir \"/isucari/initial-data\" "+
-		"-payment-url \"http://10.0.145.247:5555\" "+
-		"-shipment-url \"http://10.0.145.247:7000\" "+
+		// ポータル用インスタンスのPrivate IP
+		"-payment-url \"http://172.31.36.6:5555\" "+
+		"-shipment-url \"http://172.31.36.6:7000\" "+
 		"-static-dir \"/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url \"http://%s\"", ip, ip)
