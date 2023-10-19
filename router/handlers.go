@@ -48,7 +48,7 @@ func genPassword() string {
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("/isucari/bench/bench "+
+	return fmt.Sprintf("/isucari/bin/benchmarker "+
 		"--target-url=http://%s "+
 		"--data-dir=/isucari/initial-data", ip)
 }
