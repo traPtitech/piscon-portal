@@ -47,7 +47,6 @@ services:
       - db:/var/lib/mysql
       - ./db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     environment:
-      MARIADB_ROOT_PASSWORD: ${MARIADB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MARIADB_PASSWORD}
       TZ: Asia/Tokyo
     env_file: .env
