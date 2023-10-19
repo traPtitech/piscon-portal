@@ -81,6 +81,18 @@ echo "%s\n%s\n" | passwd isucon
 usermod -G sudo isucon
 sed -e "s/PasswordAuthentication no/PasswordAuthentication yes/g" -i /etc/ssh/sshd_config
 systemctl restart sshd
+echo "server {" > /etc/nginx/sites-available/isucari.conf
+echo "	# listen 443 ssl;" >> /etc/nginx/sites-available/isucari.conf
+echo "	# server_name isucon9.catatsuy.org;" >> /etc/nginx/sites-available/isucari.conf
+echo "" >> /etc/nginx/sites-available/isucari.conf
+echo "	# ssl_certificate //etc/nginx/sites-available/isucari.confssl/fullchain.pem;" >> /etc/nginx/sites-available/isucari.conf
+echo "	# ssl_certificate_key //etc/nginx/sites-available/isucari.confssl/privkey.pem;" >> /etc/nginx/sites-available/isucari.conf
+echo "" >> /etc/nginx/sites-available/isucari.conf
+echo "	location / {" >> /etc/nginx/sites-available/isucari.conf
+echo "			proxy_set_header Host $http_host;" >> /etc/nginx/sites-available/isucari.conf
+echo "			proxy_pass http://127.0.0.1:8000;" >> /etc/nginx/sites-available/isucari.conf
+echo "	}" >> /etc/nginx/sites-available/isucari.conf
+echo "}" >> /etc/nginx/sites-available/isucari.conf
 	`, pwd, pwd)
 	enc := base64.StdEncoding.EncodeToString([]byte(startUpScript))
 	nispec := types.InstanceNetworkInterfaceSpecification{
