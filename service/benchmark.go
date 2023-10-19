@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"os"
 	"os/exec"
 
 	isuxportalResources "github.com/isucon/isucon10-portal/proto.go/isuxportal/resources"
@@ -45,9 +46,9 @@ func RunBenchmark(task *model.Task) *model.Result {
 // TODO: 最終的に BenchmarkResult -> Output -> Result と変換されているので, 設計を見直す
 func runBenchmarkCommand(args []string) (*model.Output, error) {
 	// ISUCON11のベンチマーカーはディレクトリの移動が必要
-	// if err := os.Chdir("/bench"); err != nil {
-	// 	return nil, err
-	// }
+	if err := os.Chdir("/isucari"); err != nil {
+		return nil, err
+	}
 
 	// パイプを使ってベンチマーカーのプロセスから結果を取得する
 	// pipeRead, pipeWrite, err := os.Pipe()
