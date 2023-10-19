@@ -51,8 +51,8 @@ func formatCommand(ip string, allAddresses []string) string {
 	return fmt.Sprintf("/isucari/bin/benchmarker "+
 		"-data-dir \"/isucari/initial-data\" "+
 		// ポータル用インスタンスのPrivate IP
-		"-payment-url \"http://172.31.36.6:5555\" "+
-		"-shipment-url \"http://172.31.36.6:7000\" "+
+		"-payment-url \"http://172.31.36.173:5555\" "+
+		"-shipment-url \"http://172.31.36.173:7000\" "+
 		"-static-dir \"/isucari/webapp/public/static\" "+
 		"-target-host \"%s\" "+
 		"-target-url \"http://%s\"", ip, ip)
