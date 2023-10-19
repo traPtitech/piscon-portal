@@ -48,8 +48,13 @@ func genPassword() string {
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("./bin/benchmarker "+
-		"--target-url=http://%s ", ip)
+	return fmt.Sprintf("/isucari/bin/benchmarker "+
+		"-data-dir \"/isucari/initial-data\" "+
+		"-payment-url \"http://10.0.145.247:5555\" "+
+		"-shipment-url \"http://10.0.145.247:7000\" "+
+		"-static-dir \"/isucari/webapp/public/static\" "+
+		"-target-host \"%s\" "+
+		"-target-url \"http://%s\"", ip, ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
