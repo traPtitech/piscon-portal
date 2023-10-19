@@ -15,6 +15,24 @@
               </ul>
             </div>
 
+            <div>
+              <h3 class="h-fix">注意事項</h3>
+              <p>インスタンスを作成しただけでは、nginxがSSL/TLSを無効な証明書を使って行おうとするため、ベンチマーカーを実行することができません</p>
+              <p>それを回避するために /etc/nginx/sites-available/isucari.conf を次のように書き換える必要があります</p>
+              <pre><code>server {
+        # listen 443 ssl;
+        # server_name isucon9.catatsuy.org;
+
+        # ssl_certificate //etc/nginx/sites-available/isucari.confssl/fullchain.pem;
+        # ssl_certificate_key //etc/nginx/sites-available/isucari.confssl/privkey.pem;
+
+        location / {
+                        proxy_set_header Host ;
+                        proxy_pass http://127.0.0.1:8000;
+        }
+}</code></pre>
+            </div>
+
             <div class="mb-4">
               <h3 class="h-fix">補足事項</h3>
               <div class="mb-4">
@@ -73,21 +91,19 @@
                     番ポートにローカルフォワードされるようにした上でブラウザ操作を行ってください.
                   </p>
                   <pre><code>ssh isucon@[競技用サーバのグローバルアドレス] -L 5000:localhost:5000</code></pre>
-                </div>
-                <div class="mb-4">
-                  <h6>ISU の登録</h6>
-                  <p>
-                    ブラウザより ISU の登録を行う際にも JIA API Mock が必要です.
-                    こちらについては
-                    <a
-                      href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md"
-                    >
-                      アプリケーションマニュアル
-                    </a>
-                    をご確認ください.
-                  </p>
-                </div>
-              </div> -->
+          </div>
+          <div class="mb-4">
+            <h6>ISU の登録</h6>
+            <p>
+              ブラウザより ISU の登録を行う際にも JIA API Mock が必要です.
+              こちらについては
+              <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
+                アプリケーションマニュアル
+              </a>
+              をご確認ください.
+            </p>
+          </div>
+    </div> -->
             </div>
           </va-card-content>
         </va-card>
