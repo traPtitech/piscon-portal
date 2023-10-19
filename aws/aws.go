@@ -95,7 +95,7 @@ systemctl restart sshd
 		MaxCount:          &defaultInstanceNum,
 		TagSpecifications: []types.TagSpecification{tspec},
 		NetworkInterfaces: []types.InstanceNetworkInterfaceSpecification{nispec},
-		KeyName:           aws.String("piscon"),
+		KeyName:           aws.String("piscon-portal"),
 		UserData:          aws.String(enc),
 	}
 	res, err := a.c.RunInstances(context.TODO(), i)
