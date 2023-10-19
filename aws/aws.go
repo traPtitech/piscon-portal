@@ -70,6 +70,9 @@ func (a *AwsClient) CreateInstance(name string, privateIp string, pwd string) (*
 		Tags: []types.Tag{{
 			Key:   aws.String("Name"),
 			Value: &name,
+		}, {
+			Key:   aws.String("type"),
+			Value: aws.String("PISCON"),
 		}},
 	}
 	startUpScript := fmt.Sprintf(`#!/bin/sh
