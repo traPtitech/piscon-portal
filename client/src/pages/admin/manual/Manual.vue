@@ -8,8 +8,8 @@
               <h3 class="h-fix">Links</h3>
               <ul>
                 <li>
-                  <a href="https://github.com/isucon/isucon9-qualify/blob/master/docs/manual.md">
-                    ISUCON9 予選当日マニュアル
+                  <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/manual.md">
+                    ISUCON11 予選当日マニュアル
                   </a>
                 </li>
               </ul>
@@ -38,7 +38,7 @@
               <div class="mb-4">
                 <h5>競技環境について</h5>
                 <p>
-                  ISUCON9 予選当日とは異なり,
+                  ISUCON11 予選当日とは異なり,
                   PISCONでは各チームで競技環境の構築を行う必要はありません.
                   TeamInfo ページより, インスタンスの作成,
                   及びサーバー情報の確認を行ってください.
@@ -69,7 +69,7 @@
                   ssh 接続を行ってください
                 </p>
               </div>
-              <!--
+
               <div class="mb-4">
                 <h5>ブラウザでのアクセスにおける留意点</h5>
                 <p>
@@ -91,19 +91,19 @@
                     番ポートにローカルフォワードされるようにした上でブラウザ操作を行ってください.
                   </p>
                   <pre><code>ssh isucon@[競技用サーバのグローバルアドレス] -L 5000:localhost:5000</code></pre>
-          </div>
-          <div class="mb-4">
-            <h6>ISU の登録</h6>
-            <p>
-              ブラウザより ISU の登録を行う際にも JIA API Mock が必要です.
-              こちらについては
-              <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
-                アプリケーションマニュアル
-              </a>
-              をご確認ください.
-            </p>
-          </div>
-    </div> -->
+                </div>
+                <div class="mb-4">
+                  <h6>ISU の登録</h6>
+                  <p>
+                    ブラウザより ISU の登録を行う際にも JIA API Mock が必要です.
+                    こちらについては
+                    <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
+                      アプリケーションマニュアル
+                    </a>
+                    をご確認ください.
+                  </p>
+                </div>
+              </div>
             </div>
           </va-card-content>
         </va-card>
