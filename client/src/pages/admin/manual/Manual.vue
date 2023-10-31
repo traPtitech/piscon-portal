@@ -30,6 +30,14 @@
         proxy_pass http://127.0.0.1:3000;
     }
 }</code></pre>
+              <p>加えて、<code>~/env.sh</code>内の</p>
+              <pre><code>POST_ISUCONDITION_TARGET_BASE_URL="https://isucondition-1.t.isucon.dev"</code></pre>
+              <p>を</p>
+              <pre><code>POST_ISUCONDITION_TARGET_BASE_URL="http://isucondition-1.t.isucon.dev"</code></pre>
+
+              <p> のように書き換える必要があります (2台目、3台目はそれぞれ <code>isucondition-2.t.isucon.dev</code>
+                <code>isucondition-3.t.isucon.dev</code> になります)
+              </p>
             </div>
 
             <div class="mb-4">
