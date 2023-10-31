@@ -48,14 +48,12 @@ func genPassword() string {
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("/isucari/bin/benchmarker "+
-		"-data-dir \"/isucari/initial-data\" "+
-		// ポータル用インスタンスのPrivate IP
-		"-payment-url \"http://172.31.36.173:5555\" "+
-		"-shipment-url \"http://172.31.36.173:7000\" "+
-		"-static-dir \"/isucari/webapp/public/static\" "+
-		"-target-host \"%s\" "+
-		"-target-url \"http://%s\"", ip, ip)
+	return fmt.Sprintf("/home/isucon/bench/bench "+
+		"-all-addresses %s "+
+		"-target %s:443 "+
+		"-tls "+
+		"-jia-service-url http://127.0.0.1:4999",
+		ip, ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
@@ -245,7 +243,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	n := teamId*5 + instanceNumber
 	var privateIP string
 	// TODO: サブネットの設定ミスでIPアドレスが足りないので応急処置. 競技後revert.
-	privateIP = fmt.Sprintf("172.31.36.%d", n)
+	privateIP = fmt.Sprintf("172.31.38.%d", n)
 	id, err := h.client.CreateInstance(name, privateIP, pass)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{
