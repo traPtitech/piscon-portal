@@ -48,7 +48,7 @@ func genPassword() string {
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("sudo ./bench "+
+	return fmt.Sprintf("./bench "+
 		"-all-addresses %s "+
 		"-target %s "+
 		// ベンチマーカーのプライベートIPアドレスを指定
