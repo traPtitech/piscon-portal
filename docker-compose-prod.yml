@@ -12,7 +12,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /home/isucon/isucari:/isucari  # ベンチマーカーを置くディレクトリ
+      - /home/isucon/bench:/bench  # ベンチマーカーを置くディレクトリ
       - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
