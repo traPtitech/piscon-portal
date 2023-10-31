@@ -50,8 +50,7 @@ func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
 	return fmt.Sprintf("/home/isucon/bench/bench "+
 		"-all-addresses %s "+
-		"-target %s:443 "+
-		"-tls "+
+		"-target %s "+
 		"-jia-service-url http://127.0.0.1:4999",
 		ip, ip)
 }
