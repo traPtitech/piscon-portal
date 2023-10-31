@@ -3,8 +3,8 @@ package service
 import (
 	"bufio"
 	"encoding/binary"
-	"encoding/json"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -51,37 +51,34 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	}
 
 	// パイプを使ってベンチマーカーのプロセスから結果を取得する
-	// pipeRead, pipeWrite, err := os.Pipe()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// defer pipeRead.Close()
-	// defer pipeWrite.Close()
+	pipeRead, pipeWrite, err := os.Pipe()
+	if err != nil {
+		return nil, err
+	}
+	defer pipeRead.Close()
+	defer pipeWrite.Close()
 
 	cmd := exec.Command(args[0], args[1:]...)
-	// cmd.ExtraFiles = []*os.File{pipeWrite}
+	cmd.ExtraFiles = []*os.File{pipeWrite}
 	// 子プロセスの3番のfdの先がパイプの書き口になる
-	// cmd.Env = append(os.Environ(), "ISUXBENCH_REPORT_FD=3")
-	// cmd.Stderr = os.Stderr
-
+	cmd.Env = append(os.Environ(), "ISUXBENCH_REPORT_FD=3")
+	cmd.Stderr = os.Stderr
 	cmdOut, err := cmd.StdoutPipe()
 	if err != nil {
 		return nil, err
 	}
-	// r := io.TeeReader(cmdOut, os.Stdout)
+	r := io.TeeReader(cmdOut, os.Stdout)
 
 	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
 	// readをブロックしないように, 不要なファイルは閉じる
-	// pipeWrite.Close()
+	pipeWrite.Close()
 
 	var messages []model.OutputMessage
-	scanner := bufio.NewScanner(cmdOut)
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		text := scanner.Text()
-		log.Println(text)
-		messages = append(messages, model.OutputMessage{Text: text})
+		messages = append(messages, model.OutputMessage{Text: scanner.Text()})
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, err
@@ -92,25 +89,20 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	}
 
 	// wire-formatのデータが連続するバイト列
-	// wires, err := ioutil.ReadAll(pipeRead)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// result, err := lastBenchmarkResultFromBinary(wires)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	result := &Result{}
-
-	json.Unmarshal([]byte(messages[len(messages)-1].Text), result)
+	wires, err := io.ReadAll(pipeRead)
+	if err != nil {
+		return nil, err
+	}
+	result, err := lastBenchmarkResultFromBinary(wires)
+	if err != nil {
+		return nil, err
+	}
 
 	output := &model.Output{
-		Pass:     result.Pass,
+		Pass:     result.Passed,
 		Score:    result.Score,
-		Reason:   result.Reason,
-		Language: result.Language,
+		Reason:   result.Execution.Reason,
+		Language: result.SurveyResponse.Language,
 		Messages: messages,
 	}
 	return output, nil
