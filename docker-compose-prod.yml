@@ -6,8 +6,7 @@ services:
     container_name: piscon-portal-backend
     ports:
       - "4000:4000"
-      - "5555:5555"
-      - "7000:7000"
+      - "4999:4999"
     restart: always
     depends_on:
       - db
