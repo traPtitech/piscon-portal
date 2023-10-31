@@ -51,7 +51,8 @@ func formatCommand(ip string, allAddresses []string) string {
 	return fmt.Sprintf("./bench "+
 		"-all-addresses %s "+
 		"-target %s "+
-		"-jia-service-url http://127.0.0.1:4999",
+		// ベンチマーカーのプライベートIPアドレスを指定
+		"-jia-service-url http://172.31.38.6:4999",
 		ip, ip)
 }
 
