@@ -18,18 +18,17 @@
             <div>
               <h3 class="h-fix">注意事項</h3>
               <p>インスタンスを作成しただけでは、nginxがSSL/TLSを無効な証明書を使って行おうとするため、ベンチマーカーを実行することができません</p>
-              <p>それを回避するために /etc/nginx/sites-available/isucari.conf を次のように書き換える必要があります</p>
+              <p>それを回避するために /etc/nginx/sites-available/isucondition.conf を次のように書き換える必要があります</p>
               <pre><code>server {
-        # listen 443 ssl;
-        # server_name isucon9.catatsuy.org;
+    # listen 443 ssl http2;
 
-        # ssl_certificate //etc/nginx/sites-available/isucari.confssl/fullchain.pem;
-        # ssl_certificate_key //etc/nginx/sites-available/isucari.confssl/privkey.pem;
+    # ssl_certificate /etc/nginx/certificates/tls-cert.pem;
+    # ssl_certificate_key /etc/nginx/certificates/tls-key.pem;
 
-        location / {
-                        proxy_set_header Host $http_host;
-                        proxy_pass http://127.0.0.1:8000;
-        }
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:3000;
+    }
 }</code></pre>
             </div>
 
