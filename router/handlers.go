@@ -47,13 +47,19 @@ func genPassword() string {
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
+	allAddressesStr := ""
+	for _, address := range allAddresses {
+		allAddressesStr += address + ","
+	}
+	allAddressesStr = allAddressesStr[:len(allAddressesStr)-1]
+
 	// TODO: target, all-addressesを環境変数で渡すようにする
 	return fmt.Sprintf("./bench "+
 		"-all-addresses %s "+
 		"-target %s "+
 		// ベンチマーカーのプライベートIPアドレスを指定
 		"-jia-service-url http://172.31.38.127:4999",
-		ip, ip)
+		allAddressesStr, ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
