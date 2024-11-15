@@ -8,13 +8,36 @@
               <h3 class="h-fix">Links</h3>
               <ul>
                 <li>
-                  <a
-                    href="https://gist.github.com/progfay/25edb2a9ede4ca478cb3e2422f1f12f6"
-                  >
-                    ISUCON10 予選当日マニュアル
+                  <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/manual.md">
+                    ISUCON11 予選当日マニュアル
                   </a>
                 </li>
               </ul>
+            </div>
+
+            <div>
+              <h3 class="h-fix">注意事項</h3>
+              <p>インスタンスを作成しただけでは、nginxがSSL/TLSを無効な証明書を使って行おうとするため、ベンチマーカーを実行することができません</p>
+              <p>それを回避するために /etc/nginx/sites-available/isucondition.conf を次のように書き換える必要があります</p>
+              <pre><code>server {
+    # listen 443 ssl http2;
+
+    # ssl_certificate /etc/nginx/certificates/tls-cert.pem;
+    # ssl_certificate_key /etc/nginx/certificates/tls-key.pem;
+
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:3000;
+    }
+}</code></pre>
+              <p>加えて、<code>~/env.sh</code>内の</p>
+              <pre><code>POST_ISUCONDITION_TARGET_BASE_URL="https://isucondition-1.t.isucon.dev"</code></pre>
+              <p>を</p>
+              <pre><code>POST_ISUCONDITION_TARGET_BASE_URL="http://isucondition-1.t.isucon.dev"</code></pre>
+
+              <p> のように書き換える必要があります (2台目、3台目はそれぞれ <code>isucondition-2.t.isucon.dev</code>
+                <code>isucondition-3.t.isucon.dev</code> になります)
+              </p>
             </div>
 
             <div class="mb-4">
@@ -22,16 +45,14 @@
               <div class="mb-4">
                 <h5>競技環境について</h5>
                 <p>
-                  ISUCON10 予選当日とは異なり,
+                  ISUCON11 予選当日とは異なり,
                   PISCONでは各チームで競技環境の構築を行う必要はありません.
                   TeamInfo ページより, インスタンスの作成,
                   及びサーバー情報の確認を行ってください.
                 </p>
                 <p>
                   競技用インスタンスには
-                  <a href="https://aws.amazon.com/jp/ec2/instance-types/t2/"
-                    >Amazon EC2 T2 インスタンス</a
-                  >
+                  <a href="https://aws.amazon.com/jp/ec2/instance-types/t2/">Amazon EC2 T2 インスタンス</a>
                   を使用しています. そのため,
                   短時間に多数回ベンチマークを行うと, CPU
                   クレジットの不足により,
@@ -43,8 +64,7 @@
                 <p>
                   参考:
                   <a
-                    href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html"
-                  >
+                    href="https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html">
                     バーストパフォーマンスインスタンスに関する主要な概念と定義
                   </a>
                 </p>
@@ -56,7 +76,7 @@
                   ssh 接続を行ってください
                 </p>
               </div>
-              <!--
+
               <div class="mb-4">
                 <h5>ブラウザでのアクセスにおける留意点</h5>
                 <p>
@@ -84,15 +104,13 @@
                   <p>
                     ブラウザより ISU の登録を行う際にも JIA API Mock が必要です.
                     こちらについては
-                    <a
-                      href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md"
-                    >
+                    <a href="https://github.com/isucon/isucon11-qualify/blob/main/docs/isucondition.md">
                       アプリケーションマニュアル
                     </a>
                     をご確認ください.
                   </p>
                 </div>
-              </div> -->
+              </div>
             </div>
           </va-card-content>
         </va-card>

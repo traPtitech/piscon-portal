@@ -10,7 +10,6 @@ import (
         "strings"
         "os"
 
-	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
 	"github.com/traPtitech/piscon-portal/oauth"
 	"gorm.io/gorm"
@@ -49,12 +48,19 @@ func genPassword() string {
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
+	allAddressesStr := ""
+	for _, address := range allAddresses {
+		allAddressesStr += address + ","
+	}
+	allAddressesStr = allAddressesStr[:len(allAddressesStr)-1]
+
 	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("/bench/bench "+
-		"-tls "+
-		"-target=%s "+
-		"-all-addresses=%s "+
-		"-jia-service-url=http://%s:5000", ip, strings.Join(allAddresses, ","), os.Getenv("BENCH_PRIVATE_IP"))
+	return fmt.Sprintf("./bench "+
+		"-all-addresses %s "+
+		"-target %s "+
+		// ベンチマーカーのプライベートIPアドレスを指定
+		"-jia-service-url http://192.168.0.111:4999",
+		allAddressesStr, ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {

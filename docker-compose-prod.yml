@@ -6,6 +6,7 @@ services:
     container_name: piscon-portal-backend
     ports:
       - "4000:4000"
+      - "4999:4999"
     restart: always
     depends_on:
       - db
@@ -19,6 +20,7 @@ services:
       net.core.somaxconn: 65535
       net.ipv4.tcp_tw_reuse: 1
       net.ipv4.tcp_fin_timeout: 10
+    env_file: .env
   frontend:
     build:
       context: ./client
@@ -33,6 +35,7 @@ services:
       - ./client/caddy/Caddyfile-prod:/etc/caddy/Caddyfile
       - caddy-data:/data
       - caddy-config:/config
+    env_file: .env
   db:
     image: mariadb:10.8-jammy
     container_name: piscon-portal-db
@@ -47,6 +50,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Tokyo
+    env_file: .env
 volumes:
   db:
   caddy-data:
