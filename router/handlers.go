@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+        "strings"
+        "os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
@@ -48,10 +50,11 @@ func genPassword() string {
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
 	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("/isuumo/bench/bench "+
-		"--target-url=http://%s "+
-		"--data-dir=/isuumo/initial-data "+
-		"--fixture-dir /isuumo/webapp/fixture", ip)
+	return fmt.Sprintf("/bench/bench "+
+		"-tls "+
+		"-target=%s "+
+		"-all-addresses=%s "+
+		"-jia-service-url=http://%s:5000", ip, strings.Join(allAddresses, ","), os.Getenv("BENCH_PRIVATE_IP"))
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
