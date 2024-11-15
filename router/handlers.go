@@ -7,9 +7,8 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
-        "strings"
-        "os"
 
+	"github.com/labstack/echo/v4"
 	"github.com/traPtitech/piscon-portal/model"
 	"github.com/traPtitech/piscon-portal/oauth"
 	"gorm.io/gorm"
