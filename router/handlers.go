@@ -58,7 +58,7 @@ func formatCommand(ip string, allAddresses []string) string {
 		"-all-addresses %s "+
 		"-target %s "+
 		// ベンチマーカーのプライベートIPアドレスを指定
-		"-jia-service-url http://192.168.0.111:4999",
+		"-jia-service-url http://192.168.12.99:4999",
 		allAddressesStr, ip)
 }
 
