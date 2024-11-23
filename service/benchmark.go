@@ -53,10 +53,13 @@ func runBenchmarkCommand(args []string) (*model.Output, error) {
 	defer pipeRead.Close()
 	defer pipeWrite.Close()
 
-	cmd := exec.Command(args[0], args[1:]...)
+	envVar := args[0]
+	command := args[1:]
+
+	cmd := exec.Command(command[0], command[1:]...)
 	cmd.ExtraFiles = []*os.File{pipeWrite}
 	// 子プロセスの3番のfdの先がパイプの書き口になる
-	cmd.Env = append(os.Environ(), "ISUXBENCH_REPORT_FD=3")
+	cmd.Env = append(os.Environ(), envVar, "ISUXBENCH_REPORT_FD=3") // 環境変数を設定
 	cmd.Stderr = os.Stderr
 	cmdOut, err := cmd.StdoutPipe()
 	if err != nil {
