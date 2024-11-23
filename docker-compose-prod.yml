@@ -11,7 +11,8 @@ services:
     depends_on:
       - db
     volumes:
-      - /home/isucon/bin/benchmarker:/bench  # ベンチマーカーを置くディレクトリ
+      - /home/isucon/bin/benchmarker:/home/isucon/bin/benchmarker  # ベンチマーカーを置くディレクトリ
+      - /home/isucon/isucon12-final/benchmarker:/home/isucon/isucon12-final/benchmarker
       - /etc/ssl/certs:/etc/ssl/certs
     environment:
       TZ: Asia/Tokyo
