@@ -47,7 +47,7 @@ func genPassword() string {
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
-	return fmt.Sprintf("ISUXBENCH_TARGET=%s /home/isucon/bin/benchmarker --stage=prod --request-timeout=10s --initialize-request-timeout=60s", ip)
+	return fmt.Sprintf("ISUXBENCH_TARGET=%s /root/bin/benchmarker --stage=prod --request-timeout=10s --initialize-request-timeout=60s", ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
