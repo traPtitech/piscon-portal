@@ -45,6 +45,10 @@ func RunBenchmark(task *model.Task) *model.Result {
 
 // TODO: 最終的に BenchmarkResult -> Output -> Result と変換されているので, 設計を見直す
 func runBenchmarkCommand(args []string) (*model.Output, error) {
+	if err := os.Chdir("/root"); err != nil {
+		return nil, err
+	}
+
 	// パイプを使ってベンチマーカーのプロセスから結果を取得する
 	pipeRead, pipeWrite, err := os.Pipe()
 	if err != nil {
