@@ -47,25 +47,13 @@ func genPassword() string {
 
 // ベンチマーク実行コマンド（大会によって書き換えた）
 func formatCommand(ip string, allAddresses []string) string {
-	allAddressesStr := ""
-	for _, address := range allAddresses {
-		allAddressesStr += address + ","
-	}
-	allAddressesStr = allAddressesStr[:len(allAddressesStr)-1]
-
-	// TODO: target, all-addressesを環境変数で渡すようにする
-	return fmt.Sprintf("./bench "+
-		"-all-addresses %s "+
-		"-target %s "+
-		// ベンチマーカーのプライベートIPアドレスを指定
-		"-jia-service-url http://192.168.12.99:4999",
-		allAddressesStr, ip)
+	return fmt.Sprintf("export ISUXBENCH_TARGET=%s && ./bin/benchmarker --stage=prod --request-timeout=10s --initialize-request-timeout=60s", ip)
 }
 
 func (h *Handlers) GetNewer(c echo.Context) error {
 	teams := []model.Team{}
 	// チームIDのうち結果が存在するものをとってきて、かつ一回以上パスしており正の点数を取っていて、、かつ一日以内の者でもっとも得点が高いを一つ選択する
-	h.db.Raw("SELECT * FROM results AS PI LEFT JOIN teams ON PI.team_id = teams.id WHERE PI.id =( SELECT po.id FROM results AS po LEFT JOIN teams ON po.team_id = teams.id WHERE pass = 1 AND PI.team_id = po.team_id AND score > 0 ORDER BY po.score DESC LIMIT 1 ) AND (PI.created_at > (CURRENT_TIME() - INTERVAL 1 day))").Scan(&teams)
+	h.db.Raw("SELECT * FROM results AS PI LEFT JOIN teams ON PI.team_id = teams.id WHERE PI.id =( SELECT po.id FROM results AS po LEFT JOIN teams ON po.team_id = teams.id WHERE pass = 1 AND PI.team_id = po.team_id AND score > 0 ORDER BY po.score DESC LIMIT 1 ) AND (PI.created_at > (CURRENT_TIME() - INTERVAL 1 DAY))").Scan(&teams)
 	return c.JSON(http.StatusOK, teams)
 }
 
