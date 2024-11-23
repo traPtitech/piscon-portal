@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	MAX_INSTANCE_NUMBER = 3
+	MAX_INSTANCE_NUMBER = 5
 )
 
 type Handlers struct {
@@ -229,7 +229,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 			Message: err.Error()})
 	}
 
-	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
+	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 && instanceNumber != 4 && instanceNumber != 5 {
 		return c.JSON(http.StatusBadRequest, model.Response{
 			Success: false,
 			Message: "instance number should be 1 or 2 or 3"})
@@ -252,7 +252,7 @@ func (h *Handlers) CreateInstance(c echo.Context) error {
 	if n <= 255 {
 		privateIP = fmt.Sprintf("192.168.0.%d", n)
 	} else {
-		privateIP = fmt.Sprintf("192.168.0.%d", n%250+3)
+		privateIP = fmt.Sprintf("192.168.0.%d", n%250+5)
 	}
 	id, err := h.client.CreateInstance(name, privateIP, pass)
 	if err != nil {
@@ -300,7 +300,7 @@ func (h *Handlers) DeleteInstance(c echo.Context) error {
 			Message: err.Error()})
 	}
 
-	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 {
+	if instanceNumber != 1 && instanceNumber != 2 && instanceNumber != 3 && instanceNumber != 4 && instanceNumber != 5 {
 		return c.JSON(http.StatusBadRequest, model.Response{
 			Success: false,
 			Message: "instance number should be 1 or 2 or 3"})
