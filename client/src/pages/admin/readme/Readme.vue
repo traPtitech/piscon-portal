@@ -6,7 +6,7 @@
           <div class="mb-4">
             <h4>PISUCON とは</h4>
             <p>
-              <a href="https://trap.jp" target="_blank">東京工業大学デジタル創作同好会traP</a> の部内ISUCON のことです.
+              <a href="https://trap.jp" target="_blank">東京科学大学デジタル創作同好会traP</a> の部内ISUCON のことです.
             </p>
           </div>
           <div class="mb-4">
@@ -47,4 +47,3 @@ a
   margin-bottom: auto
   margin-top: auto
 </style>
-
