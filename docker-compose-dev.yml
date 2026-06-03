@@ -25,7 +25,7 @@ services:
     volumes:
       - ./client/caddy/Caddyfile-dev:/etc/caddy/Caddyfile
   db:
-    image: mariadb:10.8-jammy
+    image: mariadb:10.8-jammy@sha256:456709ab146585d6189da05669b84384518baecd83670c9e5221f8c20a47cf1e
     expose:
       - "3306"
     volumes:
